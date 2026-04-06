@@ -33,15 +33,30 @@
             <div class="p-8 space-y-6">
                 <div class="flex flex-col gap-2">
                     <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Enrollment Type</span>
-                    <div class="flex flex-col sm:flex-row gap-4 mt-2">
-                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1">
-                            <input type="radio" value="Incoming First Year" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
-                            <span class="text-sm font-bold">Incoming First Year</span>
+                    <div class="flex flex-wrap gap-4 mt-2">
+                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1 min-w-[200px]">
+                            <input type="radio" value="Incoming Grade 7" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold">Incoming Grade 7</span>
+                                <span class="text-[10px] text-gray-400">Fresh from Elementary</span>
+                            </div>
                         </label>
-                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1">
+                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1 min-w-[200px]">
                             <input type="radio" value="Transferee" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
-                            <span class="text-sm font-bold">Transferee</span>
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold">Transferee</span>
+                                <span class="text-[10px] text-gray-400">From another school</span>
+                            </div>
                         </label>
+                        @if(Auth::user()->role === 'student')
+                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1 min-w-[200px]">
+                            <input type="radio" value="Promoted" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
+                            <div class="flex flex-col">
+                                <span class="text-sm font-bold">Promoted</span>
+                                <span class="text-[10px] text-gray-400">Continuing Student</span>
+                            </div>
+                        </label>
+                        @endif
                     </div>
                     @error('enrollment_type') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
@@ -246,37 +261,101 @@
                     <input wire:model.defer="last_school_attended" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm" placeholder="Full School Name" type="text"/>
                 </label>
 
-                <!-- Custom Routing Logic -->
+                <!-- Grade 8 Track Selection Module -->
                 @if(str_contains($grade_level, 'Grade 8'))
-                <div class="md:col-span-2 p-6 bg-primary/5 rounded-xl border border-primary/20 space-y-4">
-                    <h3 class="text-sm font-bold text-primary uppercase tracking-wider">Tech-Voc Specialization Selection</h3>
-                    <p class="text-xs text-gray-500">As a Grade 8 student at TNTS, please select your preferred technical course.</p>
-                    <select wire:model.defer="specialization" class="form-select w-full rounded-lg border-[#e7cfcf] bg-white text-sm">
-                        <option value="">Choose Specialization</option>
-                        <option value="Consumer Electronics Servicing">Consumer Electronics Servicing</option>
-                        <option value="Computer Systems Servicing">Computer Systems Servicing</option>
-                        <option value="Electrical Installation and Maintenance">Electrical Installation and Maintenance</option>
-                        <option value="Automotive Servicing">Automotive Servicing</option>
-                        <option value="Dressmaking/Tailoring">Dressmaking/Tailoring</option>
-                    </select>
+                <div class="md:col-span-2 p-8 bg-primary/5 rounded-2xl border border-primary/20 space-y-6">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined">ranking</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Tech-Voc Specialization Ranking</h3>
+                            <p class="text-xs text-gray-500">Rank your top 3 choices (1 = Most Preferred). Available based on G7 Exploratory grades.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @php
+                            $specializations = [
+                                'Consumer Electronics Servicing',
+                                'Computer Systems Servicing',
+                                'Electrical Installation and Maintenance',
+                                'Automotive Servicing',
+                                'Dressmaking/Tailoring',
+                                'Food and Beverage Services',
+                                'Shielded Metal Arc Welding'
+                            ];
+                        @endphp
+
+                        @foreach(['rank1' => '1st Choice', 'rank2' => '2nd Choice', 'rank3' => '3rd Choice'] as $model => $label)
+                        <label class="flex flex-col gap-2">
+                            <span class="text-xs font-bold text-primary uppercase">{{ $label }}</span>
+                            <select wire:model.defer="{{ $model }}" class="form-select w-full rounded-xl border-gray-200 bg-white text-sm focus:ring-primary focus:border-primary">
+                                <option value="">Select Specialization</option>
+                                @foreach($specializations as $spec)
+                                    <option value="{{ $spec }}" @if(($rank1 == $spec && $model != 'rank1') || ($rank2 == $spec && $model != 'rank2') || ($rank3 == $spec && $model != 'rank3')) disabled @endif>
+                                        {{ $spec }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </label>
+                        @endforeach
+                    </div>
                 </div>
                 @endif
 
+                <!-- SHS Strand Selection Module -->
                 @if(str_contains($grade_level, 'Grade 11') || str_contains($grade_level, 'Grade 12'))
-                <div class="md:col-span-2 p-6 bg-primary/5 rounded-xl border border-primary/20 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <h3 class="md:col-span-2 text-sm font-bold text-primary uppercase tracking-wider">Senior High School Tracking</h3>
-                    <label class="flex flex-col gap-2">
-                        <span class="text-xs font-semibold">Track</span>
-                        <select wire:model.defer="track" class="form-select rounded-lg border-gray-200 text-sm">
-                            <option value="">Select Track</option>
-                            <option value="Academic">Academic</option>
-                            <option value="TVL">TVL (Technical-Vocational-Livelihood)</option>
-                        </select>
-                    </label>
-                    <label class="flex flex-col gap-2">
-                        <span class="text-xs font-semibold">Strand</span>
-                        <input wire:model.defer="strand" class="form-input rounded-lg border-gray-200 text-sm" placeholder="e.g. STEM, HUMSS, ICT" type="text"/>
-                    </label>
+                <div class="md:col-span-2 p-8 bg-primary/5 rounded-2xl border border-primary/20 space-y-6" x-data="{ track: @entangle('shs_track') }">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
+                            <span class="material-symbols-outlined">account_tree</span>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">Senior High School Tracking</h3>
+                            <p class="text-xs text-gray-500">Select your academic or vocational track and strand.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <label class="flex flex-col gap-2">
+                            <span class="text-xs font-bold text-primary uppercase">SHS Track</span>
+                            <select wire:model.lazy="shs_track" class="form-select rounded-xl border-gray-200 bg-white text-sm focus:ring-primary focus:border-primary">
+                                <option value="">Select Track</option>
+                                <option value="Academic">Academic</option>
+                                <option value="TVL">TVL (Technical-Vocational-Livelihood)</option>
+                            </select>
+                        </label>
+
+                        <label class="flex flex-col gap-2">
+                            <span class="text-xs font-bold text-primary uppercase">Strand</span>
+                            <select wire:model.defer="strand" class="form-select rounded-xl border-gray-200 bg-white text-sm focus:ring-primary focus:border-primary">
+                                <option value="">Select Strand</option>
+                                <template x-if="track === 'Academic'">
+                                    <optgroup label="Academic Strands">
+                                        <option value="STEM">STEM (Science, Tech, Engineering, Math)</option>
+                                        <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
+                                        <option value="GAS">GAS (General Academic Strand)</option>
+                                    </optgroup>
+                                </template>
+                                <template x-if="track === 'TVL'">
+                                    <optgroup label="TVL Strands">
+                                        <option value="ICT">ICT (Information and Communications Technology)</option>
+                                        <option value="HE">HE (Home Economics)</option>
+                                        <option value="IA">IA (Industrial Arts)</option>
+                                    </optgroup>
+                                </template>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center gap-3 p-4 bg-white/50 rounded-xl border border-primary/10">
+                        <input type="checkbox" wire:model="is_shs_aligned" class="rounded text-primary focus:ring-primary" />
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-900">Track Alignment Check</span>
+                            <p class="text-[10px] text-gray-500">My chosen SHS strand aligns with my previous Technical-Vocational specialization.</p>
+                        </div>
+                    </div>
                 </div>
                 @endif
 
@@ -331,7 +410,7 @@
                     </div>
                     <!-- Good Moral -->
                     <div class="flex flex-col gap-2">
-                        <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Certificate of Good Moral</p>
+                        <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Certificate of Good Moral @if($enrollment_type === 'Transferee') <span class="text-red-500 font-bold">*</span> @endif</p>
                         <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
                             <input type="file" wire:model="good_moral_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                             <span class="material-symbols-outlined text-primary text-2xl">@if($good_moral_file) check_circle @else add_a_photo @endif</span>
@@ -339,6 +418,18 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Honorable Dismissal (Transferee Only) -->
+                @if($enrollment_type === 'Transferee')
+                <div class="flex flex-col gap-2">
+                    <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Honorable Dismissal <span class="text-red-500 font-bold">*</span></p>
+                    <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
+                        <input type="file" wire:model="honorable_dismissal_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <span class="material-symbols-outlined text-primary text-2xl">upload</span>
+                        <p class="text-xs font-medium text-[#1b0d0d] dark:text-[#fcf8f8]">Required for transferees</p>
+                    </div>
+                </div>
+                @endif
 
                 <div class="pt-8 border-t border-[#e7cfcf] dark:border-white/10">
                     <label class="flex items-start gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10 cursor-pointer">

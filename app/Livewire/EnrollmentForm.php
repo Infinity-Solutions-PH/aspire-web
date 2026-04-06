@@ -65,10 +65,18 @@ class EnrollmentForm extends Component
     public $specialization;
     public $modality;
 
+    // Specialized Logic
+    public $shs_track;
+    public $rank1;
+    public $rank2;
+    public $rank3;
+    public $is_shs_aligned = false;
+
     // Step 5: Uploads
     public $psa_file;
     public $sf9_file;
     public $good_moral_file;
+    public $honorable_dismissal_file;
 
     protected $rules = [
         1 => [
@@ -92,15 +100,61 @@ class EnrollmentForm extends Component
             'last_grade_level' => 'required',
             'last_school_attended' => 'required',
         ],
+        // Step 6 Specialized Logic (Handled in nextStep)
     ];
 
     public function mount()
     {
+        $user = Auth::user();
+        
+        // Conditional Auto-Progression Detection (Phase 2 Recommendation)
+        if ($user->role === 'student' || $user->role === 'student') {
+            $this->enrollment_type = 'Promoted';
+            
+            // Fetch the most recent finalized enrollment to pre-fill
+            $latest = Enrollment::where('user_id', $user->id)
+                ->where('status', 'Enrolled')
+                ->latest()
+                ->first();
+
+            if ($latest) {
+                // Pre-fill student, address, and family info
+                $this->fill($latest->only([
+                    'psa_no', 'lrn', 'last_name', 'first_name', 'middle_name', 'extension_name', 'birthdate', 'sex',
+                    'is_ip', 'ip_community', 'is_4ps', 'household_id', 'has_disability', 'disability_types',
+                    'current_house_no', 'current_street', 'current_barangay', 'current_municipality', 'current_province', 'current_zip',
+                    'is_same_address', 'permanent_house_no', 'permanent_street', 'permanent_barangay', 'permanent_municipality', 'permanent_province', 'permanent_zip',
+                    'father_name', 'mother_maiden_name', 'guardian_name', 'contact_no'
+                ]));
+                
+                // Auto-set the next grade level
+                $this->last_grade_level = $latest->grade_level;
+                $this->grade_level = $this->calculateNextGrade($latest->grade_level);
+            }
+        }
+
         $existing = Enrollment::where('user_id', Auth::id())->where('status', 'Draft')->first();
 
         if ($existing) {
             $this->fill($existing->toArray());
+            if ($existing->tech_voc_choices) {
+                $this->rank1 = $existing->tech_voc_choices[0] ?? null;
+                $this->rank2 = $existing->tech_voc_choices[1] ?? null;
+                $this->rank3 = $existing->tech_voc_choices[2] ?? null;
+            }
         }
+    }
+
+    private function calculateNextGrade($current)
+    {
+        $map = [
+            'Grade 7' => 'Grade 8',
+            'Grade 8' => 'Grade 9',
+            'Grade 9' => 'Grade 10',
+            'Grade 10' => 'Grade 11',
+            'Grade 11' => 'Grade 12',
+        ];
+        return $map[$current] ?? null;
     }
 
     public function nextStep()
@@ -123,6 +177,11 @@ class EnrollmentForm extends Component
         $data = $this->all();
         $data['user_id'] = Auth::id();
         $data['status'] = 'Draft';
+        $data['type'] = $this->enrollment_type;
+        
+        if ($this->rank1 || $this->rank2 || $this->rank3) {
+            $data['tech_voc_choices'] = [$this->rank1, $this->rank2, $this->rank3];
+        }
 
         Enrollment::updateOrCreate(
             ['user_id' => Auth::id(), 'status' => 'Draft'],
@@ -149,10 +208,13 @@ class EnrollmentForm extends Component
         if ($this->good_moral_file) {
             $enrollment->update(['good_moral_path' => $this->good_moral_file->store('enrollments/good_moral', 'public')]);
         }
+        if ($this->honorable_dismissal_file) {
+            $enrollment->update(['honorable_dismissal_path' => $this->honorable_dismissal_file->store('enrollments/dismissal', 'public')]);
+        }
 
         $enrollment->update(['status' => 'Submitted']);
 
-        return redirect()->route('enrollment.post');
+        return redirect()->route('enrollment.status');
     }
 
     public function render()

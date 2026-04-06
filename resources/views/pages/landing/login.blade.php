@@ -18,17 +18,17 @@
             </template>
 
             <div class="relative z-10">
-                <div class="flex items-center gap-3 text-white mb-12">
+                <div class="flex flex-row items-center gap-3 text-white mb-12">
                     <div class="size-10">
                         <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                             <path d="M36.7273 44C33.9891 44 31.6043 39.8386 30.3636 33.69C29.123 39.8386 26.7382 44 24 44C21.2618 44 18.877 39.8386 17.6364 33.69C16.3957 39.8386 14.0109 44 11.2727 44C7.25611 44 4 35.0457 4 24C4 12.9543 7.25611 4 11.2727 4C14.0109 4 16.3957 8.16144 17.6364 14.31C18.877 8.16144 21.2618 4 24 4C26.7382 4 29.123 8.16144 30.3636 14.31C31.6043 8.16144 33.9891 4 36.7273 4C40.7439 4 44 12.9543 44 24C44 35.0457 40.7439 44 36.7273 44Z" fill="white"></path>
                         </svg>
                         <!-- <img src="{{ asset('images/logo.png') }}"> -->
                     </div>
-                    <span class="text-xl font-bold tracking-tight uppercase">ASPIRE</span>
-                </div>
-                <div>
-                    <span class="text-xl font-bold tracking-tight uppercase">Tanza National Trade School</span>
+                    <div class="flex flex-col items-start">
+                        <span class="text-xl font-bold tracking-tight uppercase">ASPIRE</span>
+                        <span class="text-lg text-white font-normal tracking-tight uppercase">Tanza National Trade School</span>
+                    </div>
                 </div>
                 <div class="space-y-6 relative h-48">
                     <template x-for="(slide, index) in slides" :key="index">
@@ -60,41 +60,90 @@
             </div>
         </div>
         <div class="flex-1 bg-white flex flex-col justify-center items-center p-8 sm:p-12 lg:p-24 overflow-y-auto">
-            <div class="w-full max-w-[420px]">
+            <div class="w-full max-w-[420px]" x-data="{ view: 'returning' }">
                 <div class="mb-10 text-center lg:text-left">
-                    <h2 class="text-4xl font-bold text-gray-900 mb-3">Welcome back</h2>
-                    <p class="text-gray-500 font-normal">Enter your details to access your school dashboard.</p>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-3" x-text="view === 'returning' ? 'Welcome back' : 'Start your journey'">Welcome back</h2>
+                    <p class="text-gray-500 font-normal" x-text="view === 'returning' ? 'Enter your details to access your school dashboard.' : 'Create an applicant account to begin your enrollment.'">Enter your details to access your school dashboard.</p>
                 </div>
-                <form class="space-y-5" onsubmit="return false;">
-                    <div class="space-y-2">
-                        <label class="text-sm font-semibold text-gray-700 block ml-1">Student / Employee ID</label>
-                        <div class="relative group">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">badge</span>
-                            <input class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="ID Number (e.g. 2024-001)" type="text"/>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center ml-1">
-                            <label class="text-sm font-semibold text-gray-700">Password</label>
-                            <a class="text-primary text-xs font-bold hover:underline" href="#">Forgot password?</a>
-                        </div>
-                        <div class="relative group">
-                            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
-                            <input class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" type="password"/>
-                            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors" type="button">
-                                <span class="material-symbols-outlined text-[22px]">visibility</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 ml-1">
-                        <input class="rounded-md text-primary focus:ring-primary border-gray-300 h-4 w-4" id="remember" type="checkbox"/>
-                        <label class="text-sm text-gray-600 cursor-pointer" for="remember">Keep me logged in</label>
-                    </div>
-                    <button class="w-full bg-accent-red hover:bg-primary text-white font-bold h-14 rounded-xl shadow-lg shadow-accent-red/10 transition-all flex items-center justify-center gap-2 mt-2" type="submit">
-                        <span class="text-base">Sign In</span>
-                        <span class="material-symbols-outlined text-lg">arrow_forward</span>
+
+                <!-- View Switcher -->
+                <div class="flex p-1 bg-gray-100 rounded-xl mb-8">
+                    <button 
+                        @click="view = 'returning'"
+                        :class="view === 'returning' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-700'"
+                        class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all">
+                        Returning Student
                     </button>
-                </form>
+                    <button 
+                        @click="view = 'new'"
+                        :class="view === 'new' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-700'"
+                        class="flex-1 py-2.5 text-sm font-bold rounded-lg transition-all">
+                        New Student
+                    </button>
+                </div>
+
+                <!-- Returning Student Login -->
+                <div x-show="view === 'returning'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                    <form class="space-y-5" method="POST" action="{{ route('login') }}">
+                        @csrf
+                        <div class="space-y-2">
+                            <label class="text-sm font-semibold text-gray-700 block ml-1">Student ID / Email</label>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">badge</span>
+                                <input name="email" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="ID or Email" type="text" required value="{{ old('email') }}"/>
+                            </div>
+                            @error('email') <p class="text-red-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center ml-1">
+                                <label class="text-sm font-semibold text-gray-700">Password</label>
+                                @if (Route::has('password.request'))
+                                    <a class="text-primary text-xs font-bold hover:underline" href="{{ route('password.request') }}">Forgot password?</a>
+                                @endif
+                            </div>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
+                                <input name="password" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" type="password" required/>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 ml-1">
+                            <input name="remember" class="rounded-md text-primary focus:ring-primary border-gray-300 h-4 w-4" id="remember" type="checkbox"/>
+                            <label class="text-sm text-gray-600 cursor-pointer" for="remember">Keep me logged in</label>
+                        </div>
+                        <button class="w-full bg-accent-red hover:bg-primary text-white font-bold h-14 rounded-xl shadow-lg shadow-accent-red/10 transition-all flex items-center justify-center gap-2 mt-2" type="submit">
+                            <span class="text-base">Sign In</span>
+                            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- New Student / Applicant Section -->
+                <div x-show="view === 'new'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+                    <div class="bg-primary/5 border border-primary/10 rounded-2xl p-6 space-y-4">
+                        <div class="size-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined text-3xl">person_add</span>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold text-gray-900">Incoming Student?</h3>
+                            <p class="text-sm text-gray-600 leading-relaxed">If you are an incoming Grade 7 student, a transferee, or starting Senior High, please create an applicant account to begin.</p>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-center gap-3 text-sm text-gray-700">
+                                <span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                                Save your progress anytime
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-gray-700">
+                                <span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+                                Track application status
+                            </li>
+                        </ul>
+                    </div>
+                    <a href="{{ route('register') }}" class="w-full bg-primary hover:bg-accent-red text-white font-bold h-14 rounded-xl shadow-lg shadow-primary/10 transition-all flex items-center justify-center gap-2 mt-2">
+                        <span class="text-base">Create Applicant Account</span>
+                        <span class="material-symbols-outlined text-lg">assignment_ind</span>
+                    </a>
+                </div>
+
                 <div class="relative my-8">
                     <div class="absolute inset-0 flex items-center">
                         <div class="w-full border-t border-gray-100"></div>
@@ -114,8 +163,8 @@
                 </a>
                 <div class="mt-12 text-center">
                     <p class="text-sm text-gray-500">
-                        Don't have an account yet? 
-                        <a class="text-primary font-bold hover:underline ml-1" href="#">Contact Registrar</a>
+                        Need assistance? 
+                        <a class="text-primary font-bold hover:underline ml-1" href="mailto:support@tnts.edu.ph">Contact Support</a>
                     </p>
                 </div>
             </div>
