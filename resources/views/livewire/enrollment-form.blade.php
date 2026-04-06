@@ -1,3 +1,4 @@
+<div class="min-h-screen bg-background-light dark:bg-background-dark font-display text-[#1b0d0d] dark:text-[#f8f6f6]">
 <div class="max-w-[960px] w-full flex flex-col gap-6 mx-auto py-10 px-4">
     <!-- Progress Tracker -->
     <div class="glass-card rounded-xl p-6 shadow-sm border border-[#e7cfcf] dark:border-white/10">
@@ -31,6 +32,21 @@
             </div>
             <div class="p-8 space-y-6">
                 <div class="flex flex-col gap-2">
+                    <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Enrollment Type</span>
+                    <div class="flex flex-col sm:flex-row gap-4 mt-2">
+                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1">
+                            <input type="radio" value="Incoming First Year" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
+                            <span class="text-sm font-bold">Incoming First Year</span>
+                        </label>
+                        <label class="flex items-center gap-3 bg-white/50 dark:bg-black/20 px-6 py-4 rounded-xl border border-[#e7cfcf] dark:border-white/20 cursor-pointer hover:border-primary transition-all flex-1">
+                            <input type="radio" value="Transferee" wire:model.defer="enrollment_type" class="text-primary focus:ring-primary h-5 w-5" />
+                            <span class="text-sm font-bold">Transferee</span>
+                        </label>
+                    </div>
+                    @error('enrollment_type') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
+                </div>
+
+                <div class="flex flex-col gap-2 pt-6 border-t border-[#e7cfcf] dark:border-white/10 mt-6">
                     <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Grade Level to Enroll</span>
                     <select wire:model.defer="grade_level" class="form-select rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm">
                         <option value="">Select Grade Level</option>
@@ -370,4 +386,5 @@
             </div>
         </div>
     </form>
+</div>
 </div>

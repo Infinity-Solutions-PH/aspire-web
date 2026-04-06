@@ -14,6 +14,7 @@ class EnrollmentForm extends Component
     public $current_step = 1;
 
     // Phase 1 intent
+    public $enrollment_type;
     public $grade_level;
 
     // Step 1: Learner Info
@@ -70,7 +71,10 @@ class EnrollmentForm extends Component
     public $good_moral_file;
 
     protected $rules = [
-        1 => ['grade_level' => 'required'],
+        1 => [
+            'enrollment_type' => 'required',
+            'grade_level' => 'required'
+        ],
         2 => [
             'first_name' => 'required|min:2',
             'last_name' => 'required|min:2',
@@ -148,7 +152,7 @@ class EnrollmentForm extends Component
 
         $enrollment->update(['status' => 'Submitted']);
 
-        return redirect()->route('dashboard')->with('success', 'Your enrollment has been submitted for verification!');
+        return redirect()->route('enrollment.post');
     }
 
     public function render()

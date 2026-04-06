@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\EnrollmentForm;
+use App\Livewire\EnrollmentPost;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Landing\PageController as LandingPageController;
@@ -14,6 +15,7 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCa
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
     Route::get('/enroll', EnrollmentForm::class)->name('enrollment.form');
+    Route::get('/enrollment-schedule', EnrollmentPost::class)->name('enrollment.post');
 });
 
 require __DIR__.'/settings.php';
