@@ -34,18 +34,28 @@ class EnrollmentReview extends Component
         session()->flash('message', 'Application approved successfully.');
     }
 
-    public function enroll()
+    public function enroll(\App\Services\SectioningService $sectioningService, \App\Services\ProvisioningService $provisioningService)
     {
-        $this->enrollment->update([
-            'status' => 'Enrolled',
-            'finalized_at' => now(),
-        ]);
+        try {
+            // 1. Assign Section based on track and capacity
+            $section = $sectioningService->assignSection($this->enrollment);
 
-        // Transition applicant to student role
-        $this->enrollment->user->update(['role' => 'student']);
+            // 2. Transition applicant to student role and provision IT accounts
+            $user = $this->enrollment->user;
+            $user->update(['role' => 'student']);
+            $provisioningService->provisionAccount($user);
 
-        session()->flash('message', 'Student officially enrolled.');
-        return redirect()->route('admin.enrollments');
+            // 3. Finalize Enrollment
+            $this->enrollment->update([
+                'status' => 'Enrolled',
+                'finalized_at' => now(),
+            ]);
+
+            session()->flash('message', "Student officially enrolled in {$section->name} and account provisioned.");
+            return redirect()->route('admin.enrollments');
+        } catch (\Exception $e) {
+            session()->flash('error', $e->getMessage());
+        }
     }
 
     public function reject()

@@ -88,6 +88,9 @@
                         </div>
                     </div>
                 @else
+                @if($enrollment->status === 'Enrolled')
+                    @livewire('student.dashboard-portal')
+                @else
                     <div class="glass-card rounded-3xl border border-primary/10 overflow-hidden shadow-xl shadow-primary/5">
                         <div class="p-8 bg-primary/5 border-b border-primary/5 flex justify-between items-center">
                             <div class="flex items-center gap-4">
@@ -140,12 +143,6 @@
                                         <a href="{{ route('enrollment.form') }}" class="w-full bg-primary text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
                                             Continue Application
                                             <span class="material-symbols-outlined">edit_square</span>
-                                        </a>
-                                    @endif
-                                    @if($enrollment->status === 'Enrolled')
-                                        <a href="{{ route('enrollment.certificate') }}" class="w-full bg-green-600 text-white py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-green-600/20">
-                                            Download Certificate
-                                            <span class="material-symbols-outlined">picture_as_pdf</span>
                                         </a>
                                     @endif
                                 </div>

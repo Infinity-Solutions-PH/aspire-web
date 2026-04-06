@@ -24,6 +24,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('admin')->middleware(['can:access-admin'])->group(function () {
         Route::get('/enrollments', EnrollmentDashboard::class)->name('admin.enrollments');
         Route::get('/enrollments/{enrollment}/review', EnrollmentReview::class)->name('admin.enrollment.review');
+        Route::get('/schedules', \App\Livewire\Admin\ScheduleManager::class)->name('admin.schedules');
     });
 
     // PDF Certificate
