@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable([
     'user_id', 'status', 'current_step', 'type', 'tech_voc_choices',
-    'grade_level', 'psa_no', 'lrn', 'last_name', 'first_name', 'middle_name', 'extension_name', 'birthdate', 'sex',
+    'grade_level', 'psa_no', 'lrn', 'last_name', 'first_name', 'middle_name', 'extension_name', 'gwa', 'birthdate', 'sex',
     'is_ip', 'ip_community', 'is_4ps', 'household_id', 'has_disability', 'disability_types',
     'current_house_no', 'current_street', 'current_barangay', 'current_municipality', 'current_province', 'current_zip',
     'is_same_address', 'permanent_house_no', 'permanent_street', 'permanent_barangay', 'permanent_municipality', 'permanent_province', 'permanent_zip',
@@ -37,6 +37,7 @@ class Enrollment extends Model
             'disability_types' => 'array',
             'tech_voc_choices' => 'array',
             'finalized_at' => 'datetime',
+            'gwa' => 'decimal:2',
         ];
     }
 

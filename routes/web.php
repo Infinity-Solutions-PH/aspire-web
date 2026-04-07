@@ -3,7 +3,9 @@
 use App\Livewire\EnrollmentForm;
 use App\Livewire\EnrollmentPost;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\ScheduleManager;
 use App\Livewire\Admin\EnrollmentReview;
+use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\EnrollmentDashboard;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\Enrollment\CertificateController;
@@ -24,7 +26,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('admin')->middleware(['can:access-admin'])->group(function () {
         Route::get('/enrollments', EnrollmentDashboard::class)->name('admin.enrollments');
         Route::get('/enrollments/{enrollment}/review', EnrollmentReview::class)->name('admin.enrollment.review');
-        Route::get('/schedules', \App\Livewire\Admin\ScheduleManager::class)->name('admin.schedules');
+        Route::get('/sections', SectionManagement::class)->name('admin.sections');
+        Route::get('/schedules', ScheduleManager::class)->name('admin.schedules');
     });
 
     // PDF Certificate

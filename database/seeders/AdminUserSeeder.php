@@ -13,25 +13,24 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'System Admin',
-            'email' => 'admin@tnts.edu.ph',
-            'password' => Hash::make('password123'),
-            'role' => 'admin',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@tnts.edu.ph'],
+            ['name' => 'System Admin', 'password' => Hash::make('password123'), 'role' => 'admin']
+        );
 
-        User::create([
-            'name' => 'School Registrar',
-            'email' => 'registrar@tnts.edu.ph',
-            'password' => Hash::make('password123'),
-            'role' => 'registrar',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'registrar@tnts.edu.ph'],
+            ['name' => 'School Registrar', 'password' => Hash::make('password123'), 'role' => 'registrar']
+        );
 
-        User::create([
-            'name' => 'Department Head',
-            'email' => 'depthead@tnts.edu.ph',
-            'password' => Hash::make('password123'),
-            'role' => 'dept_head',
-        ]);
+        User::updateOrCreate(
+            ['email' => 'guidance@tnts.edu.ph'],
+            ['name' => 'Guidance Counselor', 'password' => Hash::make('password123'), 'role' => 'guidance']
+        );
+
+        User::updateOrCreate(
+            ['email' => 'depthead@tnts.edu.ph'],
+            ['name' => 'Department Head', 'password' => Hash::make('password123'), 'role' => 'dept_head']
+        );
     }
 }

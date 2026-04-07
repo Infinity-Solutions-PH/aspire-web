@@ -150,6 +150,7 @@
                         </div>
                     </div>
                 @endif
+                @endif
             </div>
         @endcan
     </div>

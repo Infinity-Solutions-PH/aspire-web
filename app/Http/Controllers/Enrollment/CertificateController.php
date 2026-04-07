@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Enrollment;
 
+use App\Models\Fee;
 use App\Models\Enrollment;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
@@ -17,7 +18,7 @@ class CertificateController extends Controller
             ->firstOrFail();
 
         if ($request->has('soa')) {
-            $fees = \App\Models\Fee::where(function($query) use ($enrollment) {
+            $fees = Fee::where(function($query) use ($enrollment) {
                 $query->where('track', $enrollment->track)
                       ->orWhere('strand', $enrollment->strand)
                       ->orWhere('specialization', $enrollment->specialization)

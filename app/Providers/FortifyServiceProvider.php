@@ -7,8 +7,10 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Fortify;
 use Illuminate\Support\Facades\Hash;
+use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
+use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Support\Facades\RateLimiter;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -46,8 +48,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureActions(): void
     {
-        Fortify::resetUserPasswordsUsing(\App\Actions\Fortify\ResetUserPassword::class);
-        Fortify::createUsersUsing(\App\Actions\Fortify\CreateNewUser::class);
+        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
+        Fortify::createUsersUsing(CreateNewUser::class);
     }
 
     /**

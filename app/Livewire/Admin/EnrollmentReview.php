@@ -2,10 +2,12 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Enrollment;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\Enrollment;
+use App\Services\SectioningService;
+use Illuminate\Support\Facades\Auth;
+use App\Services\ProvisioningService;
 
 class EnrollmentReview extends Component
 {
@@ -34,7 +36,7 @@ class EnrollmentReview extends Component
         session()->flash('message', 'Application approved successfully.');
     }
 
-    public function enroll(\App\Services\SectioningService $sectioningService, \App\Services\ProvisioningService $provisioningService)
+    public function enroll(SectioningService $sectioningService, ProvisioningService $provisioningService)
     {
         try {
             // 1. Assign Section based on track and capacity
@@ -69,8 +71,10 @@ class EnrollmentReview extends Component
         session()->flash('message', 'Application rejected.');
     }
 
-    public function render()
+    public function render(SectioningService $sectioningService)
     {
-        return view('livewire.admin.enrollment-review');
+        return view('livewire.admin.enrollment-review', [
+            'isStarQualified' => $sectioningService->checkStarQualification($this->enrollment),
+        ]);
     }
 }

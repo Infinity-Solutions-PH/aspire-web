@@ -64,6 +64,18 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase">Sex</p>
                         <p class="text-sm font-medium">{{ $enrollment->sex }}</p>
                     </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">GWA</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm font-bold text-primary">{{ $enrollment->gwa ?: 'N/A' }}</p>
+                            @if($isStarQualified)
+                                <span class="bg-yellow-100 text-yellow-700 text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-[12px]">star</span>
+                                    STAR QUALIFIED
+                                </span>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </section>
 
