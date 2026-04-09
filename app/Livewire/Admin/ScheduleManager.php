@@ -33,7 +33,7 @@ class ScheduleManager extends Component
             ->take(10)
             ->get();
 
-        return view('livewire.admin.schedule-manager', [
+        return view('pages.Admin.schedule-manager', [
             'sections' => $sections,
             'rooms' => $rooms,
             'recentSchedules' => $schedules,

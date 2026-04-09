@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Student;
+namespace App\Livewire\StudentPortal;
 
 use App\Models\SafetyWaiver as WaiverModel;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +36,6 @@ class SafetyWaiver extends Component
 
     public function render()
     {
-        return view('livewire.student.safety-waiver');
+        return view('pages.StudentPortal.safety-waiver');
     }
 }

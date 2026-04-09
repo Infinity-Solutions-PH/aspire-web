@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Student;
+namespace App\Livewire\StudentPortal;
 
 use App\Models\Enrollment;
 use App\Models\Schedule;
@@ -34,7 +34,7 @@ class DashboardPortal extends Component
                   ->orWhereNull('track');
         })->get();
 
-        return view('livewire.student.dashboard-portal', [
+        return view('pages.StudentPortal.dashboard-portal', [
             'schedules' => $schedules,
             'fees' => $fees,
             'totalFees' => $fees->sum('amount'),

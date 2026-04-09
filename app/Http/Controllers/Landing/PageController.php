@@ -8,11 +8,19 @@ class PageController extends Controller
 {
     public function index()
     {
-        return view('pages.landing.login');
+        if (auth()->check()) {
+            return redirect()->route('dashboard');
+        }
+        return view('pages.landing.home');
     }
 
     public function login()
     {
         return view('pages.landing.login');
+    }
+
+    public function programs()
+    {
+        return view('pages.landing.programs');
     }
 }

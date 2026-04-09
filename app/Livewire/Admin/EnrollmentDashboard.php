@@ -27,7 +27,7 @@ class EnrollmentDashboard extends Component
             ->latest()
             ->paginate(10);
 
-        return view('livewire.admin.enrollment-dashboard', [
+        return view('pages.Admin.enrollment-dashboard', [
             'enrollments' => $enrollments
         ]);
     }

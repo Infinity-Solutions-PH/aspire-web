@@ -103,7 +103,7 @@
 
             <!-- Academic Specializations -->
             @if($enrollment->grade_level === 'Grade 8')
-            <section class="p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
+            <section class="p-6 bg-primary/5 rounded-2xl p-6 border border-primary/10 space-y-4">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-primary">verified_user</span>
                     <h3 class="text-lg font-bold text-gray-900">Track Selection Review</h3>
@@ -135,7 +135,7 @@
             @endif
 
             @if(str_contains($enrollment->grade_level, 'Grade 11'))
-            <section class="p-6 bg-primary/5 rounded-2xl border border-primary/10 space-y-4">
+            <section class="p-6 bg-primary/5 rounded-2xl p-6 border border-primary/10 space-y-4">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-primary">lan</span>
                     <h3 class="text-lg font-bold text-gray-900">SHS Strand Alignment</h3>

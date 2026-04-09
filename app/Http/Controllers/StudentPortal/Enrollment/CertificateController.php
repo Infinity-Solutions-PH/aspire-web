@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Enrollment;
+namespace App\Http\Controllers\StudentPortal\Enrollment;
 
 use App\Models\Fee;
 use App\Models\Enrollment;
+use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class CertificateController extends Controller
 {
-    public function download(\Illuminate\Http\Request $request)
+    public function download(Request $request)
     {
         $enrollment = Enrollment::where('user_id', Auth::id())
             ->where('status', 'Enrolled')

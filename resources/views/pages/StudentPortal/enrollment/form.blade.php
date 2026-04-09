@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-background-light dark:bg-background-dark font-display text-[#1b0d0d] dark:text-[#f8f6f6]">
-<div class="max-w-[960px] w-full flex flex-col gap-6 mx-auto py-10 px-4">
+
+<div class="max-w-[960px] w-full flex flex-col gap-6 mx-auto py-4 px-4">
     <!-- Progress Tracker -->
     <div class="glass-card rounded-xl p-6 shadow-sm border border-[#e7cfcf] dark:border-white/10">
         <div class="flex flex-col gap-3">
@@ -386,7 +386,7 @@
                 <div class="flex flex-col gap-2">
                     <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">PSA Birth Certificate</p>
                     <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-8 flex flex-col items-center justify-center gap-3 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
-                        <input type="file" wire:model="psa_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <input type="file" wire:model="psa_file" accept=".pdf,.jpg,.jpeg,.png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         <span class="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">upload_file</span>
                         <div class="text-center">
                             <p class="text-sm font-medium text-[#1b0d0d] dark:text-[#fcf8f8]">
@@ -403,19 +403,21 @@
                     <div class="flex flex-col gap-2">
                         <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Form 138 (Report Card)</p>
                         <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
-                            <input type="file" wire:model="sf9_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            <input type="file" wire:model="sf9_file" accept=".pdf,.jpg,.jpeg,.png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                             <span class="material-symbols-outlined text-primary text-2xl">@if($sf9_file) check_circle @else add_a_photo @endif</span>
                             <p class="text-xs font-medium text-[#1b0d0d] dark:text-[#fcf8f8]">@if($sf9_file) {{ $sf9_file->getClientOriginalName() }} @else Select File @endif</p>
                         </div>
+                        @error('sf9_file') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
                     <!-- Good Moral -->
                     <div class="flex flex-col gap-2">
                         <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Certificate of Good Moral @if($enrollment_type === 'Transferee') <span class="text-red-500 font-bold">*</span> @endif</p>
                         <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
-                            <input type="file" wire:model="good_moral_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                            <input type="file" wire:model="good_moral_file" accept=".pdf,.jpg,.jpeg,.png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                             <span class="material-symbols-outlined text-primary text-2xl">@if($good_moral_file) check_circle @else add_a_photo @endif</span>
                             <p class="text-xs font-medium text-[#1b0d0d] dark:text-[#fcf8f8]">@if($good_moral_file) {{ $good_moral_file->getClientOriginalName() }} @else Select File @endif</p>
                         </div>
+                        @error('good_moral_file') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                     </div>
                 </div>
 
@@ -424,18 +426,20 @@
                 <div class="flex flex-col gap-2">
                     <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Honorable Dismissal <span class="text-red-500 font-bold">*</span></p>
                     <div class="relative border-2 border-dashed border-[#e7cfcf] dark:border-white/20 rounded-xl p-6 flex flex-col items-center justify-center gap-2 bg-white/20 dark:bg-black/10 hover:border-primary/50 transition-colors cursor-pointer group">
-                        <input type="file" wire:model="honorable_dismissal_file" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                        <input type="file" wire:model="honorable_dismissal_file" accept=".pdf,.jpg,.jpeg,.png" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                         <span class="material-symbols-outlined text-primary text-2xl">upload</span>
                         <p class="text-xs font-medium text-[#1b0d0d] dark:text-[#fcf8f8]">Required for transferees</p>
                     </div>
+                    @error('honorable_dismissal_file') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
                 @endif
 
                 <div class="pt-8 border-t border-[#e7cfcf] dark:border-white/10">
                     <label class="flex items-start gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10 cursor-pointer">
-                        <input type="checkbox" required class="mt-1 rounded text-primary focus:ring-primary" />
+                        <input type="checkbox" wire:model.live="consent" class="mt-1 rounded text-primary focus:ring-primary @error('consent') border-red-500 @enderror" />
                         <div class="flex flex-col gap-1">
                             <span class="text-sm font-bold text-gray-900 dark:text-white">Data Privacy Consent</span>
+                            @error('consent') <span class="text-red-500 text-[10px] font-bold">Please accept the data privacy consent.</span> @enderror
                             <p class="text-xs text-gray-500 leading-relaxed">
                                 I hereby certify that all information provided is true and correct. I authorize Tanza National Trade School to collect and process my personal data for enrollment purposes in accordance with the Data Privacy Act of 2012.
                             </p>
@@ -469,13 +473,14 @@
                     <span class="material-symbols-outlined">arrow_forward</span>
                 </button>
                 @else
-                <button type="submit" class="bg-green-600 text-white px-10 py-3 rounded-lg font-bold shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center gap-2">
-                    Submit Enrollment
-                    <span class="material-symbols-outlined">rocket_launch</span>
+                <button type="submit" wire:loading.attr="disabled" class="bg-green-600 text-white px-10 py-3 rounded-lg font-bold shadow-lg shadow-green-600/20 hover:bg-green-700 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span wire:loading wire:target="submit" class="animate-spin material-symbols-outlined text-sm">progress_activity</span>
+                    <span wire:loading.remove wire:target="submit">Submit Enrollment</span>
+                    <span wire:loading wire:target="submit">Submitting...</span>
+                    <span class="material-symbols-outlined" wire:loading.remove wire:target="submit">rocket_launch</span>
                 </button>
                 @endif
             </div>
         </div>
     </form>
-</div>
 </div>

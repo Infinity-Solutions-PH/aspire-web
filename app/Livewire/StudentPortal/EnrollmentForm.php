@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\StudentPortal;
 
-use App\Models\Enrollment;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\Enrollment;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class EnrollmentForm extends Component
 {
@@ -16,6 +17,7 @@ class EnrollmentForm extends Component
     // Phase 1 intent
     public $enrollment_type;
     public $grade_level;
+    public $consent = false;
 
     // Step 1: Learner Info
     public $psa_no;
@@ -192,12 +194,21 @@ class EnrollmentForm extends Component
     public function submit()
     {
         $this->validate([
+            'consent' => 'accepted',
             'psa_file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
             'sf9_file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
             'good_moral_file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
+            'honorable_dismissal_file' => 'nullable|file|mimes:pdf,jpg,png|max:5120',
         ]);
 
+        $this->saveDraft();
+
         $enrollment = Enrollment::where('user_id', Auth::id())->where('status', 'Draft')->first();
+
+        if (!$enrollment) {
+            // Fallback if somehow draft was already submitted or lost
+            $enrollment = Enrollment::where('user_id', Auth::id())->latest()->first();
+        }
 
         if ($this->psa_file) {
             $enrollment->update(['psa_path' => $this->psa_file->store('enrollments/psa', 'public')]);
@@ -214,11 +225,12 @@ class EnrollmentForm extends Component
 
         $enrollment->update(['status' => 'Submitted']);
 
-        return redirect()->route('enrollment.status');
+        return redirect()->route('enrollment.index');
     }
 
     public function render()
     {
-        return view('livewire.enrollment-form');
+        return view('pages.StudentPortal.enrollment.form')
+            ->layout('layouts.student-portal');
     }
 }

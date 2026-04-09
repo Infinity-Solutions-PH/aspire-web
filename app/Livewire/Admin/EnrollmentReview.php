@@ -73,7 +73,7 @@ class EnrollmentReview extends Component
 
     public function render(SectioningService $sectioningService)
     {
-        return view('livewire.admin.enrollment-review', [
+        return view('pages.Admin.enrollment-review', [
             'isStarQualified' => $sectioningService->checkStarQualification($this->enrollment),
         ]);
     }

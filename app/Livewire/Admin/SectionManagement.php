@@ -89,7 +89,7 @@ class SectionManagement extends Component
             $query->where('strand', $this->activeStrand);
         }
 
-        return view('livewire.admin.section-management', [
+        return view('pages.Admin.section-management', [
             'sections' => $query->get(),
             'teachers' => User::where('role', 'teacher')->orWhere('role', 'dept_head')->get(),
         ])->layout('layouts.app'); // Or pipeline if that's the base
