@@ -60,12 +60,18 @@
     <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-950/80 backdrop-blur-md shadow-sm border-b border-stone-100/50">
         <div class="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
             <div class="flex items-center gap-4">
-                <div class="size-12 bg-primary flex items-center justify-center rounded-xl p-2 shadow-lg shadow-primary/20">
-                    <x-app-logo-icon class="size-full fill-current text-white" />
+                <div class="size-12 flex items-center justify-center rounded-xl">
+                    <x-app-logo-image class="size-full fill-current text-white" />
                 </div>
-                <div class="flex flex-col justify-center leading-none">
-                    <span class="text-[10px] font-bold text-primary tracking-[0.2em] uppercase">Tanza National Trade School</span>
-                    <span class="text-2xl font-black text-primary-container tracking-tighter">ASPIRE</span>
+                <div class="flex flex-col justify-center leading-none mt-1">
+                    <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
+                    <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
+                        <span class="text-xs font-bold">A</span>cademic
+                        <span class="text-xs font-bold">S</span>tudent
+                        <span class="text-xs font-bold">P</span>ortal
+                        <span class="text-xs font-bold">I</span>nformation
+                        <span class="text-xs font-bold">R</span>ecords and
+                        <span class="text-xs font-bold">E</span>nrollment</span>
                 </div>
             </div>
             
@@ -147,7 +153,7 @@
         </div>
         <div class="relative z-10 max-w-7xl mx-auto px-8 w-full grid grid-cols-1 md:grid-cols-2">
             <div class="max-w-xl">
-                <span class="inline-block px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-black tracking-widest uppercase mb-6 rounded-sm">Established 1964</span>
+                <span class="inline-block px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-black tracking-widest uppercase mb-6 rounded-sm">Established 1963</span>
                 <h1 class="text-5xl md:text-7xl font-headline font-black text-white leading-[1.1] mb-6 tracking-tight">
                     Crafting Your <span class="text-on-primary-container">Technical</span> Legacy
                 </h1>

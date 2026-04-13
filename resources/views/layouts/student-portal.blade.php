@@ -54,8 +54,8 @@
         <aside class="w-64 border-r border-[#e7cfcf] dark:border-[#3d2424] bg-background-light dark:bg-background-dark flex flex-col justify-between p-6 sticky top-0 h-screen">
             <div class="flex flex-col gap-8">
                 <div class="flex items-center gap-3">
-                    <div class="bg-primary flex items-center justify-center rounded-lg size-10 text-white">
-                        <span class="material-symbols-outlined">school</span>
+                    <div class="flex items-center justify-center rounded-lg size-10 text-white">
+                        <x-app-logo-image />
                     </div>
                     <div class="flex flex-col">
                         <h1 class="text-[#1b0d0d] dark:text-white text-lg font-bold leading-none">TNTS</h1>

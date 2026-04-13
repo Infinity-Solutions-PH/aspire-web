@@ -52,12 +52,27 @@
     <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm border-b border-stone-100/50">
         <div class="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
             <a href="{{ route('home') }}" class="flex items-center gap-4">
-                <div class="size-10 bg-primary flex items-center justify-center rounded-lg p-1.5 ">
+                <!-- <div class="size-10 bg-primary flex items-center justify-center rounded-lg p-1.5 ">
                     <x-app-logo-icon class="size-full fill-current text-white" />
                 </div>
                 <div class="flex flex-col justify-center leading-none">
                     <span class="text-[8px] font-bold text-primary tracking-[0.2em] uppercase">Tanza National Trade School</span>
                     <span class="text-xl font-black text-primary-container tracking-tighter">ASPIRE</span>
+                </div> -->
+                <div class="flex items-center gap-4">
+                    <div class="size-12 flex items-center justify-center rounded-xl">
+                        <x-app-logo-image class="size-full fill-current text-white" />
+                    </div>
+                    <div class="flex flex-col justify-center leading-none mt-2">
+                        <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
+                        <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
+                            <span class="text-xs font-bold">A</span>cademic
+                            <span class="text-xs font-bold">S</span>tudent
+                            <span class="text-xs font-bold">P</span>ortal
+                            <span class="text-xs font-bold">I</span>nformation
+                            <span class="text-xs font-bold">R</span>ecords and
+                            <span class="text-xs font-bold">E</span>nrollment</span>
+                    </div>
                 </div>
             </a>
             

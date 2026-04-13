@@ -1,17 +1,16 @@
 <?php
 
+use App\Models\Enrollment;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\Admin\ScheduleManager;
 use App\Livewire\Admin\EnrollmentReview;
 use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\EnrollmentDashboard;
-use App\Livewire\StudentPortal\EnrollmentForm;
-use App\Livewire\StudentPortal\EnrollmentPost;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\StudentPortal\Enrollment\CertificateController;
 use App\Http\Controllers\Landing\PageController as LandingPageController;
-use App\Http\Controllers\StudentPortal\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\StudentPortal\DashboardController as StudentDashboardController;
 use App\Http\Controllers\StudentPortal\EnrollmentController as StudentEnrollmentController;
 
 Route::get('/', [LandingPageController::class, 'index'])->name('home');
@@ -30,7 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
-        $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())->latest()->first();
+        $enrollment = Enrollment::where('user_id', auth()->id())->latest()->first();
         if (!$enrollment || $enrollment->status !== 'Enrolled') {
             return redirect()->route('enrollment.index');
         }
