@@ -59,30 +59,32 @@
     <!-- Top Navigation -->
     <nav class="fixed top-0 w-full z-50 bg-white/80 dark:bg-stone-950/80 backdrop-blur-md shadow-sm border-b border-stone-100/50">
         <div class="flex justify-between items-center max-w-7xl mx-auto px-6 h-20">
-            <div class="flex items-center gap-4">
-                <div class="size-12 flex items-center justify-center rounded-xl">
-                    <x-app-logo-image class="size-full fill-current text-white" />
+            <a href="{{ route('home') }}">
+                <div class="flex items-center gap-4">
+                    <div class="size-12 flex items-center justify-center rounded-xl">
+                        <x-app-logo-image class="size-full fill-current text-white" />
+                    </div>
+                    <div class="flex flex-col justify-center leading-none mt-1">
+                        <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
+                        <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
+                            <span class="text-xs font-bold">A</span>cademic
+                            <span class="text-xs font-bold">S</span>tudent
+                            <span class="text-xs font-bold">P</span>ortal
+                            <span class="text-xs font-bold">I</span>nformation
+                            <span class="text-xs font-bold">R</span>ecords and
+                            <span class="text-xs font-bold">E</span>nrollment</span>
+                    </div>
                 </div>
-                <div class="flex flex-col justify-center leading-none mt-1">
-                    <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
-                    <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
-                        <span class="text-xs font-bold">A</span>cademic
-                        <span class="text-xs font-bold">S</span>tudent
-                        <span class="text-xs font-bold">P</span>ortal
-                        <span class="text-xs font-bold">I</span>nformation
-                        <span class="text-xs font-bold">R</span>ecords and
-                        <span class="text-xs font-bold">E</span>nrollment</span>
-                </div>
-            </div>
+            </a>
             
             <div class="hidden md:flex gap-8 items-center font-headline font-semibold tracking-tight">
                 <a class="text-stone-500 hover:text-primary transition-all duration-300" href="{{ route('programs') }}">Programs</a>
-                <a class="text-stone-500 hover:text-primary transition-all duration-300" href="#">Admissions</a>
-                <a class="text-stone-500 hover:text-primary transition-all duration-300" href="#">Legacy</a>
+                <!-- <a class="text-stone-500 hover:text-primary transition-all duration-300" href="#">Admissions</a> -->
+                <!-- <a class="text-stone-500 hover:text-primary transition-all duration-300" href="#">Legacy</a> -->
                 
                 @guest
-                    <a class="text-stone-500 hover:text-primary transition-all duration-300" href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}" class="bg-primary hover:bg-primary-container text-white px-6 py-2.5 rounded-lg transition-all duration-300 shadow-md">
+                    <a class="text-stone-500 hover:text-primary transition-all duration-300" href="{{ route('login-portal') }}">Student Portal</a>
+                    <a href="{{ route('login-portal') }}" class="bg-primary hover:bg-primary-container text-white px-6 py-2.5 rounded-lg transition-all duration-300 shadow-md">
                         Enroll Now
                     </a>
                 @endguest
@@ -282,7 +284,7 @@
             </div>
             @guest
             <div class="mt-20 text-center">
-                <a href="{{ route('register') }}" class="px-12 py-5 bg-primary text-white font-black rounded-xl hover:scale-105 transition-all shadow-2xl shadow-primary/30 uppercase tracking-widest text-sm">
+                <a href="{{ route('enrollment.index') }}" class="px-12 py-5 bg-primary text-white font-black rounded-xl hover:scale-105 transition-all shadow-2xl shadow-primary/30 uppercase tracking-widest text-sm">
                     Begin Application
                 </a>
             </div>
@@ -291,54 +293,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-stone-50 py-20 px-8 border-t border-stone-100">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div class="col-span-1 md:col-span-1">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="size-10 bg-primary flex items-center justify-center rounded-lg p-1.5 shadow-md">
-                        <x-app-logo-icon class="size-full fill-current text-white" />
-                    </div>
-                    <div class="flex flex-col leading-none">
-                        <span class="text-[8px] font-black text-primary uppercase tracking-widest">TNTS</span>
-                        <span class="text-lg font-black text-primary-container tracking-tighter">ASPIRE</span>
-                    </div>
-                </div>
-                <p class="text-xs text-stone-500 leading-loose">
-                    Developing technically skilled and value-oriented graduates since 1964. The premier hub for craftsmanship in Tanza, Cavite.
-                </p>
-            </div>
-            <div>
-                <h6 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Navigation</h6>
-                <ul class="space-y-4 text-xs font-bold text-stone-600 uppercase tracking-widest">
-                    <li><a href="{{ route('home') }}" class="hover:text-primary transition-colors">Home</a></li>
-                    <li><a href="{{ route('programs') }}" class="hover:text-primary transition-colors">Programs</a></li>
-                    <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Student Portal</a></li>
-                    <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
-                </ul>
-            </div>
-            <div>
-                <h6 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Address</h6>
-                <p class="text-xs text-stone-500 leading-loose">
-                    Daang Amaya II, Tanza, Cavite<br/>
-                    Philippines, 4108
-                </p>
-            </div>
-            <div>
-                <h6 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Portals</h6>
-                <ul class="space-y-4 text-xs font-bold text-stone-600 uppercase tracking-widest">
-                    <li><a href="{{ route('login') }}" class="hover:text-primary transition-colors">Student Login</a></li>
-                    <li><a href="{{ route('register') }}" class="hover:text-primary transition-colors">Applicant Registration</a></li>
-                    <li><a href="/admin" class="hover:text-primary transition-colors">Faculty Portal</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto mt-20 pt-8 border-t border-stone-200 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-black text-stone-400 uppercase tracking-[0.2em]">
-            <span>© 2024 Tanza National Trade School. ASPIRE Project.</span>
-            <div class="flex gap-6">
-                <span>DepEd Cavite</span>
-                <span>Region IV-A</span>
-            </div>
-        </div>
-    </footer>
+    
+    @include('pages.landing.partials.footer')
 </body>
 </html>

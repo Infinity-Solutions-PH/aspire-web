@@ -266,7 +266,7 @@
                 <div class="md:col-span-2 p-8 bg-primary/5 rounded-2xl border border-primary/20 space-y-6">
                     <div class="flex items-center gap-3">
                         <div class="size-10 bg-primary rounded-lg flex items-center justify-center text-white">
-                            <span class="material-symbols-outlined">ranking</span>
+                            <span class="material-symbols-outlined">work</span>
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-gray-900">Tech-Voc Specialization Ranking</h3>

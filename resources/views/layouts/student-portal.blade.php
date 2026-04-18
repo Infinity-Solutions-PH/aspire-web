@@ -101,7 +101,13 @@
             
             <div class="flex flex-col gap-4">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424]">
-                    <div class="size-10 rounded-full bg-cover bg-center" style="background-image: url('{{ auth()->user()->profile_photo_url }}')"></div>
+                    @if(!empty(auth()->user()->avatar))
+                        <div class="size-10 rounded-full shrink-0 bg-cover bg-center" style="background-image: url('{{ auth()->user()->avatar }}')"></div>
+                    @else
+                        <div class="size-10 rounded-full shrink-0 bg-primary/20 text-primary flex items-center justify-center font-bold text-sm uppercase tracking-widest">
+                            {{ auth()->user()->initials() }}
+                        </div>
+                    @endif
                     <div class="overflow-hidden">
                         <p class="text-xs font-bold truncate">{{ auth()->user()->name }}</p>
                         <p class="text-[10px] text-primary">Student Account</p>
@@ -146,7 +152,7 @@
 
             <!-- Footer -->
             <footer class="mt-auto px-8 py-6 border-t border-[#e7cfcf] dark:border-[#3d2424] text-center">
-                <p class="text-xs text-[#9a4c4c] dark:text-[#c4a1a1]">© 2024 Tanza National Trade School Student Information System. All rights reserved.</p>
+                <p class="text-xs text-[#9a4c4c] dark:text-[#c4a1a1]">© 2026 Tanza National Trade School &sdot; ASPIRE. All rights reserved.</p>
             </footer>
         </main>
     </div>

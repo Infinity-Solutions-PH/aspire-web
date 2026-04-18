@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\Enrollment;
-use App\Models\Section;
 use Exception;
+use App\Models\Section;
+use App\Models\Enrollment;
 
 class SectioningService
 {
@@ -15,7 +15,7 @@ class SectioningService
     {
         // 1. Fetch unassigned students for the specific grade level/track
         $query = Enrollment::where('grade_level', $gradeLevel)
-            ->where('status', 'Approved')
+            ->where('status', 'Enrolled')
             ->whereNull('section_id');
 
         if ($track) $query->where('track', $track);
@@ -186,6 +186,22 @@ class SectioningService
             }
         }
 
-        throw new Exception("No available capacity in matching sections.");
+        throw new \Exception("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
+    }
+
+    /**
+     * Get available sections matching enrollment criteria.
+     */
+    public function getAvailableSectionsForEnrollment(Enrollment $enrollment)
+    {
+        $query = Section::where('grade_level', $enrollment->grade_level);
+
+        if ($enrollment->track) $query->where('track', $enrollment->track);
+        if ($enrollment->strand) $query->where('strand', $enrollment->strand);
+        if ($enrollment->specialization) $query->where('specialization', $enrollment->specialization);
+
+        return $query->withCount('enrollments')->get()->filter(function($section) {
+            return $section->enrollments_count < $section->capacity;
+        });
     }
 }

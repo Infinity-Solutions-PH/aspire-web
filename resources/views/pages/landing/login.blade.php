@@ -174,7 +174,7 @@
             </div>
             <div class="mt-auto pt-8 text-center lg:hidden">
                 <p class="text-[10px] text-gray-400 uppercase tracking-widest font-medium">
-                    © 2024 Tanza National Trade School
+                    © 2026 Tanza National Trade School
                 </p>
             </div>
         </div>

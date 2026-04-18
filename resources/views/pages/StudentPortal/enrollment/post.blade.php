@@ -14,7 +14,7 @@
             <div class="p-8 md:p-12 space-y-10">
                 <!-- Greeting -->
                 <div class="space-y-4">
-                    <h2 class="text-2xl font-black tracking-tight text-[#1b0d0d] dark:text-zinc-100">Hello, {{ Auth::user()->first_name }}!</h2>
+                    <h2 class="text-2xl font-black tracking-tight text-[#1b0d0d] dark:text-zinc-100">Hello, {{ Auth::user()->name }}!</h2>
                     <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed">
                         We are excited to welcome you to the TNTS community. Your enrollment application for the upcoming school year has been successfully submitted and is currently in the <strong>Verification</strong> stage.
                     </p>
@@ -77,7 +77,7 @@
             </div>
             
             <footer class="bg-zinc-50 dark:bg-zinc-800/50 p-6 border-t border-zinc-100 dark:border-zinc-800 text-center">
-                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">© 2024 Tanza National Trade School | ASPIRE</p>
+                <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">© 2026 Tanza National Trade School | ASPIRE</p>
             </footer>
         </div>
     </div>

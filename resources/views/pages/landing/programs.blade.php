@@ -61,7 +61,7 @@
                 </div> -->
                 <div class="flex items-center gap-4">
                     <div class="size-12 flex items-center justify-center rounded-xl">
-                        <x-app-logo-image class="size-full fill-current text-white" />
+                        <x-app-logo-image class="size-full" />
                     </div>
                     <div class="flex flex-col justify-center leading-none mt-2">
                         <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
@@ -71,7 +71,8 @@
                             <span class="text-xs font-bold">P</span>ortal
                             <span class="text-xs font-bold">I</span>nformation
                             <span class="text-xs font-bold">R</span>ecords and
-                            <span class="text-xs font-bold">E</span>nrollment</span>
+                            <span class="text-xs font-bold">E</span>nrollment
+                        </span>
                     </div>
                 </div>
             </a>
@@ -81,8 +82,8 @@
                 <a class="text-primary hover:text-primary transition-all duration-300" href="{{ route('programs') }}">Programs</a>
                 
                 @guest
-                    <a class="text-stone-500 hover:text-primary transition-all duration-300" href="{{ route('login') }}">Login</a>
-                    <a href="{{ route('register') }}" class="bg-primary hover:bg-primary-container text-white px-6 py-2.5 rounded-lg transition-all duration-300 shadow-md">
+                    <a class="text-stone-500 hover:text-primary transition-all duration-300" href="{{ route('login-portal') }}">Student Portal</a>
+                    <a href="{{ route('login-portal') }}" class="bg-primary hover:bg-primary-container text-white px-6 py-2.5 rounded-lg transition-all duration-300 shadow-md">
                         Enroll Now
                     </a>
                 @endguest
@@ -250,43 +251,6 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-stone-50 py-20 px-8 border-t border-stone-100">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-            <div>
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="size-10 bg-primary flex items-center justify-center rounded-lg p-1.5 shadow-md">
-                        <x-app-logo-icon class="size-full fill-current text-white" />
-                    </div>
-                    <div class="flex flex-col leading-none">
-                        <span class="text-[8px] font-black text-primary uppercase tracking-widest">TNTS</span>
-                        <span class="text-lg font-black text-primary-container tracking-tighter">ASPIRE</span>
-                    </div>
-                </div>
-                <p class="text-xs text-stone-500 leading-loose">
-                    Crafting technical legacies since 1964.
-                </p>
-            </div>
-            <div>
-                <h6 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Links</h6>
-                <ul class="space-y-4 text-xs font-bold text-stone-600 uppercase tracking-widest">
-                    <li><a href="{{ route('home') }}">Home</a></li>
-                    <li><a href="{{ route('register') }}">Enrollment</a></li>
-                    <li><a href="{{ route('login') }}">Portal</a></li>
-                </ul>
-            </div>
-            <div class="col-span-2">
-                <div class="bg-primary/5 p-8 rounded-2xl border border-primary/10">
-                    <h5 class="text-primary font-black mb-4 uppercase tracking-widest text-xs">Ready to start?</h5>
-                    <p class="text-sm text-stone-600 mb-6 leading-relaxed">Join the next generation of technical experts and academic achievers. Online enrollment for 2026-2027 is now open.</p>
-                    @guest
-                    <a href="{{ route('register') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-black text-xs uppercase tracking-[0.2em]">Apply Now</a>
-                    @endguest
-                    @auth
-                    <a href="{{ route('dashboard') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-black text-xs uppercase tracking-[0.2em]">My Dashboard</a>
-                    @endauth
-                </div>
-            </div>
-        </div>
-    </footer>
+    @include('pages.landing.partials.footer')
 </body>
 </html>

@@ -160,6 +160,31 @@
             </section>
             @endif
 
+            @if($enrollment->status === 'Approved')
+            <section class="p-6 bg-green-50 rounded-2xl border border-green-100 space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-green-600">stadium</span>
+                    <h3 class="text-lg font-bold text-gray-900 uppercase tracking-tight">Final Section Assignment</h3>
+                </div>
+                
+                <div class="space-y-3">
+                    <p class="text-[10px] font-bold text-green-700 uppercase tracking-widest">Recommended Section (Based on Capacity & Track)</p>
+                    
+                    <div class="grid grid-cols-1 gap-3">
+                        <select wire:model.defer="selected_section_id" class="form-select w-full rounded-xl border-green-200 bg-white text-sm font-bold text-gray-700 focus:ring-green-500 focus:border-green-500">
+                            <option value="">-- Let System Auto-Assign --</option>
+                            @foreach($availableSections as $section)
+                                <option value="{{ $section->id }}">
+                                    {{ $section->name }} ({{ $section->enrollments_count }}/{{ $section->capacity }} Capacity)
+                                </option>
+                            @endforeach
+                        </select>
+                        <p class="text-[10px] text-gray-400 italic">If no section is selected, the system will automatically find the first available section matching the student's criteria.</p>
+                    </div>
+                </div>
+            </section>
+            @endif
+
             <section class="space-y-4 pt-6 border-t border-gray-100">
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest">Registrar Remarks</p>
                 <textarea wire:model.defer="admin_remarks" class="w-full rounded-2xl border-gray-100 bg-gray-50/50 p-4 text-sm focus:ring-primary focus:border-primary placeholder:text-gray-300 min-h-[120px]" placeholder="Add notes about document deficiencies or track approval rationale..."></textarea>
