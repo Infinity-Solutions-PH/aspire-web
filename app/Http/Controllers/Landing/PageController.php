@@ -14,9 +14,14 @@ class PageController extends Controller
         return view('pages.landing.home');
     }
 
-    public function login()
+    public function portalLogin()
     {
-        return view('pages.landing.login');
+        return view('pages.landing.portal-login');
+    }
+
+    public function adminLogin()
+    {
+        return view('pages.landing.admin-login');
     }
 
     public function programs()
