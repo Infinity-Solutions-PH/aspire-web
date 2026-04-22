@@ -28,7 +28,7 @@
                 <li><a href="{{ route('home') }}" class="hover:text-primary transition-colors">Home</a></li>
                 <li><a href="{{ route('enrollment.index') }}" class="hover:text-primary transition-colors">Enrollment</a></li>
                 <li><a href="{{ route('programs') }}" class="hover:text-primary transition-colors">Programs</a></li>
-                <li><a href="{{ route('login-portal') }}" class="hover:text-primary transition-colors">Student Portal</a></li>
+                <li><a href="{{ route('portal.login') }}" class="hover:text-primary transition-colors">Student Portal</a></li>
                 <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
             </ul>
         </div>
@@ -37,7 +37,7 @@
                 <h5 class="text-primary font-black mb-4 uppercase tracking-widest text-xs">Ready to start?</h5>
                 <p class="text-sm text-stone-600 mb-6 leading-relaxed">Join the next generation of technical experts and academic achievers. Online enrollment for 2026-2027 is now open.</p>
                 @guest
-                <a href="{{ route('login-portal') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-black text-xs uppercase tracking-[0.2em]">Apply Now</a>
+                <a href="{{ route('enroll.public') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-black text-xs uppercase tracking-[0.2em]">Apply Now</a>
                 @endguest
                 @auth
                 <a href="{{ route('dashboard') }}" class="inline-block bg-primary text-white px-8 py-3 rounded-lg font-black text-xs uppercase tracking-[0.2em]">My Dashboard</a>

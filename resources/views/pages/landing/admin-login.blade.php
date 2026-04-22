@@ -22,7 +22,7 @@
                     <div class="size-12 flex items-center justify-center rounded-xl p-2 bg-white shadow-lg shadow-primary/80">
                         <x-app-logo-image class="size-full fill-current text-white" />
                     </div>
-                    <div class="flex flex-col items-start mt-1.5">
+                    <div class="hidden md:flex flex-col items-start mt-1.5">
                         <span class="text-lg text-white font-bold tracking-tight uppercase leading-[1rem]">Tanza National Trade School</span>
                         <span class="text-sm font-bold tracking-tight">
                             <span class="text-xl font-bold">A</span>cademic
@@ -31,6 +31,12 @@
                             <span class="text-xl font-bold">I</span>nformation
                             <span class="text-xl font-bold">R</span>ecords and
                             <span class="text-xl font-bold">E</span>nrollment</span>
+                        </span>
+                    </div>
+                    <div class="flex md:hidden flex-col justify-center leading-none mt-1">
+                        <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">TNTS</span>
+                        <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
+                            <span class="text-xs font-bold">ASPIRE</span>
                         </span>
                     </div>
                 </div>

@@ -2,12 +2,12 @@
 
 namespace App\Livewire\Public;
 
-use App\Models\PreEnrollment;
-use App\Models\Enrollment;
 use Livewire\Component;
+use App\Models\Enrollment;
+use App\Models\PreEnrollment;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Session;
 use Livewire\Attributes\Layout;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 #[Layout('layouts.guest')]
 class EnrollmentWizard extends Component
@@ -17,6 +17,7 @@ class EnrollmentWizard extends Component
     public $currentStep = 0; // 0 = Gateway/Initiation, 1-6 = Form
     public $initStep = 0;    // 0 = LRN/Birthdate, 1 = Category, 2 = Type
     public $is_resumed = false;
+    public $submitted = false;
 
     // Credentials
     public $lrn;
@@ -76,6 +77,8 @@ class EnrollmentWizard extends Component
         'rank3' => '',
         'is_shs_aligned' => false,
         'profile_picture' => null,
+        'last_gwa' => '',
+        'mother_tongue' => '',
     ];
 
     public $profile_picture_upload;
@@ -99,6 +102,7 @@ class EnrollmentWizard extends Component
         5 => [
             'formData.last_grade_level' => 'required',
             'formData.last_school_attended' => 'required',
+            'formData.last_gwa' => 'required|numeric|min:75|max:100',
         ],
     ];
 
@@ -135,8 +139,14 @@ class EnrollmentWizard extends Component
             // Hydrate state
             $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
             $this->currentStep = $preEnrollment->current_step;
+            $this->enrollment_type = $this->formData['enrollment_type'] ?? '';
             $this->is_resumed = true;
             
+            // Strictly skip Step 1 for Incoming Grade 7
+            if ($this->currentStep == 1 && $this->enrollment_type === 'Incoming Grade 7') {
+                $this->currentStep = 2;
+            }
+
             // If they resumed at Step 0, move them to selections
             if ($this->currentStep == 0) {
                 $this->initStep = 1;
@@ -159,13 +169,20 @@ class EnrollmentWizard extends Component
         $this->formData['enrollment_type'] = $type;
         $this->formData['lrn'] = $this->lrn;
         $this->formData['birthdate'] = $this->birthdate;
+
+        if ($type === 'Incoming Grade 7') {
+            $this->formData['grade_level'] = 'Grade 7';
+            $this->formData['last_grade_level'] = 'Grade 6';
+            $this->currentStep = 2;
+        } else {
+            $this->currentStep = 1;
+        }
         
         $this->startForm();
     }
 
     public function startForm()
     {
-        $this->currentStep = 1;
         
         // Finalize draft creation if brand new
         $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
@@ -193,6 +210,11 @@ class EnrollmentWizard extends Component
     public function previousStep()
     {
         $this->currentStep--;
+
+        if ($this->currentStep == 1 && $this->enrollment_type === 'Incoming Grade 7') {
+            $this->currentStep = 0;
+            $this->initStep = 2; // Back to type selection
+        }
     }
 
     public function saveProgress()
@@ -224,7 +246,29 @@ class EnrollmentWizard extends Component
             'form_data' => $this->formData,
         ]);
 
-        return redirect()->route('home')->with('success', 'Your enrollment application has been submitted and is pending review.');
+        $this->submitted = true;
+    }
+
+    public function downloadCertificate()
+    {
+        $enrollment = (object) [
+            'type' => $this->enrollment_type ?? 'New',
+            'lrn' => $this->lrn,
+            'first_name' => $this->formData['first_name'],
+            'last_name' => $this->formData['last_name'],
+            'middle_name' => $this->formData['middle_name'] ?? '',
+            'grade_level' => $this->formData['grade_level'],
+            'strand' => $this->formData['strand'] ?? '',
+            'specialization' => $this->formData['rank1'] ?? '',
+            'finalized_at' => now(),
+        ];
+
+        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment'))
+            ->setPaper('a4', 'portrait');
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, "TNTS_Admission_Pass_{$this->lrn}.pdf");
     }
 
     public function maskValue($key, $value)
