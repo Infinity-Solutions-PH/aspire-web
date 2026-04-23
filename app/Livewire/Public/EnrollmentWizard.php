@@ -18,6 +18,9 @@ class EnrollmentWizard extends Component
     public $initStep = 0;    // 0 = LRN/Birthdate, 1 = Category, 2 = Type
     public $is_resumed = false;
     public $submitted = false;
+    public $transaction_number;
+
+    private $prefix = "TNTS-";
 
     // Credentials
     public $lrn;
@@ -133,7 +136,10 @@ class EnrollmentWizard extends Component
             }
 
             if ($preEnrollment->status === 'pending_approval') {
-                return redirect()->route('home')->with('info', 'Your enrollment application is already pending review.');
+                $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
+                $this->transaction_number = $preEnrollment->transaction_number;
+                $this->submitted = true;
+                return;
             }
 
             // Hydrate state
@@ -142,9 +148,12 @@ class EnrollmentWizard extends Component
             $this->enrollment_type = $this->formData['enrollment_type'] ?? '';
             $this->is_resumed = true;
             
-            // Strictly skip Step 1 for Incoming Grade 7
-            if ($this->currentStep == 1 && $this->enrollment_type === 'Incoming Grade 7') {
-                $this->currentStep = 2;
+            // Strictly skip Step 1 and enforce Grade 6 for Incoming Grade 7
+            if ($this->enrollment_type === 'Incoming Grade 7') {
+                $this->formData['last_grade_level'] = 'Grade 6';
+                if ($this->currentStep == 1) {
+                    $this->currentStep = 2;
+                }
             }
 
             // If they resumed at Step 0, move them to selections
@@ -200,7 +209,14 @@ class EnrollmentWizard extends Component
     public function nextStep()
     {
         if (isset($this->stepRules[$this->currentStep])) {
-            $this->validate($this->stepRules[$this->currentStep]);
+            $rules = $this->stepRules[$this->currentStep];
+            
+            // Custom enforcement for Step 5
+            if ($this->currentStep == 5 && $this->enrollment_type === 'Incoming Grade 7') {
+                $rules['formData.last_grade_level'] = 'required|in:Grade 6';
+            }
+
+            $this->validate($rules);
         }
         
         $this->saveProgress();
@@ -240,9 +256,11 @@ class EnrollmentWizard extends Component
         }
 
         $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
+        $this->transaction_number = $this->prefix . now()->format('Y') . '-' . str_pad($preEnrollment->id, 5, '0', STR_PAD_LEFT);
         $preEnrollment->update([
             'status' => 'pending_approval',
             'current_step' => $this->currentStep,
+            'transaction_number' => $this->transaction_number,
             'form_data' => $this->formData,
         ]);
 
@@ -260,6 +278,7 @@ class EnrollmentWizard extends Component
             'grade_level' => $this->formData['grade_level'],
             'strand' => $this->formData['strand'] ?? '',
             'specialization' => $this->formData['rank1'] ?? '',
+            'transaction_number' => $this->transaction_number ?? 'PENDING',
             'finalized_at' => now(),
         ];
 

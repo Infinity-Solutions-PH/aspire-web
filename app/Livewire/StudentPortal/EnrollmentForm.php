@@ -13,6 +13,7 @@ class EnrollmentForm extends Component
     use WithFileUploads;
 
     public $current_step = 1;
+    private $prefix = 'TNTS-';
 
     // Phase 1 intent
     public $enrollment_type;
@@ -223,7 +224,10 @@ class EnrollmentForm extends Component
             $enrollment->update(['honorable_dismissal_path' => $this->honorable_dismissal_file->store('enrollments/dismissal', 'public')]);
         }
 
-        $enrollment->update(['status' => 'Submitted']);
+        $enrollment->update([
+            'status' => 'Submitted',
+            'transaction_number' => $this->prefix . now()->format('Y') . '-' . str_pad($enrollment->id, 5, '0', STR_PAD_LEFT),
+        ]);
 
         return redirect()->route('enrollment.index');
     }

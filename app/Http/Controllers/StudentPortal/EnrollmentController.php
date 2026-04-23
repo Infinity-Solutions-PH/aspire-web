@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\StudentPortal;
 
-use App\Http\Controllers\Controller;
 use App\Models\Enrollment;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class EnrollmentController extends Controller

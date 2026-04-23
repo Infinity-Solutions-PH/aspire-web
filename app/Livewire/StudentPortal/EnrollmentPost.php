@@ -25,6 +25,17 @@ class EnrollmentPost extends Component
         }
     }
 
+    public function downloadPass()
+    {
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.enrollment-certificate', [
+            'enrollment' => $this->enrollment
+        ])->setPaper('a4', 'portrait');
+
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, "TNTS_Admission_Pass_{$this->enrollment->lrn}.pdf");
+    }
+
     public function render()
     {
         return view('pages.StudentPortal.enrollment.post')

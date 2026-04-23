@@ -136,6 +136,11 @@
         <h2 class="title">Certificate of Enrollment</h2>
 
         <div class="content">
+            <div style="background: #f8f8f8; padding: 15px 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #800000;">
+                <span style="font-size: 9px; font-weight: bold; color: #666; text-transform: uppercase; letter-spacing: 1px;">Transaction Reference Number</span>
+                <div style="font-size: 24px; font-weight: 900; color: #800000; margin-top: 4px; font-family: 'Courier', monospace;">{{ $enrollment->transaction_number }}</div>
+            </div>
+
             <p class="declaration">
                 This is to certify that the student named below is officially enrolled as a 
                 <strong>{{ $enrollment->type }}</strong> student for the School Year 

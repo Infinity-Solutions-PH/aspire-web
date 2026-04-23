@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable([
-    'user_id', 'status', 'current_step', 'type', 'tech_voc_choices',
+    'user_id', 'transaction_number', 'status', 'current_step', 'type', 'tech_voc_choices',
     'grade_level', 'psa_no', 'lrn', 'last_name', 'first_name', 'middle_name', 'extension_name', 'gwa', 'birthdate', 'sex',
     'is_ip', 'ip_community', 'is_4ps', 'household_id', 'has_disability', 'disability_types',
     'current_house_no', 'current_street', 'current_barangay', 'current_municipality', 'current_province', 'current_zip',

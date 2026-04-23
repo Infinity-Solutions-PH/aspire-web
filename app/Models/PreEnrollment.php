@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['lrn', 'birthdate', 'current_step', 'status', 'form_data'])]
+#[Fillable(['lrn', 'birthdate', 'transaction_number', 'current_step', 'status', 'form_data'])]
 class PreEnrollment extends Model
 {
     /**

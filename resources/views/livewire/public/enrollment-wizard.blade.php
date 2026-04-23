@@ -10,48 +10,39 @@
                     </div>
                     <div class="relative z-10">
                         <div class="size-20 bg-white rounded-2xl flex items-center justify-center mx-auto mb-6 p-4 shadow-xl">
-                            <x-app-logo-icon class="size-full fill-current text-primary" />
+                            <x-app-logo-image class="size-full fill-current text-primary" />
                         </div>
-                        <h1 class="text-4xl font-black tracking-tighter">Application Received!</h1>
+                        <h1 class="text-4xl font-black tracking-tighter">Application Submitted!</h1>
                         <p class="text-xs uppercase tracking-[0.3em] opacity-80 mt-3 font-bold">Tanza National Trade School | ASPIRE</p>
                     </div>
                 </header>
                 
                 <div class="p-8 md:p-12 space-y-12">
                     <!-- Greeting -->
-                    <div class="space-y-4">
-                        <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-zinc-100">Hello, {{ $formData['first_name'] }}!</h2>
-                        <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg">
-                            We are excited to welcome you to the TNTS community. Your enrollment application for <strong>{{ $formData['grade_level'] }}</strong> has been successfully submitted and is currently in the <span class="text-primary font-bold">Verification</span> stage.
-                        </p>
-                    </div>
-                    
-                    <!-- Appointment Box -->
-                    <div class="bg-primary/5 dark:bg-primary/20 border-2 border-primary/20 rounded-3xl overflow-hidden">
-                        <div class="bg-primary/10 px-8 py-4 border-b border-primary/10 flex justify-between items-center">
-                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Next Step: Physical Verification</p>
-                            <span class="flex h-2 w-2 rounded-full bg-primary animate-pulse"></span>
-                        </div>
-                        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-10">
-                            <div class="flex items-start gap-5">
-                                <div class="size-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-primary text-3xl">calendar_today</span>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Target Date</p>
-                                    <p class="font-bold text-[#1b0d0d] dark:text-white text-lg">Waiting for SMS Notification</p>
-                                    <p class="text-[10px] text-zinc-400 mt-1">Check your phone: +63 {{ $formData['contact_no'] }}</p>
-                                </div>
+                    <div class="space-y-6">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="space-y-2">
+                                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-zinc-100">Hello, {{ $formData['first_name'] }}!</h2>
+                                <p class="text-zinc-600 dark:text-zinc-400 leading-relaxed text-lg max-w-xl">
+                                    We are excited to welcome you to the TNTS community. Your enrollment application for <strong>{{ $formData['grade_level'] }}</strong> has been successfully submitted and is currently in the <span class="text-primary font-bold">Verification</span> stage.
+                                </p>
                             </div>
-                            <div class="flex items-start gap-5">
-                                <div class="size-12 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
-                                    <span class="material-symbols-outlined text-primary text-3xl">location_on</span>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-1">Venue</p>
-                                    <p class="font-bold text-[#1b0d0d] dark:text-white text-lg">Registrar's Office, Main Building</p>
-                                    <p class="text-[10px] text-zinc-400 mt-1">TNTS Campus, Paradahan I</p>
-                                </div>
+                            <div class="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center shrink-0">
+                                <p class="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Transaction Number</p>
+                                <p class="text-2xl font-black text-[#1b0d0d] dark:text-white tracking-tighter">{{ $transaction_number ?? 'PENDING' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Announcement Banner -->
+                        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-6 flex items-start gap-4">
+                            <div class="size-10 bg-amber-100 dark:bg-amber-800 rounded-xl flex items-center justify-center shrink-0">
+                                <span class="material-symbols-outlined text-amber-700 dark:text-amber-300">campaign</span>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-amber-900 dark:text-amber-100 mb-1">Physical Verification Notice</h3>
+                                <p class="text-xs text-amber-800/80 dark:text-amber-200/60 leading-relaxed">
+                                    Please wait for further announcements regarding your schedule for physical document verification. We will post updates on our official Facebook page and school notice boards.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -103,7 +94,7 @@
                 <footer class="bg-zinc-50 dark:bg-zinc-800/50 p-8 border-t border-zinc-100 dark:border-zinc-800 text-center">
                     <p class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-relaxed">
                         This is an automated acknowledgment of your enrollment application.<br>
-                        Reference Number: <span class="text-primary">{{ $lrn }}-{{ now()->format('Ymd') }}</span>
+                        Transaction Reference: <span class="text-primary">{{ $transaction_number }}</span>
                     </p>
                 </footer>
             </div>
@@ -431,12 +422,11 @@
                                     class="form-select rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm {{ $enrollment_type === 'Incoming Grade 7' ? 'bg-zinc-100 dark:bg-zinc-800 opacity-75 cursor-not-allowed' : '' }}">
                                 <option value="">Select Level</option>
                                 @foreach(['Grade 6', 'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11'] as $lvl)
-                                    <option value="{{ $lvl }}">{{ $lvl }}</option>
+                                    <option value="{{ $lvl }}" @if(($enrollment_type === 'Incoming Grade 7' && $lvl === 'Grade 6') || $formData['last_grade_level'] == $lvl) selected @endif>{{ $lvl }}</option>
                                 @endforeach
                             </select>
                             @if($enrollment_type === 'Incoming Grade 7')
-                                <input type="hidden" wire:model="formData.last_grade_level" value="Grade 6">
-                                <p class="text-[9px] text-primary italic font-medium">Auto-set for Grade 7 applicants</p>
+                                <p class="text-[9px] text-primary italic font-medium">Auto-selected for Incoming Grade 7 applicants</p>
                             @endif
                             @error('formData.last_grade_level') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
                         </label>
