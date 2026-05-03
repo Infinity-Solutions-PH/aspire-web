@@ -2,14 +2,20 @@
 
 namespace App\Livewire\Admin;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Section;
 use Livewire\Component;
 use App\Models\Enrollment;
+use Illuminate\Support\Str;
+use App\Models\PreEnrollment;
 use App\Services\SectioningService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Services\ProvisioningService;
 
-class EnrollmentReview extends Component
+class AdmissionReview extends Component
 {
     public $record;
     public $isPre = false;
@@ -18,7 +24,7 @@ class EnrollmentReview extends Component
     public $status;
     public $selected_section_id;
 
-    public function mount(Enrollment $enrollment = null, \App\Models\PreEnrollment $preEnrollment = null)
+    public function mount(Enrollment $enrollment = null, PreEnrollment $preEnrollment = null)
     {
         if ($preEnrollment && $preEnrollment->exists) {
             $this->record = $preEnrollment;
@@ -39,11 +45,25 @@ class EnrollmentReview extends Component
     public function approve()
     {
         if ($this->isPre) {
-            // Promote PreEnrollment to Enrollment
             $data = $this->record->form_data;
             
+            // 1. Create Student Portal Account
+            $username = $this->record->lrn;
+            $passwordStr = Str::lower($data['last_name']) . $this->record->birthdate->format('dmY');
+            
+            $user = User::firstOrCreate(
+                ['student_id' => $username],
+                [
+                    'name' => ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? ''),
+                    'email' => $username . '@tnts.edu.ph',
+                    'password' => Hash::make($passwordStr),
+                    'role' => 'student',
+                ]
+            );
+
+            // 2. Promote PreEnrollment to Enrollment
             $enrollment = Enrollment::create(array_merge($data, [
-                'user_id' => $this->record->user_id ?? auth()->id(), // Fallback if no user_id
+                'user_id' => $user->id,
                 'lrn' => $this->record->lrn,
                 'birthdate' => $this->record->birthdate,
                 'transaction_number' => $this->record->transaction_number,
@@ -55,8 +75,8 @@ class EnrollmentReview extends Component
                 'gwa' => $data['last_gwa'] ?? null,
             ]));
 
-            // Update PreEnrollment status
-            $this->record->update(['status' => 'approved']);
+            // Delete PreEnrollment data once promoted to Enrollment
+            $this->record->delete();
             
             session()->flash('message', 'Application promoted to Enrollment and approved.');
             return redirect()->route('admin.enrollment.review', $enrollment->id);
@@ -79,14 +99,14 @@ class EnrollmentReview extends Component
         try {
             // 1. Transition applicant to student role and provision IT accounts
             $user = $this->record->user;
-            if ($user) {
+            if ($user && $user->role !== 'admin') {
                 $user->update(['role' => 'student']);
                 $provisioningService->provisionAccount($user);
             }
 
             // 2. Assign Section
             $section = $this->selected_section_id 
-                ? \App\Models\Section::find($this->selected_section_id)
+                ? Section::find($this->selected_section_id)
                 : $sectioningService->assignSection($this->record);
 
             // 3. Finalize Enrollment Status
@@ -119,7 +139,7 @@ class EnrollmentReview extends Component
                 'id' => $this->record->id,
                 'status' => $this->record->status,
                 'lrn' => $this->record->lrn,
-                'birthdate' => \Carbon\Carbon::parse($this->record->birthdate),
+                'birthdate' => Carbon::parse($this->record->birthdate),
                 'type' => $data['enrollment_type'] ?? 'N/A',
                 'gwa' => $data['last_gwa'] ?? null,
                 'tech_voc_choices' => array_filter([$data['tech_voc_course1'] ?? null, $data['tech_voc_course2'] ?? null, $data['tech_voc_course3'] ?? null]),
@@ -127,10 +147,11 @@ class EnrollmentReview extends Component
                 'sf9_path' => $data['sf9_path'] ?? null,
                 'good_moral_path' => $data['good_moral_path'] ?? null,
                 'honorable_dismissal_path' => $data['honorable_dismissal_path'] ?? null,
+                'profile_picture' => $data['profile_picture'] ?? null,
             ]);
         }
 
-        return view('pages.Admin.enrollment-review', [
+        return view('pages.Admin.admission.review', [
             'enrollment' => $enrollment,
             'isStarQualified' => $sectioningService->checkStarQualification($enrollment),
             'availableSections' => $sectioningService->getAvailableSectionsForEnrollment($enrollment),

@@ -22,6 +22,14 @@
             </div>
             <div class="flex items-center gap-3">
                 <div class="flex items-center bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020]">
+                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Category</span>
+                    <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
+                        <option value="">All Categories</option>
+                        <option value="HS">High School</option>
+                        <option value="SHS">Senior High</option>
+                    </select>
+                </div>
+                <div class="flex items-center bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020]">
                     <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Grade Level</span>
                     <select wire:model.live="grade_level" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
                         <option value="All Levels">All Levels</option>
@@ -37,12 +45,22 @@
                     <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Status</span>
                     <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
                         <option value="All Status">All Status</option>
+                        <option value="Approved">Approved</option>
                         <option value="Enrolled">Enrolled</option>
+                        <option value="Rejected">Rejected</option>
                         <option value="Dropped">Dropped</option>
                         <option value="Graduated">Graduated</option>
                     </select>
                 </div>
             </div>
+        </div>
+        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">
+            <button wire:click="$set('status', 'Enrolled')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Enrolled' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Enrolled</button>
+            <button wire:click="$set('status', 'Approved')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Approved' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Approved</button>
+            <div class="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2 self-center"></div>
+            <button wire:click="$set('category', 'HS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'HS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">High School</button>
+            <button wire:click="$set('category', 'SHS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'SHS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Senior High</button>
+            <button wire:click="$set('category', '')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === '' ? 'text-primary' : 'text-gray-400 hover:text-primary' }}">Clear Category</button>
         </div>
     </div>
 
@@ -95,7 +113,10 @@
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide
                                 {{ $student->status == 'Enrolled' ? 'bg-green-100 text-green-700' : 
-                                   ($student->status == 'Dropped' ? 'bg-primary/10 text-primary' : 'bg-blue-100 text-blue-700') }}">
+                                   ($student->status == 'Approved' ? 'bg-blue-100 text-blue-700' : 
+                                   ($student->status == 'Submitted' ? 'bg-amber-100 text-amber-700' :
+                                   ($student->status == 'Rejected' ? 'bg-red-100 text-red-700' :
+                                   ($student->status == 'Dropped' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-700')))) }}">
                                 {{ $student->status }}
                             </span>
                         </td>

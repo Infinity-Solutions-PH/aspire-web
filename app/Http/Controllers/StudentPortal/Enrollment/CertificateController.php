@@ -14,7 +14,7 @@ class CertificateController extends Controller
     public function download(Request $request)
     {
         $enrollment = Enrollment::where('user_id', Auth::id())
-            ->whereIn('status', ['Enrolled', 'Submitted', 'Approved'])
+            ->whereIn('status', ['Enrolled', 'pending_approval', 'Approved'])
             ->latest()
             ->firstOrFail();
 

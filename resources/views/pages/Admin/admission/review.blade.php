@@ -2,7 +2,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 pb-8 border-b border-gray-100 dark:border-white/10">
         <div>
             <div class="flex items-center gap-2 mb-2">
-                <a href="{{ route('admin.enrollments') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
+                <a href="{{ route('admin.admissions') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
                     <span class="material-symbols-outlined text-sm">arrow_back</span>
                     Back to Dashboard
                 </a>
@@ -16,7 +16,7 @@
         </div>
         
         <div class="flex gap-3">
-            @if($enrollment->status === 'Submitted')
+            @if($enrollment->status === 'Submitted' || $enrollment->status === 'pending_approval')
                 <button wire:click="approve" class="bg-primary text-white px-8 py-3 rounded-xl font-bold hover:shadow-xl hover:shadow-primary/20 transition-all flex items-center gap-2">
                     Approve Application
                     <span class="material-symbols-outlined">verified</span>
@@ -27,7 +27,7 @@
                     <span class="material-symbols-outlined">stadium</span>
                 </button>
             @endif
-            <button wire:click="reject" class="bg-white border border-gray-200 text-red-600 px-6 py-3 rounded-xl font-bold hover:bg-red-50 transition-all">Reject</button>
+            <!-- <button wire:click="reject" class="bg-white border border-gray-200 text-red-600 px-6 py-3 rounded-xl font-bold hover:bg-red-50 transition-all">Reject</button> -->
         </div>
     </div>
 
@@ -195,11 +195,12 @@
         <div class="lg:col-span-5 space-y-6">
             <div class="flex items-center justify-between border-b border-gray-100 pb-3">
                 <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wider">Submitted Credentials</h3>
-                <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded italic">Digital Dossier</span>
+                <!-- <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded italic">Digital Dossier</span> -->
             </div>
             
             <div class="space-y-4 overflow-y-auto max-h-[80vh] pr-2">
                 @foreach([
+                    '2x2 Student Photo' => $enrollment->profile_picture,
                     'PSA Birth Certificate' => $enrollment->psa_path,
                     'Form 138 (SF9)' => $enrollment->sf9_path,
                     'Good Moral' => $enrollment->good_moral_path,

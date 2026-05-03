@@ -72,9 +72,7 @@
                     </div>
                 </div>
             </a>
-            <div class="ml-auto">
-                <a href="{{ route('enroll.public') }}" class="text-sm font-bold text-gray-500 hover:text-primary transition-colors">Cancel & Return</a>
-            </div>
+            <div class="ml-auto" id="header-action"></div>
         </div>
     </header>
 

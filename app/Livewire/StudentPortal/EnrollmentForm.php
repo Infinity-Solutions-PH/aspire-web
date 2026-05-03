@@ -225,7 +225,7 @@ class EnrollmentForm extends Component
         }
 
         $enrollment->update([
-            'status' => 'Submitted',
+            'status' => 'pending_approval',
             'transaction_number' => $this->prefix . now()->format('Y') . '-' . str_pad($enrollment->id, 5, '0', STR_PAD_LEFT),
         ]);
 

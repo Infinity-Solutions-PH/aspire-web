@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'TNTS Admin Portal' }}</title>
+    <title>{{ ($title ?? '') ? $title . ' · TNTS ASPIRE Admin Portal' : 'TNTS ASPIRE Admin Portal' }}</title>
     <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -63,8 +63,8 @@
                         <span class="text-sm font-bold">Dashboard</span>
                     </a>
                     
-                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.enrollments') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.enrollments') }}">
-                        <span class="material-symbols-outlined {{ request()->routeIs('admin.enrollments') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.enrollments') ? "font-variation-settings: 'FILL' 1" : '' }}">how_to_reg</span>
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.admissions') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.admissions') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.admissions') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.admissions') ? "font-variation-settings: 'FILL' 1" : '' }}">how_to_reg</span>
                         <span class="text-sm font-bold">Admissions</span>
                     </a>
 

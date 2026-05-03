@@ -15,13 +15,13 @@
         ->get();
 @endphp
 
-<x-layouts::app :title="__('Admin Dashboard')">
-    @section('page-title', 'Admin Dashboard')
+<x-layouts::app :title="__('Dashboard')">
+    @section('page-title', 'Dashboard')
     <div class="flex flex-col gap-10">
         <!-- Header Section -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-                <h2 class="text-4xl font-black tracking-tight text-[#1b0d0d] dark:text-white">Admin Dashboard</h2>
+                <h2 class="text-4xl font-black tracking-tight text-[#1b0d0d] dark:text-white">Dashboard</h2>
                 <p class="text-neutral-500 mt-2 font-medium">System overview for {{ now()->format('F j, Y') }}</p>
             </div>
             <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-white/10 shadow-sm">
@@ -45,7 +45,7 @@
             </div>
 
             <!-- Pending Review -->
-            <a href="{{ route('admin.enrollments', ['status' => 'pending_approval']) }}" class="glass-card p-6 rounded-3xl border border-amber-200/50 bg-amber-50/50 dark:bg-amber-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+            <a href="{{ route('admin.admissions', ['status' => 'pending_approval']) }}" class="glass-card p-6 rounded-3xl border border-amber-200/50 bg-amber-50/50 dark:bg-amber-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div class="flex justify-between items-start mb-4">
                     <div class="size-12 bg-amber-100 dark:bg-amber-900/30 rounded-2xl flex items-center justify-center text-amber-600 group-hover:rotate-12 transition-transform">
                         <span class="material-symbols-outlined text-2xl">pending_actions</span>
@@ -57,7 +57,7 @@
             </a>
 
             <!-- Approved -->
-            <a href="{{ route('admin.enrollments', ['status' => 'Approved']) }}" class="glass-card p-6 rounded-3xl border border-blue-200/50 bg-blue-50/50 dark:bg-blue-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+            <a href="{{ route('admin.admissions', ['status' => 'Approved']) }}" class="glass-card p-6 rounded-3xl border border-blue-200/50 bg-blue-50/50 dark:bg-blue-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div class="flex justify-between items-start mb-4">
                     <div class="size-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-2xl">verified</span>
@@ -68,7 +68,7 @@
             </a>
 
             <!-- Officially Enrolled -->
-            <a href="{{ route('admin.enrollments', ['status' => 'Enrolled']) }}" class="glass-card p-6 rounded-3xl border border-green-200/50 bg-green-50/50 dark:bg-green-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+            <a href="{{ route('admin.admissions', ['status' => 'Enrolled']) }}" class="glass-card p-6 rounded-3xl border border-green-200/50 bg-green-50/50 dark:bg-green-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div class="flex justify-between items-start mb-4">
                     <div class="size-12 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-2xl">school</span>
@@ -89,7 +89,7 @@
                         <span class="material-symbols-outlined text-primary">new_releases</span>
                         Recent Pending Applications
                     </h3>
-                    <a href="{{ route('admin.enrollments', ['status' => 'pending_approval']) }}" class="text-xs font-bold text-primary hover:underline">View All Applications</a>
+                    <a href="{{ route('admin.admissions', ['status' => 'pending_approval']) }}" class="text-xs font-bold text-primary hover:underline">View All Applications</a>
                 </div>
                 
                 <div class="bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-white/10 rounded-3xl overflow-hidden shadow-sm">
