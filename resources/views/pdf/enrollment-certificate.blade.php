@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Admission Pass - TNTS</title>
+    <title>{{ $isOfficialCOE ? 'Certificate of Enrollment' : 'Admission Pass - TNTS' }}</title>
     <style>
         @page { 
             margin: 0;
@@ -228,143 +228,238 @@
             content: "!";
             color: #d32f2f;
         }
+
+        /* COE Refinements (Only applied when isOfficialCOE is true) */
+        @if($isOfficialCOE)
+        .header { border-bottom: 2px solid #800000; }
+        .school-name { font-size: 28px; }
+        .cert-title { font-size: 36px; }
+        .data-section { 
+            border: 1px solid #f3ecec; 
+            border-radius: 20px; 
+            padding: 25px; 
+            margin-bottom: 30px;
+        }
+        .info-value { font-size: 18px; }
+        .id-card { 
+            margin-top: 10px; 
+            border: 1px dashed #e7cfcf; 
+            padding: 20px; 
+        }
+        .qr-code { width: 110px; height: 110px; }
+        .trans-id { font-size: 20px; }
+        @endif
     </style>
 </head>
 <body>
-    <!-- Page 1: Admission Pass -->
-    <div class="container">
-        <div class="header">
-            <table class="header-table">
-                <tr>
-                    <td style="width: 70px;">
-                        <img src="{{ public_path('images/logo.png') }}" class="logo" alt="TNTS Logo">
-                    </td>
-                    <td class="brand-container">
-                        <h1 class="school-name">Tanza National Trade School</h1>
-                        <div class="aspire-tagline">
-                            <span class="aspire-letter">A</span>cademic 
-                            <span class="aspire-letter">S</span>tudent 
-                            <span class="aspire-letter">P</span>ortal 
-                            <span class="aspire-letter">I</span>nformation 
-                            <span class="aspire-letter">R</span>ecords and 
-                            <span class="aspire-letter">E</span>nrollment
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </div>
+    @if($isOfficialCOE)
+        <!-- Page: Certificate of Enrollment (COE) -->
+        <div class="container">
+            <div class="header">
+                <table class="header-table">
+                    <tr>
+                        <td style="width: 80px;">
+                            <img src="{{ public_path('images/logo.png') }}" class="logo" alt="TNTS Logo" style="width: 80px; height: 80px;">
+                        </td>
+                        <td class="brand-container">
+                            <h1 class="school-name">Tanza National Trade School</h1>
+                            <div class="aspire-tagline">
+                                <span class="aspire-letter">A</span>cademic <span class="aspire-letter">S</span>tudent <span class="aspire-letter">P</span>ortal <span class="aspire-letter">I</span>nformation <span class="aspire-letter">R</span>ecords and <span class="aspire-letter">E</span>nrollment
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="title-section">
-            <h2 class="cert-title">Certificate of Admission</h2>
-            <div class="cert-badge">ENROLLMENT PASS</div>
-        </div>
+            <div class="title-section">
+                <h2 class="cert-title">Certificate of Enrollment</h2>
+            </div>
 
-        <div class="notice-card">
-            <p class="notice-text">
-                This document serves as your official entry pass for physical document verification. 
-                Please ensure you bring all required original documents listed on the next page.
-            </p>
-        </div>
+            <div class="data-section">
+                <table class="info-table">
+                    <tr>
+                        <td class="info-label">Learner Reference No. (LRN)</td>
+                        <td class="info-value" style="color: #800000;">{{ $enrollment->lrn }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Student Name</td>
+                        <td class="info-value">{{ strtoupper($enrollment->last_name) }}, {{ strtoupper($enrollment->first_name) }} {{ strtoupper($enrollment->middle_name) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Grade Level</td>
+                        <td class="info-value">{{ $enrollment->grade_level }}</td>
+                    </tr>
+                    @if($enrollment->specialization || $enrollment->strand)
+                    <tr>
+                        <td class="info-label">Strand / Specialization</td>
+                        <td class="info-value">{{ $enrollment->specialization ?: ($enrollment->strand ?: 'N/A') }}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="info-label">Enrollment Status</td>
+                        <td><span class="status-pill" style="background: #f0fdf4; color: #166534; padding: 6px 14px; border-radius: 99px; font-size: 11px; font-weight: 900; border: 1px solid #dcfce7;">OFFICIALLY ENROLLED</span></td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Academic Year</td>
+                        <td class="info-value">2024-2025</td>
+                    </tr>
+                </table>
+            </div>
 
-        <div class="data-section">
-            <table class="info-table">
-                <tr>
-                    <td class="info-label">Learner Reference No. (LRN)</td>
-                    <td class="info-value">{{ $enrollment->lrn }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">Full Name</td>
-                    <td class="info-value">{{ strtoupper($enrollment->last_name) }}, {{ strtoupper($enrollment->first_name) }} {{ strtoupper($enrollment->middle_name) }}</td>
-                </tr>
-                <tr>
-                    <td class="info-label">Grade Level</td>
-                    <td class="info-value">{{ $enrollment->grade_level }}</td>
-                </tr>
-                @if($enrollment->specialization || $enrollment->strand)
-                <tr>
-                    <td class="info-label">Strand / Specialization</td>
-                    <td class="info-value">{{ $enrollment->specialization ?: ($enrollment->strand ?: 'N/A') }}</td>
-                </tr>
+            <div class="id-card">
+                <div class="trans-label">Student LRN</div>
+                @if($qrCode)
+                    <img class="qr-code" src="{{ $qrCode }}" alt="QR Code">
+                @else
+                    <div style="width: 110px; height: 110px; border: 1px solid #eee; margin: 0 auto; padding-top: 45px; font-size: 10px; color: #ccc;">QR PENDING</div>
                 @endif
-                <tr>
-                    <td class="info-label">Enrollment Status</td>
-                    <td><span class="status-pill">PRE-ENROLLED</span></td>
-                </tr>
-                <tr>
-                    <td class="info-label">Submission Date</td>
-                    <td class="info-value" style="font-size: 13px;">{{ $enrollment->finalized_at->format('F d, Y h:i A') }}</td>
-                </tr>
-            </table>
-        </div>
+                <div class="trans-id">{{ $enrollment->lrn }}</div>
+            </div>
 
-        <div class="id-card" style="margin-top: 30px; padding: 20px;">
-            <div class="trans-label">Verification QR Code</div>
-            @if($qrCode)
-                <img class="qr-code" style="width: 120px; height: 120px;" src="{{ $qrCode }}" alt="QR Code">
-            @else
-                <div style="width: 120px; height: 120px; border: 1px solid #eee; margin: 0 auto; padding-top: 50px; font-size: 10px; color: #ccc;">QR CODE<br>PENDING</div>
-            @endif
-            <div class="trans-label" style="margin-top: 5px;">Transaction Reference Number</div>
-            <div class="trans-id" style="font-size: 20px;">{{ $enrollment->transaction_number }}</div>
-        </div>
-
-        <div class="footer">
-            <div class="footer-text">
-                <strong>Tanza National Trade School - Registrar's Office</strong><br>
-                Brgy. Paradahan I, Tanza, Cavite | established 1959<br>
-                (046) 437-0123 | registrar@tnts.edu.ph | tnts.edu.ph
+            <div class="footer">
+                <div class="footer-text">
+                    <strong>Tanza National Trade School - Office of the Registrar</strong><br>
+                    Brgy. Paradahan I, Tanza, Cavite | Established 1959<br>
+                    (046) 437-0123 | registrar@tnts.edu.ph | www.tnts.edu.ph
+                </div>
             </div>
         </div>
-    </div>
+    @else
+        <!-- Page 1: Admission Pass (RESTORED TO OLD CONTENT) -->
+        <div class="container">
+            <div class="header">
+                <table class="header-table">
+                    <tr>
+                        <td style="width: 70px;">
+                            <img src="{{ public_path('images/logo.png') }}" class="logo" alt="TNTS Logo">
+                        </td>
+                        <td class="brand-container">
+                            <h1 class="school-name">Tanza National Trade School</h1>
+                            <div class="aspire-tagline">
+                                <span class="aspire-letter">A</span>cademic 
+                                <span class="aspire-letter">S</span>tudent 
+                                <span class="aspire-letter">P</span>ortal 
+                                <span class="aspire-letter">I</span>nformation 
+                                <span class="aspire-letter">R</span>ecords and 
+                                <span class="aspire-letter">E</span>nrollment
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
-    <!-- Page 2: Guide -->
-    <div class="container" style="page-break-before: always;">
-        <div class="header" style="border-bottom: 2px solid #1b0d0d; margin-bottom: 20px;">
-            <h1 class="school-name" style="color: #1b0d0d; font-size: 20px;">Physical Verification Guide</h1>
-            <div class="aspire-tagline" style="color: #888;">TNTS ASPIRE | SY 2026-2027</div>
-        </div>
+            <div class="title-section">
+                <h2 class="cert-title">Certificate of Admission</h2>
+                <div class="cert-badge">ADMISSION PASS</div>
+            </div>
 
-        <div class="guide-section" style="margin-bottom: 25px;">
-            <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Checklist of Requirements</h3>
-            <div class="checklist-box" style="padding: 15px;">
-                <div class="check-item"><strong>Printed Copy</strong> of this Certificate of Admission</div>
-                <div class="check-item"><strong>Original & Photocopy</strong> of PSA Birth Certificate</div>
-                <div class="check-item"><strong>Original Report Card</strong> (Form 138) from previous school year</div>
-                <div class="check-item">Original <strong>Certificate of Good Moral Character</strong></div>
-                <div class="check-item"><strong>Two (2) pieces 2x2 ID Pictures</strong> (White background, with name tag)</div>
-                <div class="check-item"><strong>Long Brown Envelope</strong> (1 piece)</div>
-                @if($enrollment->grade_level == 'Grade 11')
-                <div class="check-item"><strong>NCAE Results</strong> (for SHS Applicants)</div>
+            <div class="notice-card">
+                <p class="notice-text">
+                    This document serves as your official entry pass for physical document verification. 
+                    Please ensure you bring all required original documents listed on the next page.
+                </p>
+            </div>
+
+            <div class="data-section">
+                <table class="info-table">
+                    <tr>
+                        <td class="info-label">Learner Reference No. (LRN)</td>
+                        <td class="info-value">{{ $enrollment->lrn }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Full Name</td>
+                        <td class="info-value">{{ strtoupper($enrollment->last_name) }}, {{ strtoupper($enrollment->first_name) }} {{ strtoupper($enrollment->middle_name) }}</td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Grade Level</td>
+                        <td class="info-value">{{ $enrollment->grade_level }}</td>
+                    </tr>
+                    @if($enrollment->specialization || $enrollment->strand)
+                    <tr>
+                        <td class="info-label">Strand / Specialization</td>
+                        <td class="info-value">{{ $enrollment->specialization ?: ($enrollment->strand ?: 'N/A') }}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="info-label">Enrollment Status</td>
+                        <td><span class="status-pill">PRE-ENROLLED</span></td>
+                    </tr>
+                    <tr>
+                        <td class="info-label">Submission Date</td>
+                        <td class="info-value" style="font-size: 13px;">{{ $enrollment->finalized_at->format('F d, Y h:i A') }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="id-card" style="margin-top: 30px; padding: 20px;">
+                <div class="trans-label">Verification QR Code</div>
+                @if($qrCode)
+                    <img class="qr-code" style="width: 120px; height: 120px;" src="{{ $qrCode }}" alt="QR Code">
+                @else
+                    <div style="width: 120px; height: 120px; border: 1px solid #eee; margin: 0 auto; padding-top: 50px; font-size: 10px; color: #ccc;">QR CODE<br>PENDING</div>
                 @endif
+                <div class="trans-label" style="margin-top: 5px;">Transaction Reference Number</div>
+                <div class="trans-id" style="font-size: 20px;">{{ $enrollment->transaction_number }}</div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-text">
+                    <strong>Tanza National Trade School - Registrar's Office</strong><br>
+                    Brgy. Paradahan I, Tanza, Cavite | established 1959<br>
+                    (046) 437-0123 | registrar@tnts.edu.ph | tnts.edu.ph
+                </div>
             </div>
         </div>
 
-        <div class="guide-section" style="margin-bottom: 25px;">
-            <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Campus Rules & Etiquette</h3>
-            <div class="checklist-box" style="background: #fff8f8; border-color: #f5e6e6; padding: 15px;">
-                <div class="guide-title" style="color: #1e7e34; margin-bottom: 10px;">✓ Guidelines for Entry</div>
-                <div class="check-item"><strong>Dress Code:</strong> Wear decent attire. Strictly no slippers, sando, or short shorts allowed.</div>
-                <div class="check-item"><strong>Silence:</strong> Maintain silence especially near testing rooms and administrative offices.</div>
-                <div class="check-item"><strong>Punctuality:</strong> Arrive at least 15 minutes before your scheduled verification time.</div>
-                
-                <div class="guide-title" style="color: #d32f2f; margin-top: 15px; margin-bottom: 10px;">✗ Prohibited Actions</div>
-                <div class="check-item warning-item">No smoking or vaping within the school vicinity.</div>
-                <div class="check-item warning-item">Do not bring sharp objects or any hazardous materials.</div>
-                <div class="check-item warning-item">Avoid loitering in restricted student-only areas.</div>
+        <!-- Page 2: Guide (RESTORED TO OLD CONTENT) -->
+        <div class="container" style="page-break-before: always;">
+            <div class="header" style="border-bottom: 2px solid #1b0d0d; margin-bottom: 20px;">
+                <h1 class="school-name" style="color: #1b0d0d; font-size: 20px;">Physical Verification Guide</h1>
+                <div class="aspire-tagline" style="color: #888;">TNTS ASPIRE | SY 2026-2027</div>
+            </div>
+
+            <div class="guide-section" style="margin-bottom: 25px;">
+                <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Checklist of Requirements</h3>
+                <div class="checklist-box" style="padding: 15px;">
+                    <div class="check-item"><strong>Printed Copy</strong> of this Certificate of Admission</div>
+                    <div class="check-item"><strong>Original & Photocopy</strong> of PSA Birth Certificate</div>
+                    <div class="check-item"><strong>Original Report Card</strong> (Form 138) from previous school year</div>
+                    <div class="check-item">Original <strong>Certificate of Good Moral Character</strong></div>
+                    <div class="check-item"><strong>Two (2) pieces 2x2 ID Pictures</strong> (White background, with name tag)</div>
+                    <div class="check-item"><strong>Long Brown Envelope</strong> (1 piece)</div>
+                    @if($enrollment->grade_level == 'Grade 11')
+                    <div class="check-item"><strong>NCAE Results</strong> (for SHS Applicants)</div>
+                    @endif
+                </div>
+            </div>
+
+            <div class="guide-section" style="margin-bottom: 25px;">
+                <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Campus Rules & Etiquette</h3>
+                <div class="checklist-box" style="background: #fff8f8; border-color: #f5e6e6; padding: 15px;">
+                    <div class="guide-title" style="color: #1e7e34; margin-bottom: 10px;">✓ Guidelines for Entry</div>
+                    <div class="check-item"><strong>Dress Code:</strong> Wear decent attire. Strictly no slippers, sando, or short shorts allowed.</div>
+                    <div class="check-item"><strong>Silence:</strong> Maintain silence especially near testing rooms and administrative offices.</div>
+                    <div class="check-item"><strong>Punctuality:</strong> Arrive at least 15 minutes before your scheduled verification time.</div>
+                    
+                    <div class="guide-title" style="color: #d32f2f; margin-top: 15px; margin-bottom: 10px;">✗ Prohibited Actions</div>
+                    <div class="check-item warning-item">No smoking or vaping within the school vicinity.</div>
+                    <div class="check-item warning-item">Do not bring sharp objects or any hazardous materials.</div>
+                    <div class="check-item warning-item">Avoid loitering in restricted student-only areas.</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center; border: 1px dashed #e7cfcf; padding: 15px; border-radius: 10px;">
+                <p style="font-size: 10px; color: #9a8a8a; margin: 0; font-style: italic;">
+                    "Dedicated to Excellence in Technical and Vocational Education since 1959"
+                </p>
+            </div>
+
+            <div class="footer" style="position: relative; margin-top: 40px; bottom: auto;">
+                <div class="footer-text">
+                    For inquiries, visit our official Facebook page: <strong>fb.com/TNTSOfficial</strong>
+                </div>
             </div>
         </div>
-
-        <div style="margin-top: 30px; text-align: center; border: 1px dashed #e7cfcf; padding: 15px; border-radius: 10px;">
-            <p style="font-size: 10px; color: #9a8a8a; margin: 0; font-style: italic;">
-                "Dedicated to Excellence in Technical and Vocational Education since 1959"
-            </p>
-        </div>
-
-        <div class="footer">
-            <div class="footer-text">
-                For inquiries, visit our official Facebook page: <strong>fb.com/TNTSOfficial</strong>
-            </div>
-        </div>
-    </div>
+    @endif
 </body>
 </html>

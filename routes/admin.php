@@ -17,6 +17,9 @@ Route::middleware('guest')->group(function () {
 
 // Admin Authenticated Routes
 Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
+    Route::get('/', function() {
+        return redirect()->route('dashboard');
+    });
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admissions', AdmissionDashboard::class)->name('admin.admissions');
     Route::get('/enrollments/{enrollment}/review', AdmissionReview::class)->name('admin.enrollment.review');

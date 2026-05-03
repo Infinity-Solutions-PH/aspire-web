@@ -71,6 +71,10 @@
         </div>
         <div class="flex-1 bg-white flex flex-col justify-center items-center p-8 sm:p-12 lg:p-24 overflow-y-auto">
             <div class="w-full max-w-[420px]" x-data="{ view: 'returning' }">
+                <a href="{{ route('home') }}" class="group inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Return Home
+                </a>
                 <div class="mb-10 text-center lg:text-left">
                     <h2 class="text-4xl font-bold text-gray-900 mb-3" x-text="view === 'returning' ? 'Welcome back' : 'Start your journey'">Welcome back</h2>
                     <p class="text-gray-500 font-normal" x-text="view === 'returning' ? 'Enter your details to access your school dashboard.' : 'Create an applicant account to begin your enrollment.'">Enter your details to access your school dashboard.</p>
@@ -97,29 +101,32 @@
                     <form class="space-y-5" method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="space-y-2">
-                            <label class="text-sm font-semibold text-gray-700 block ml-1">Student ID / Email</label>
+                            <label class="text-sm font-semibold text-gray-700 block ml-1">LRN</label>
                             <div class="relative group">
                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">badge</span>
-                                <input name="email" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="ID or Email" type="text" required value="{{ old('email') }}"/>
+                                <input name="email" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-4 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="LRN" type="text" required value="{{ old('email') }}"/>
                             </div>
                             @error('email') <p class="text-red-500 text-xs mt-1 ml-1">{{ $message }}</p> @enderror
                         </div>
                         <div class="space-y-2">
                             <div class="flex justify-between items-center ml-1">
                                 <label class="text-sm font-semibold text-gray-700">Password</label>
-                                @if (Route::has('password.request'))
+                                <!-- @if (Route::has('password.request'))
                                     <a class="text-primary text-xs font-bold hover:underline" href="{{ route('password.request') }}">Forgot password?</a>
-                                @endif
+                                @endif -->
                             </div>
-                            <div class="relative group">
+                            <div class="relative group" x-data="{ show: false }">
                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
-                                <input name="password" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" type="password" required/>
+                                <input name="password" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" :type="show ? 'text' : 'password'" required/>
+                                <button type="button" @click="show = !show" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors focus:outline-none">
+                                    <span class="material-symbols-outlined select-none" x-text="show ? 'visibility' : 'visibility_off'"></span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-1">
+                        <!-- <div class="flex items-center gap-2 ml-1">
                             <input name="remember" class="rounded-md text-primary focus:ring-primary border-gray-300 h-4 w-4" id="remember" type="checkbox"/>
                             <label class="text-sm text-gray-600 cursor-pointer" for="remember">Keep me logged in</label>
-                        </div>
+                        </div> -->
                         <button class="w-full bg-accent-red hover:bg-primary text-white font-bold h-14 rounded-xl shadow-lg shadow-accent-red/10 transition-all flex items-center justify-center gap-2 mt-2" type="submit">
                             <span class="text-base">Sign In</span>
                             <span class="material-symbols-outlined text-lg">arrow_forward</span>
@@ -148,7 +155,7 @@
                             </li>
                         </ul>
                     </div>
-                    <a href="{{ route('register') }}" class="w-full bg-primary hover:bg-accent-red text-white font-bold h-14 rounded-xl shadow-lg shadow-primary/10 transition-all flex items-center justify-center gap-2 mt-2">
+                    <a href="{{ route('enroll.public') }}" class="w-full bg-primary hover:bg-accent-red text-white font-bold h-14 rounded-xl shadow-lg shadow-primary/10 transition-all flex items-center justify-center gap-2 mt-2">
                         <span class="text-base">Create Applicant Account</span>
                         <span class="material-symbols-outlined text-lg">assignment_ind</span>
                     </a>

@@ -71,6 +71,10 @@
         </div>
         <div class="flex-1 bg-white flex flex-col justify-center items-center p-8 sm:p-12 lg:p-24 overflow-y-auto">
             <div class="w-full max-w-[420px]">
+                <a href="{{ route('home') }}" class="group inline-flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-primary transition-all">
+                    <span class="material-symbols-outlined text-lg group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                    Return Home
+                </a>
                 <div class="mb-10 text-center lg:text-left">
                     <h2 class="text-4xl font-bold text-gray-900 mb-3">Admin Login</h2>
                     <p class="text-gray-500 font-normal">Enter your details to access the administrator dashboard.</p>
@@ -91,19 +95,22 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center ml-1">
                                 <label class="text-sm font-semibold text-gray-700">Password</label>
-                                @if (Route::has('password.request'))
+                                <!-- @if (Route::has('password.request'))
                                     <a class="text-primary text-xs font-bold hover:underline" href="{{ route('password.request') }}">Forgot password?</a>
-                                @endif
+                                @endif -->
                             </div>
-                            <div class="relative group">
+                            <div class="relative group" x-data="{ show: false }">
                                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors">lock</span>
-                                <input name="password" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" type="password" required/>
+                                <input name="password" class="w-full h-14 bg-gray-50 border-none rounded-xl pl-12 pr-12 text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-primary/20 transition-all text-base" placeholder="••••••••" :type="show ? 'text' : 'password'" required/>
+                                <button type="button" @click="show = !show" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary transition-colors focus:outline-none">
+                                    <span class="material-symbols-outlined select-none" x-text="show ? 'visibility' : 'visibility_off'"></span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2 ml-1">
+                        <!-- <div class="flex items-center gap-2 ml-1">
                             <input name="remember" class="rounded-md text-primary focus:ring-primary border-gray-300 h-4 w-4" id="remember" type="checkbox"/>
                             <label class="text-sm text-gray-600 cursor-pointer" for="remember">Keep me logged in</label>
-                        </div>
+                        </div> -->
                         <button class="w-full bg-accent-red hover:bg-primary text-white font-bold h-14 rounded-xl shadow-lg shadow-accent-red/10 transition-all flex items-center justify-center gap-2 mt-2" type="submit">
                             <span class="text-base">Sign In</span>
                             <span class="material-symbols-outlined text-lg">arrow_forward</span>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'TNTS Student Portal' }}</title>
-    
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
@@ -74,22 +74,22 @@
                             <span class="material-symbols-outlined">dashboard</span>
                             <span class="text-sm">Dashboard</span>
                         </a>
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
+                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
                             <span class="material-symbols-outlined">how_to_reg</span>
                             <span class="text-sm">Enrolment Status</span>
-                        </a>
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+                        </a> --}}
+                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.profile') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.profile') }}">
                             <span class="material-symbols-outlined">person</span>
                             <span class="text-sm">Profile</span>
                         </a>
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
                             <span class="material-symbols-outlined">history_edu</span>
                             <span class="text-sm">Academic Records</span>
                         </a>
                         <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
                             <span class="material-symbols-outlined">folder_open</span>
                             <span class="text-sm">Resources</span>
-                        </a>
+                        </a> --}}
                     @else
                         <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
                             <span class="material-symbols-outlined">how_to_reg</span>

@@ -19,6 +19,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
     
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
+    Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
     Route::get('/enrollment', [StudentEnrollmentController::class, 'index'])->name('enrollment.index');
     Route::post('/enrollment/start', [StudentEnrollmentController::class, 'start'])->name('enrollment.start');
     

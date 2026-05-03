@@ -2,12 +2,10 @@
 
 namespace App\Livewire\StudentPortal;
 
-use App\Models\Enrollment;
-use App\Models\Schedule;
-use App\Models\Section;
 use App\Models\Fee;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use App\Models\Enrollment;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardPortal extends Component
 {

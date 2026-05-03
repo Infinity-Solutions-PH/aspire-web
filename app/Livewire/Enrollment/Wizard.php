@@ -156,6 +156,7 @@ class Wizard extends Component
         $allRules = [
             'lrn' => 'required|digits:12',
             'birthdate' => 'required|date',
+            'profile_picture_upload' => 'nullable|image|max:5120',
         ];
 
         foreach ($this->stepRules as $stepNum => $step) {
@@ -173,6 +174,15 @@ class Wizard extends Component
         }
 
         return $allRules;
+    }
+
+    public function messages()
+    {
+        return [
+            'profile_picture_upload.image' => 'The file must be an image (jpg, jpeg, png).',
+            'profile_picture_upload.max' => 'The photo must not be larger than 5MB.',
+            'profile_picture_upload.required' => 'A 2x2 photo is required to complete enrollment.',
+        ];
     }
 
     public function updated($propertyName)
@@ -455,7 +465,8 @@ class Wizard extends Component
             // Fallback
         }
 
-        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment', 'qrCode'))
+        $isOfficialCOE = false;
+        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment', 'qrCode', 'isOfficialCOE'))
             ->setPaper('a4', 'portrait')
             ->setOption('isRemoteEnabled', true)
             ->setOption('isHtml5ParserEnabled', true);

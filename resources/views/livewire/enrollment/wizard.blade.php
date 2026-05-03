@@ -1,4 +1,15 @@
-<div class="max-w-[960px] w-full flex flex-col gap-6 mx-auto py-4 px-4" x-data="{ resumed: @entangle('is_resumed') }">
+<div class="max-w-[960px] w-full flex flex-col gap-6 mx-auto py-4 px-4" 
+     x-data="{ 
+        resumed: @entangle('is_resumed'),
+        currentStep: @entangle('currentStep'),
+        initStep: @entangle('initStep'),
+        submitted: @entangle('submitted')
+     }"
+     x-init="
+        $watch('currentStep', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+        $watch('initStep', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+        $watch('submitted', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+     ">
     @teleport('#header-action')
         @if($currentStep == 0 && $initStep == 0)
             <a href="{{ route('home') }}" class="text-sm font-bold text-gray-500 hover:text-primary transition-colors">Return Home</a>

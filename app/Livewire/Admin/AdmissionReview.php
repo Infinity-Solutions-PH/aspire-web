@@ -49,7 +49,7 @@ class AdmissionReview extends Component
             
             // 1. Create Student Portal Account
             $username = $this->record->lrn;
-            $passwordStr = Str::lower($data['last_name']) . $this->record->birthdate->format('dmY');
+            $passwordStr = $this->record->birthdate->format('mdY');
             
             $user = User::firstOrCreate(
                 ['student_id' => $username],

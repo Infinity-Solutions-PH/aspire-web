@@ -20,6 +20,14 @@
 
                 <input type="file" wire:model="profile_picture_upload" class="absolute inset-0 opacity-0 cursor-pointer z-10">
             </div>
+
+            @error('profile_picture_upload')
+                <div class="flex items-center gap-2 text-red-600 bg-red-50 px-4 py-2 rounded-lg border border-red-100 animate-pulse">
+                    <span class="material-symbols-outlined text-sm">error</span>
+                    <p class="text-[10px] font-bold uppercase tracking-wider">{{ $message }}</p>
+                </div>
+            @enderror
+
             <div class="text-center">
                 <p class="text-sm font-bold text-gray-800">2x2 Picture</p>
                 <p class="text-[10px] text-[#9a4c4c] mt-1 font-medium">White background, formal/school attire (Max 5MB)</p>

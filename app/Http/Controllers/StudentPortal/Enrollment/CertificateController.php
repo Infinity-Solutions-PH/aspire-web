@@ -34,14 +34,15 @@ class CertificateController extends Controller
 
         $qrCode = null;
         try {
-            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($enrollment->transaction_number);
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($enrollment->lrn);
             $qrData = file_get_contents($qrUrl);
             $qrCode = 'data:image/png;base64,' . base64_encode($qrData);
         } catch (\Exception $e) {
             // Fallback to null if QR generation fails
         }
 
-        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment', 'qrCode'))
+        $isOfficialCOE = true;
+        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment', 'qrCode', 'isOfficialCOE'))
             ->setPaper('a4', 'portrait')
             ->setOption('isRemoteEnabled', true)
             ->setOption('isHtml5ParserEnabled', true);

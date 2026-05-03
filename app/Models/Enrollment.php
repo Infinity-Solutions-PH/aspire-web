@@ -64,4 +64,13 @@ class Enrollment extends Model
     {
         return $this->belongsTo(Section::class);
     }
+
+    /**
+     * Get the school category based on grade level.
+     */
+    public function getSchoolCategoryAttribute(): string
+    {
+        $grade = (int) str_replace('Grade ', '', $this->grade_level);
+        return ($grade >= 11) ? 'Senior High School' : 'High School';
+    }
 }
