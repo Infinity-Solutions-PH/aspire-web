@@ -5,6 +5,7 @@ use App\Livewire\Admin\AdmissionReview;
 use App\Livewire\Admin\ScheduleManager;
 use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\StudentMasterlist;
+use App\Livewire\Admin\TeacherManagement;
 use App\Livewire\Admin\AdmissionDashboard;
 use App\Http\Controllers\Landing\PageController as LandingPageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -23,4 +24,5 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     Route::get('/students/masterlist', StudentMasterlist::class)->name('admin.students.masterlist');
     Route::get('/sections', SectionManagement::class)->name('admin.sections');
     Route::get('/schedules', ScheduleManager::class)->name('admin.schedules');
+    Route::get('/faculty', TeacherManagement::class)->name('admin.faculty');
 });

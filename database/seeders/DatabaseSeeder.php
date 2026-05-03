@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             SchoolManagementSeeder::class,
             JhsSectionSeeder::class,
+            FacultySeeder::class,
         ]);
     }
 }
