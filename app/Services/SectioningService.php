@@ -150,16 +150,17 @@ class SectioningService
     /**
      * Check if a student qualifies for the Star Section.
      */
-    public function checkStarQualification(Enrollment $enrollment): bool
+    public function checkStarQualification($enrollment): bool
     {
         $avg = $this->getStarSectionAverage($enrollment->grade_level);
-        return $enrollment->gwa >= $avg && $avg > 0;
+        $gwa = (float) ($enrollment->gwa ?? ($enrollment->last_gwa ?? 0));
+        return $gwa >= $avg && $avg > 0;
     }
 
     /**
      * Manual assignment (Bypasses capacity if done by Guidance)
      */
-    public function manualAssign(Enrollment $enrollment, Section $section): void
+    public function manualAssign($enrollment, Section $section): void
     {
         $enrollment->update(['section_id' => $section->id]);
     }
@@ -167,14 +168,14 @@ class SectioningService
     /**
      * Legacy method for individual assignment (Modified to use new logic if needed)
      */
-    public function assignSection(Enrollment $enrollment): Section
+    public function assignSection($enrollment): Section
     {
         // For individual assignment, we just find the first available section matching criteria
         $query = Section::where('grade_level', $enrollment->grade_level);
 
-        if ($enrollment->track) $query->where('track', $enrollment->track);
-        if ($enrollment->strand) $query->where('strand', $enrollment->strand);
-        if ($enrollment->specialization) $query->where('specialization', $enrollment->specialization);
+        if ($enrollment->track ?? null) $query->where('track', $enrollment->track);
+        if ($enrollment->strand ?? null) $query->where('strand', $enrollment->strand);
+        if ($enrollment->specialization ?? null) $query->where('specialization', $enrollment->specialization);
 
         $sections = $query->get();
 
@@ -192,13 +193,13 @@ class SectioningService
     /**
      * Get available sections matching enrollment criteria.
      */
-    public function getAvailableSectionsForEnrollment(Enrollment $enrollment)
+    public function getAvailableSectionsForEnrollment($enrollment)
     {
         $query = Section::where('grade_level', $enrollment->grade_level);
 
-        if ($enrollment->track) $query->where('track', $enrollment->track);
-        if ($enrollment->strand) $query->where('strand', $enrollment->strand);
-        if ($enrollment->specialization) $query->where('specialization', $enrollment->specialization);
+        if ($enrollment->track ?? null) $query->where('track', $enrollment->track);
+        if ($enrollment->strand ?? null) $query->where('strand', $enrollment->strand);
+        if ($enrollment->specialization ?? null) $query->where('specialization', $enrollment->specialization);
 
         return $query->withCount('enrollments')->get()->filter(function($section) {
             return $section->enrollments_count < $section->capacity;

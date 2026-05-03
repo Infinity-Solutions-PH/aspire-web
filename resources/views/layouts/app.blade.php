@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'TNTS Admin Portal' }}</title>
-    
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <!-- Scripts & Styles -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
@@ -43,94 +43,118 @@
     @livewireStyles
 </head>
 <body class="bg-background-light dark:bg-background-dark text-[#1b0d0d] dark:text-[#fcf8f8] min-h-screen">
-    <div class="flex min-h-screen w-full">
+    <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside class="w-64 border-r border-[#e7cfcf] dark:border-[#3d2424] bg-background-light dark:bg-background-dark flex flex-col justify-between p-6 sticky top-0 h-screen">
-            <div class="flex flex-col gap-8">
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center rounded-lg size-10 text-white">
-                        <x-app-logo-image />
+        <aside class="w-64 border-r border-[#e7cfcf] dark:border-[#422020] bg-white dark:bg-[#1a0c0c] flex flex-col sticky top-0 h-screen">
+            <div class="p-6">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="size-10 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-[#e7cfcf] dark:border-[#422020] shadow-sm">
+                        <x-app-logo-image class="w-8 h-8 object-contain" />
                     </div>
-                    <div class="flex flex-col">
-                        <h1 class="text-[#1b0d0d] dark:text-white text-lg font-bold leading-none">TNTS</h1>
-                        <p class="text-primary text-xs font-medium">Administrator</p>
+                    <div>
+                        <h1 class="text-primary text-lg font-black leading-none">TNTS Admin</h1>
+                        <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-[10px] font-bold uppercase tracking-wider">Management System</p>
                     </div>
                 </div>
                 
-                <nav class="flex flex-col gap-2">
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('admin.dashboard') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('admin.dashboard') }}">
-                        <span class="material-symbols-outlined">dashboard</span>
-                        <span class="text-sm">Overview</span>
+                <nav class="flex flex-col gap-1.5">
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.dashboard') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.dashboard') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.dashboard') ? "font-variation-settings: 'FILL' 1" : '' }}">dashboard</span>
+                        <span class="text-sm font-bold">Dashboard</span>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ (request()->routeIs('admin.enrollments') || request()->routeIs('admin.enrollment.review')) ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('admin.enrollments') }}">
-                        <span class="material-symbols-outlined">how_to_reg</span>
-                        <span class="text-sm">Enrollments</span>
+                    
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.enrollments') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.enrollments') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.enrollments') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.enrollments') ? "font-variation-settings: 'FILL' 1" : '' }}">how_to_reg</span>
+                        <span class="text-sm font-bold">Admissions</span>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('admin.sections') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('admin.sections') }}">
-                        <span class="material-symbols-outlined">meeting_room</span>
-                        <span class="text-sm">Sections</span>
+
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.students.masterlist') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.students.masterlist') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.students.masterlist') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.students.masterlist') ? "font-variation-settings: 'FILL' 1" : '' }}">group</span>
+                        <span class="text-sm font-bold">Student Masterlist</span>
                     </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('admin.schedules') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('admin.schedules') }}">
-                        <span class="material-symbols-outlined">calendar_month</span>
-                        <span class="text-sm">Schedules</span>
+                    
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.sections') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.sections') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.sections') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.sections') ? "font-variation-settings: 'FILL' 1" : '' }}">meeting_room</span>
+                        <span class="text-sm font-bold">Sections</span>
+                    </a>
+
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.schedules') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.schedules') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.schedules') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.schedules') ? "font-variation-settings: 'FILL' 1" : '' }}">calendar_month</span>
+                        <span class="text-sm font-bold">Schedules</span>
                     </a>
                 </nav>
             </div>
-            
-            <div class="flex flex-col gap-4">
-                <div class="flex items-center gap-3 p-3 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424]">
+
+            <div class="mt-auto p-6 space-y-4">
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-background-light dark:bg-[#2a1515] border border-[#e7cfcf] dark:border-[#422020]">
                     @if(!empty(auth()->user()->avatar))
-                        <div class="size-10 rounded-full shrink-0 bg-cover bg-center" style="background-image: url('{{ auth()->user()->avatar }}')"></div>
+                        <div class="size-9 rounded-full shrink-0 bg-cover bg-center border-2 border-primary/20" style="background-image: url('{{ auth()->user()->avatar }}')"></div>
                     @else
-                        <div class="size-10 rounded-full shrink-0 bg-primary/20 text-primary flex items-center justify-center font-bold text-sm uppercase tracking-widest">
+                        <div class="size-9 rounded-full shrink-0 bg-primary/20 text-primary flex items-center justify-center font-bold text-xs uppercase tracking-widest border-2 border-primary/20">
                             {{ auth()->user()->initials() }}
                         </div>
                     @endif
                     <div class="overflow-hidden">
-                        <p class="text-xs font-bold truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-[10px] text-primary">System Admin</p>
+                        <p class="text-xs font-bold truncate leading-none">{{ auth()->user()->name }}</p>
+                        <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-tighter mt-1">Admin Access</p>
                     </div>
                 </div>
-                
+
                 <form method="POST" action="{{ route('logout') }}" x-data>
                     @csrf
-                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl h-12 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-maroon-accent transition-all">
-                        <span class="material-symbols-outlined text-sm">logout</span>
-                        Logout
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl h-10 border border-[#e7cfcf] dark:border-[#422020] text-[#1b0d0d] dark:text-[#fcf8f8] text-xs font-bold hover:bg-primary hover:text-white hover:border-primary transition-all group">
+                        <span class="material-symbols-outlined text-sm group-hover:fill-1">logout</span>
+                        Sign Out
                     </button>
                 </form>
             </div>
         </aside>
 
-        <!-- Main Content Wrapper -->
-        <main class="flex-1 flex flex-col overflow-y-auto w-full">
-            <!-- Header -->
-            <header class="flex items-center justify-between px-8 py-4 bg-background-light dark:bg-background-dark border-b border-[#e7cfcf] dark:border-[#3d2424]">
-                <div class="flex items-center gap-4 flex-1 max-w-xl">
-                    <div class="relative w-full">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                        <input class="w-full bg-[#f3e7e7] dark:bg-[#3d2424] border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-gray-500" placeholder="Search students, LRNs, or records..." type="text"/>
-                    </div>
+        <!-- Main Content Area -->
+        <main class="flex-1 flex flex-col overflow-y-auto bg-background-light dark:bg-background-dark">
+            <!-- Top Header -->
+            <header class="h-16 border-b border-[#e7cfcf] dark:border-[#422020] bg-white dark:bg-[#1a0c0c] px-8 flex items-center justify-between sticky top-0 z-10">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-widest">Main</span>
+                    <span class="material-symbols-outlined text-xs text-[#9a4c4c]">chevron_right</span>
+                    <span class="text-sm font-bold text-gray-900 dark:text-white">
+                        @yield('page-title', 'Overview')
+                    </span>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button class="size-10 flex items-center justify-center rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white relative">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
-                    </button>
-                    <button class="size-10 flex items-center justify-center rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white">
-                        <span class="material-symbols-outlined">settings</span>
-                    </button>
+                
+                <div class="flex items-center gap-6">
+                    <div class="flex items-center gap-2">
+                        <button class="p-2 rounded-xl hover:bg-background-light dark:hover:bg-[#361a1a] relative text-[#9a4c4c] transition-colors">
+                            <span class="material-symbols-outlined">notifications</span>
+                            <span class="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full border-2 border-white dark:border-[#1a0c0c]"></span>
+                        </button>
+                        <button class="p-2 rounded-xl hover:bg-background-light dark:hover:bg-[#361a1a] text-[#9a4c4c] transition-colors">
+                            <span class="material-symbols-outlined">settings</span>
+                        </button>
+                    </div>
+                    
+                    <div class="h-8 w-px bg-[#e7cfcf] dark:bg-[#422020]"></div>
+                    
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <p class="text-xs font-bold leading-none text-gray-900 dark:text-white">Registrar Portal</p>
+                            <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-wider mt-1">Active Session</p>
+                        </div>
+                        <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                            <span class="material-symbols-outlined">shield_person</span>
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <!-- Content Area -->
-            <div class="p-8 max-w-7xl w-full mx-auto">
+            <div class="p-8 max-w-[1400px] mx-auto w-full">
                 {{ $slot }}
             </div>
 
             <!-- Footer -->
-            <footer class="mt-auto px-8 py-6 border-t border-[#e7cfcf] dark:border-[#3d2424] text-center">
-                <p class="text-xs text-[#9a4c4c] dark:text-[#c4a1a1]">© 2026 Tanza National Trade School &sdot; ASPIRE. All rights reserved.</p>
+            <footer class="mt-auto px-8 py-6 border-t border-[#e7cfcf] dark:border-[#422020] text-center">
+                <p class="text-[10px] font-bold text-[#9a4c4c] dark:text-[#c4a1a1] uppercase tracking-widest">© 2026 Tanza National Trade School &sdot; ASPIRE Management System</p>
             </footer>
         </main>
     </div>

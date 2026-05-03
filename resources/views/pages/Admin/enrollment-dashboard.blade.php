@@ -1,3 +1,5 @@
+@section('page-title', 'Enrollment Pipeline')
+
 <div class="flex flex-col gap-6 p-8 bg-white dark:bg-zinc-900 min-h-screen">
     <div class="flex justify-between items-center border-b border-gray-100 pb-6">
         <div>
@@ -11,7 +13,7 @@
             </div>
             <select wire:model.live="status" class="h-10 rounded-xl border-gray-200 bg-gray-50/50 text-sm focus:ring-primary">
                 <option value="">All Status</option>
-                <option value="Submitted">Pending Review</option>
+                <option value="pending_approval">Pending Review</option>
                 <option value="Approved">Approved</option>
                 <option value="Enrolled">Officially Enrolled</option>
                 <option value="Rejected">Rejected</option>
@@ -36,35 +38,48 @@
             </thead>
             <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                 @forelse($enrollments as $enrollment)
+                @php
+                    $isPre = $enrollment instanceof \App\Models\PreEnrollment;
+                    $data = $isPre ? $enrollment->form_data : $enrollment;
+                    $firstName = $isPre ? ($data['first_name'] ?? 'N/A') : $enrollment->first_name;
+                    $lastName = $isPre ? ($data['last_name'] ?? 'N/A') : $enrollment->last_name;
+                    $type = $isPre ? ($data['enrollment_type'] ?? 'N/A') : $enrollment->type;
+                    $gradeLevel = $isPre ? ($data['grade_level'] ?? 'N/A') : $enrollment->grade_level;
+                @endphp
                 <tr class="hover:bg-gray-50/80 dark:hover:bg-white/5 transition-colors group">
                     <td class="px-6 py-5">
                         <div class="flex flex-col">
-                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $enrollment->last_name }}, {{ $enrollment->first_name }}</span>
+                            <span class="text-sm font-bold text-gray-900 dark:text-white">{{ $lastName }}, {{ $firstName }}</span>
                             <span class="text-xs text-gray-400 font-mono">{{ $enrollment->lrn }}</span>
                         </div>
                     </td>
                     <td class="px-6 py-5">
                         <span class="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase {{ 
-                            $enrollment->type == 'Promoted' ? 'bg-blue-100 text-blue-600' : 
-                            ($enrollment->type == 'Transferee' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600')
+                            $type == 'Promoted' || $type == 'Old Student' ? 'bg-blue-100 text-blue-600' : 
+                            ($type == 'Transferee' ? 'bg-orange-100 text-orange-600' : 'bg-green-100 text-green-600')
                         }}">
-                            {{ $enrollment->type }}
+                            {{ $type }}
                         </span>
                     </td>
                     <td class="px-6 py-5">
-                        <span class="text-sm font-medium text-gray-700">{{ $enrollment->grade_level }}</span>
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $gradeLevel }}</span>
                     </td>
                     <td class="px-6 py-5">
                         <div class="flex items-center gap-2">
                             <span class="size-1.5 rounded-full {{ 
-                                $enrollment->status == 'Submitted' ? 'bg-amber-400' : 
+                                $enrollment->status == 'pending_approval' || $enrollment->status == 'Submitted' ? 'bg-amber-400' : 
                                 ($enrollment->status == 'Enrolled' ? 'bg-green-500' : 'bg-gray-300') 
                             }}"></span>
-                            <span class="text-xs font-bold uppercase tracking-tight">{{ $enrollment->status }}</span>
+                            <span class="text-xs font-bold uppercase tracking-tight text-gray-600 dark:text-gray-400">
+                                {{ $enrollment->status == 'pending_approval' ? 'Pending Review' : $enrollment->status }}
+                            </span>
                         </div>
                     </td>
                     <td class="px-6 py-5 text-right">
-                        <a href="{{ route('admin.enrollment.review', $enrollment->id) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary text-primary hover:text-white text-xs font-bold rounded-lg transition-all">
+                        @php
+                            $route = $isPre ? route('admin.pre_enrollment.review', ['preEnrollment' => $enrollment->id]) : route('admin.enrollment.review', ['enrollment' => $enrollment->id]);
+                        @endphp
+                        <a href="{{ $route }}" class="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 hover:bg-primary text-primary hover:text-white text-xs font-bold rounded-lg transition-all">
                             Review Details
                             <span class="material-symbols-outlined text-sm">visibility</span>
                         </a>

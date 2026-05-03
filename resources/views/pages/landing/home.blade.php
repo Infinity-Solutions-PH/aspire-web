@@ -1,5 +1,5 @@
 @extends('layouts.landing')
-@section('title', 'Tanza National Trade School | ASPIRE')
+@section('title', 'Tanza National Trade School · ASPIRE')
 @push('styles')
 <style>
 .hero-gradient {

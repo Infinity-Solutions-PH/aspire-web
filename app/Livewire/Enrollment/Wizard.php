@@ -35,6 +35,7 @@ class Wizard extends Component
 
     // All form data fields from old form
     public array $formData = [
+        'school_category' => '',
         'enrollment_type' => '',
         'grade_level' => '',
         'psa_no' => '',
@@ -82,9 +83,9 @@ class Wizard extends Component
         'specialization' => '',
         'modality' => '',
         'shs_track' => '',
-        'rank1' => '',
-        'rank2' => '',
-        'rank3' => '',
+        'tech_voc_course1' => '',
+        'tech_voc_course2' => '',
+        'tech_voc_course3' => '',
         'is_shs_aligned' => false,
         'profile_picture' => null
     ];
@@ -126,11 +127,12 @@ class Wizard extends Component
         'formData.first_name' => 'first name',
         'formData.last_name' => 'last name',
         'formData.sex' => 'sex',
-        'formData.current_barangay' => 'barangay',
-        'formData.current_municipality' => 'municipality',
-        'formData.current_province' => 'province',
-        'formData.current_zip' => 'ZIP code',
-        'formData.current_country' => 'country',
+        'formData.current_house_no' => 'current house no.',
+        'formData.current_barangay' => 'current barangay',
+        'formData.current_municipality' => 'current municipality',
+        'formData.current_province' => 'current province',
+        'formData.current_zip' => 'current ZIP code',
+        'formData.current_country' => 'current country',
         'formData.permanent_house_no' => 'permanent house no.',
         'formData.permanent_barangay' => 'permanent barangay',
         'formData.permanent_municipality' => 'permanent municipality',
@@ -144,6 +146,9 @@ class Wizard extends Component
         'formData.last_grade_level' => 'last grade level',
         'formData.last_school_attended' => 'last school attended',
         'formData.last_gwa' => 'GWA',
+        'formData.tech_voc_course1' => '1st choice specialization',
+        'formData.tech_voc_course2' => '2nd choice specialization',
+        'formData.tech_voc_course3' => '3rd choice specialization',
     ];
 
     public function rules()
@@ -181,6 +186,22 @@ class Wizard extends Component
 
         if (str_starts_with($propertyName, 'formData.current_') && ($this->formData['is_same_address'] ?? false)) {
             $this->syncAddresses();
+        }
+
+        if ($propertyName === 'formData.grade_level') {
+            $grade = (int) str_replace('Grade ', '', $this->formData['grade_level']);
+            if ($grade > 1) {
+                $this->formData['last_grade_level'] = 'Grade ' . ($grade - 1);
+            }
+        }
+
+        // Prevent duplicate tech-voc courses
+        if ($propertyName === 'formData.tech_voc_course1') {
+            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course2']) $this->formData['tech_voc_course2'] = '';
+            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course3']) $this->formData['tech_voc_course3'] = '';
+        }
+        if ($propertyName === 'formData.tech_voc_course2') {
+            if ($this->formData['tech_voc_course2'] === $this->formData['tech_voc_course3']) $this->formData['tech_voc_course3'] = '';
         }
     }
 
@@ -246,6 +267,7 @@ class Wizard extends Component
         // Hydrate state
         $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
         $this->currentStep = $preEnrollment->current_step;
+        $this->school_category = $this->formData['school_category'] ?? '';
         $this->enrollment_type = $this->formData['enrollment_type'] ?? '';
         $this->is_resumed = true;
         
@@ -262,6 +284,11 @@ class Wizard extends Component
             $this->initStep = 1;
         }
 
+        // Fallback for Old Students if school name is missing in draft
+        if ($this->enrollment_type === 'Old Student' && empty($this->formData['last_school_attended'])) {
+            $this->formData['last_school_attended'] = 'Tanza National Trade School';
+        }
+
         $this->showResumeModal = false;
     }
 
@@ -275,6 +302,7 @@ class Wizard extends Component
     public function selectCategory($cat)
     {
         $this->school_category = $cat;
+        $this->formData['school_category'] = $cat;
         $this->initStep = 2;
     }
 
@@ -284,6 +312,10 @@ class Wizard extends Component
         $this->formData['enrollment_type'] = $type;
         $this->formData['lrn'] = $this->lrn;
         $this->formData['birthdate'] = $this->birthdate;
+
+        if ($type === 'Old Student') {
+            $this->formData['last_school_attended'] = 'Tanza National Trade School';
+        }
 
         if ($type === 'Incoming Grade 7') {
             $this->formData['grade_level'] = 'Grade 7';
@@ -332,8 +364,16 @@ class Wizard extends Component
             }
 
             // Custom enforcement for Step 5
-            if ($this->currentStep == 5 && in_array($this->enrollment_type, ['Incoming Grade 7', 'Incoming Grade 11'])) {
-                $rules['formData.last_grade_level'] = 'required|in:' . ($this->enrollment_type === 'Incoming Grade 7' ? 'Grade 6' : 'Grade 10');
+            if ($this->currentStep == 5) {
+                if (in_array($this->enrollment_type, ['Incoming Grade 7', 'Incoming Grade 11'])) {
+                    $rules['formData.last_grade_level'] = 'required|in:' . ($this->enrollment_type === 'Incoming Grade 7' ? 'Grade 6' : 'Grade 10');
+                }
+                
+                if ($this->formData['grade_level'] == 'Grade 8') {
+                    $rules['formData.tech_voc_course1'] = 'required';
+                    $rules['formData.tech_voc_course2'] = 'required';
+                    $rules['formData.tech_voc_course3'] = 'required';
+                }
             }
 
             $this->validate($rules);
@@ -401,7 +441,7 @@ class Wizard extends Component
             'middle_name' => $this->formData['middle_name'] ?? '',
             'grade_level' => $this->formData['grade_level'],
             'strand' => $this->formData['strand'] ?? '',
-            'specialization' => $this->formData['rank1'] ?? '',
+            'specialization' => $this->formData['tech_voc_course1'] ?? '',
             'transaction_number' => $this->transaction_number ?? 'PENDING',
             'finalized_at' => now(),
         ];

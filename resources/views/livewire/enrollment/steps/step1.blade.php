@@ -10,15 +10,15 @@
                 <option value="">Select Grade Level</option>
                 @if($school_category == 'HS')
                     <optgroup label="Junior High School">
-                        <option value="Grade 7">Grade 7</option>
-                        <option value="Grade 8">Grade 8</option>
-                        <option value="Grade 9">Grade 9</option>
-                        <option value="Grade 10">Grade 10</option>
+                        <option value="Grade 7" @selected(($formData['grade_level'] ?? '') == 'Grade 7')>Grade 7</option>
+                        <option value="Grade 8" @selected(($formData['grade_level'] ?? '') == 'Grade 8')>Grade 8</option>
+                        <option value="Grade 9" @selected(($formData['grade_level'] ?? '') == 'Grade 9')>Grade 9</option>
+                        <option value="Grade 10" @selected(($formData['grade_level'] ?? '') == 'Grade 10')>Grade 10</option>
                     </optgroup>
                 @else
                     <optgroup label="Senior High School">
-                        <option value="Grade 11">Grade 11</option>
-                        <option value="Grade 12">Grade 12</option>
+                        <option value="Grade 11" @selected(($formData['grade_level'] ?? '') == 'Grade 11')>Grade 11</option>
+                        <option value="Grade 12" @selected(($formData['grade_level'] ?? '') == 'Grade 12')>Grade 12</option>
                     </optgroup>
                 @endif
             </select>

@@ -6,17 +6,17 @@
         <label wire:key="f-father-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Father's Full Name</span>
             <input wire:model.live.debounce.500ms="formData.father_name" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm @error('formData.father_name') border-red-500 ring-red-500 @enderror" type="text"/>
-            @error('formData.father_name') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+            @error('formData.father_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label wire:key="f-mother-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Mother's Maiden Name</span>
             <input wire:model.live.debounce.500ms="formData.mother_maiden_name" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm @error('formData.mother_maiden_name') border-red-500 ring-red-500 @enderror" type="text"/>
-            @error('formData.mother_maiden_name') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+            @error('formData.mother_maiden_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label wire:key="f-guardian-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Legal Guardian Name</span>
             <input wire:model.live.debounce.500ms="formData.guardian_name" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm @error('formData.guardian_name') border-red-500 ring-red-500 @enderror" placeholder="Full Name" type="text"/>
-            @error('formData.guardian_name') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+            @error('formData.guardian_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label class="flex flex-col gap-2 max-w-sm">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Primary Contact Number</span>
@@ -28,7 +28,7 @@
                        class="form-input w-full rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm pl-12 {{ $is_resumed ? 'text-gray-400' : '' }} @error('formData.contact_no') border-red-500 ring-red-500 @enderror" type="text" placeholder="9XXXXXXXXX"/>
             </div>
             <p class="text-[10px] text-zinc-500 mt-1 italic">Note: This number will be used for official school communications and as an <strong>emergency contact</strong>.</p>
-            @error('formData.contact_no') <span class="text-red-500 text-[10px] font-bold">{{ $message }}</span> @enderror
+            @error('formData.contact_no') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
     </div>
 </section>

@@ -82,9 +82,14 @@
                     <span class="material-symbols-outlined text-lg">home</span>
                     Back to Home
                 </a>
-                <button type="button" wire:click="downloadCertificate" class="w-full md:w-auto inline-flex items-center justify-center gap-3 bg-primary text-white px-10 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:scale-[1.02] transition-all">
-                    <span class="material-symbols-outlined text-lg">download</span>
-                    Download Enrollment Certificate
+                <button type="button" 
+                        wire:click="downloadCertificate" 
+                        wire:loading.attr="disabled"
+                        class="w-full md:w-auto inline-flex items-center justify-center gap-3 bg-primary text-white px-10 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-2xl shadow-primary/30 hover:bg-primary/90 hover:scale-[1.02] transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+                    <span wire:loading.remove wire:target="downloadCertificate" class="material-symbols-outlined text-lg">download</span>
+                    <div wire:loading wire:target="downloadCertificate" class="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span wire:loading.remove wire:target="downloadCertificate">Download Enrollment Certificate</span>
+                    <span wire:loading wire:target="downloadCertificate">Generating Certificate...</span>
                 </button>
             </div>
         </div>

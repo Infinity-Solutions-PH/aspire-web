@@ -6,20 +6,23 @@
         <label wire:key="f-first-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">First Name</span>
             <input @if($is_resumed) value="{{ $this->maskValue('first_name', $formData['first_name']) }}" @endif
-                   @focus="resumed = false"
-                    wire:model.live.debounce.500ms="formData.first_name" 
-                   class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm {{ $is_resumed ? 'text-gray-400' : '' }} @error('formData.first_name') border-red-500 ring-red-500 @enderror" type="text"/>
+                @focus="resumed = false"
+                wire:model.live.debounce.500ms="formData.first_name" 
+                class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm {{ $is_resumed ? 'text-gray-400' : '' }} @error('formData.first_name') border-red-500 ring-red-500 @enderror" type="text"/>
+            @error('formData.first_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label wire:key="f-last-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Last Name</span>
             <input @if($is_resumed) value="{{ $this->maskValue('last_name', $formData['last_name']) }}" @endif
-                   @focus="resumed = false"
-                   wire:model.live.debounce.500ms="formData.last_name" 
-                   class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm {{ $is_resumed ? 'text-gray-400' : '' }} @error('formData.last_name') border-red-500 ring-red-500 @enderror" type="text"/>
+                @focus="resumed = false"
+                wire:model.live.debounce.500ms="formData.last_name" 
+                class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm {{ $is_resumed ? 'text-gray-400' : '' }} @error('formData.last_name') border-red-500 ring-red-500 @enderror" type="text"/>
+            @error('formData.last_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label wire:key="f-middle-name" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Middle Name</span>
             <input wire:model.live.debounce.500ms="formData.middle_name" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm @error('formData.middle_name') border-red-500 ring-red-500 @enderror" type="text"/>
+            @error('formData.middle_name') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Extension Name</span>
@@ -32,6 +35,7 @@
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
             </select>
+            @error('formData.sex') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
         </label>
         <label class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Mother Tongue</span>
