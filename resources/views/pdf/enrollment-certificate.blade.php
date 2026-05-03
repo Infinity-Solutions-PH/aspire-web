@@ -2,205 +2,368 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Certificate of Enrollment - TNTS</title>
+    <title>Admission Pass - TNTS</title>
     <style>
-        @page { margin: 0; }
+        @page { 
+            margin: 0;
+            size: a4 portrait;
+        }
         body {
             font-family: 'Helvetica', sans-serif;
             margin: 0;
             padding: 0;
-            color: #1a1a1a;
-            line-height: 1.5;
+            color: #1b0d0d;
+            line-height: 1.4;
+            background-color: #ffffff;
         }
+        .page-break {
+            page-break-before: always;
+            clear: both;
+        }
+        
+        /* Layout */
         .container {
-            padding: 40px;
+            padding: 40px 60px 80px 60px;
             position: relative;
         }
+        
+        /* Header */
         .header {
-            text-align: center;
             margin-bottom: 40px;
-            border-bottom: 2px solid #800000;
-            padding-bottom: 20px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #e7cfcf;
         }
-        .logo-placeholder {
-            font-size: 24px;
-            font-weight: bold;
-            color: #800000;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-        .school-name {
-            font-size: 28px;
-            font-weight: 800;
-            margin: 0;
-            color: #800000;
-        }
-        .school-info {
-            font-size: 10px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .title {
-            text-align: center;
-            font-size: 22px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-        .content {
-            font-size: 12px;
-        }
-        .declaration {
-            margin-bottom: 30px;
-            text-align: justify;
-        }
-        .data-table {
+        .header-table {
             width: 100%;
             border-collapse: collapse;
+        }
+        .logo {
+            width: 70px;
+            height: 70px;
+        }
+        .brand-container {
+            padding-left: 20px;
+        }
+        .school-name {
+            font-size: 26px;
+            font-weight: 900;
+            color: #800000;
+            text-transform: uppercase;
+            letter-spacing: -1.5px;
+            margin: 0;
+            line-height: 1;
+        }
+        .aspire-tagline {
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            color: #800000;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+        .aspire-letter { font-weight: 900; }
+
+        /* Titles */
+        .title-section {
+            text-align: center;
             margin-bottom: 40px;
         }
-        .data-table td {
-            padding: 8px 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .label {
-            font-weight: bold;
-            width: 30%;
-            color: #666;
+        .cert-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: #1b0d0d;
+            margin: 0;
             text-transform: uppercase;
-            font-size: 10px;
+            letter-spacing: 2px;
         }
-        .value {
+        .cert-badge {
+            display: inline-block;
+            margin-top: 8px;
+            background: #800000;
+            color: #ffffff;
+            padding: 4px 16px;
+            border-radius: 4px;
+            font-size: 11px;
             font-weight: bold;
-            color: #000;
-            font-size: 13px;
+            letter-spacing: 2px;
         }
-        .footer {
-            margin-top: 60px;
-        }
-        .signatures {
-            width: 100%;
-            margin-top: 40px;
-        }
-        .signature-box {
+
+        /* Notice Box */
+        .notice-card {
+            background: #fffafa;
+            border: 1px solid #f5e6e6;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 35px;
             text-align: center;
-            width: 45%;
         }
-        .sig-line {
-            border-top: 1px solid #000;
-            margin-top: 40px;
-            padding-top: 5px;
-            font-weight: bold;
+        .notice-text {
             font-size: 12px;
+            color: #6d4c41;
+            margin: 0;
+            font-style: italic;
         }
-        .sig-sub {
+
+        /* Data Section */
+        .data-section {
+            background: #ffffff;
+            margin-bottom: 40px;
+        }
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .info-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f3ecec;
+        }
+        .info-label {
             font-size: 10px;
-            color: #666;
-        }
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 80px;
-            color: rgba(128, 0, 0, 0.05);
             font-weight: bold;
-            z-index: -1;
-            white-space: nowrap;
+            color: #9a8a8a;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 35%;
         }
-        .qr-placeholder {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            width: 80px;
-            height: 80px;
-            border: 1px solid #eee;
+        .info-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1b0d0d;
+        }
+        .status-pill {
+            background: #f0fdf4;
+            color: #166534;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 900;
+            border: 1px solid #dcfce7;
+        }
+
+        /* QR / Transaction Code */
+        .id-card {
+            margin-top: 50px;
+            border: 2px solid #800000;
+            border-radius: 20px;
+            padding: 30px;
             text-align: center;
-            font-size: 8px;
-            color: #ccc;
-            padding-top: 30px;
+            background: #fff;
+        }
+        .qr-code {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 15px;
+        }
+        .trans-label {
+            font-size: 10px;
+            color: #9a8a8a;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .trans-id {
+            font-family: 'Courier', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            color: #800000;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 50px;
+            left: 60px;
+            right: 60px;
+            text-align: center;
+            border-top: 1px solid #f3ecec;
+            padding-top: 20px;
+        }
+        .footer-text {
+            font-size: 10px;
+            color: #9a8a8a;
+            line-height: 1.6;
+        }
+
+        /* Secondary Page */
+        .guide-header {
+            font-size: 22px;
+            font-weight: 900;
+            color: #800000;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            border-left: 5px solid #800000;
+            padding-left: 15px;
+        }
+        .guide-section {
+            margin-bottom: 40px;
+        }
+        .guide-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #1b0d0d;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .checklist-box {
+            background: #fdfbfb;
+            border: 1px solid #f3ecec;
+            border-radius: 12px;
+            padding: 25px;
+        }
+        .check-item {
+            font-size: 12px;
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+            color: #4a3f3f;
+        }
+        .check-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #800000;
+            font-weight: 900;
+        }
+        .warning-item:before {
+            content: "!";
+            color: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <div class="watermark">OFFICIAL ENROLLMENT</div>
+    <!-- Page 1: Admission Pass -->
     <div class="container">
         <div class="header">
-            <div class="logo-placeholder">TNTS ASPIRE</div>
-            <h1 class="school-name">Tanza National Trade School</h1>
-            <p class="school-info">Brgy. Paradahan I, Tanza, Cavite | Established 1959</p>
-            <p class="school-info">Tel: (046) 437-0123 | Email: registrar@tnts.edu.ph</p>
+            <table class="header-table">
+                <tr>
+                    <td style="width: 70px;">
+                        <img src="{{ public_path('images/logo.png') }}" class="logo" alt="TNTS Logo">
+                    </td>
+                    <td class="brand-container">
+                        <h1 class="school-name">Tanza National Trade School</h1>
+                        <div class="aspire-tagline">
+                            <span class="aspire-letter">A</span>cademic 
+                            <span class="aspire-letter">S</span>tudent 
+                            <span class="aspire-letter">P</span>ortal 
+                            <span class="aspire-letter">I</span>nformation 
+                            <span class="aspire-letter">R</span>ecords and 
+                            <span class="aspire-letter">E</span>nrollment
+                        </div>
+                    </td>
+                </tr>
+            </table>
         </div>
 
-        <h2 class="title">Certificate of Enrollment</h2>
+        <div class="title-section">
+            <h2 class="cert-title">Certificate of Admission</h2>
+            <div class="cert-badge">ENROLLMENT PASS</div>
+        </div>
 
-        <div class="content">
-            <div style="background: #f8f8f8; padding: 15px 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #800000;">
-                <span style="font-size: 9px; font-weight: bold; color: #666; text-transform: uppercase; letter-spacing: 1px;">Transaction Reference Number</span>
-                <div style="font-size: 24px; font-weight: 900; color: #800000; margin-top: 4px; font-family: 'Courier', monospace;">{{ $enrollment->transaction_number }}</div>
-            </div>
-
-            <p class="declaration">
-                This is to certify that the student named below is officially enrolled as a 
-                <strong>{{ $enrollment->type }}</strong> student for the School Year 
-                <strong>2026-2027</strong>. This certificate serves as temporary proof of enrollment 
-                pending the issuance of a formal School ID.
+        <div class="notice-card">
+            <p class="notice-text">
+                This document serves as your official entry pass for physical document verification. 
+                Please ensure you bring all required original documents listed on the next page.
             </p>
+        </div>
 
-            <table class="data-table">
+        <div class="data-section">
+            <table class="info-table">
                 <tr>
-                    <td class="label">LEARNER REFERENCE NO. (LRN)</td>
-                    <td class="value">{{ $enrollment->lrn }}</td>
+                    <td class="info-label">Learner Reference No. (LRN)</td>
+                    <td class="info-value">{{ $enrollment->lrn }}</td>
                 </tr>
                 <tr>
-                    <td class="label">STUDENT NAME</td>
-                    <td class="value">{{ strtoupper($enrollment->last_name) }}, {{ strtoupper($enrollment->first_name) }} {{ strtoupper($enrollment->middle_name) }}</td>
+                    <td class="info-label">Full Name</td>
+                    <td class="info-value">{{ strtoupper($enrollment->last_name) }}, {{ strtoupper($enrollment->first_name) }} {{ strtoupper($enrollment->middle_name) }}</td>
                 </tr>
                 <tr>
-                    <td class="label">GRADE LEVEL</td>
-                    <td class="value">{{ $enrollment->grade_level }}</td>
+                    <td class="info-label">Grade Level</td>
+                    <td class="info-value">{{ $enrollment->grade_level }}</td>
                 </tr>
-                @if($enrollment->specialization)
+                @if($enrollment->specialization || $enrollment->strand)
                 <tr>
-                    <td class="label">SPECIALIZATION / STRAND</td>
-                    <td class="value">{{ $enrollment->specialization ?: ($enrollment->strand ?: 'General Curriculum') }}</td>
+                    <td class="info-label">Strand / Specialization</td>
+                    <td class="info-value">{{ $enrollment->specialization ?: ($enrollment->strand ?: 'N/A') }}</td>
                 </tr>
                 @endif
                 <tr>
-                    <td class="label">ENROLLMENT STATUS</td>
-                    <td class="value" style="color: #008000;">OFFICIALLY ENROLLED</td>
+                    <td class="info-label">Enrollment Status</td>
+                    <td><span class="status-pill">PRE-ENROLLED</span></td>
                 </tr>
                 <tr>
-                    <td class="label">DATE FINALIZED</td>
-                    <td class="value">{{ $enrollment->finalized_at->format('F d, Y h:i A') }}</td>
+                    <td class="info-label">Submission Date</td>
+                    <td class="info-value" style="font-size: 13px;">{{ $enrollment->finalized_at->format('F d, Y h:i A') }}</td>
                 </tr>
             </table>
+        </div>
+
+        <div class="id-card" style="margin-top: 30px; padding: 20px;">
+            <div class="trans-label">Verification QR Code</div>
+            @if($qrCode)
+                <img class="qr-code" style="width: 120px; height: 120px;" src="{{ $qrCode }}" alt="QR Code">
+            @else
+                <div style="width: 120px; height: 120px; border: 1px solid #eee; margin: 0 auto; padding-top: 50px; font-size: 10px; color: #ccc;">QR CODE<br>PENDING</div>
+            @endif
+            <div class="trans-label" style="margin-top: 5px;">Transaction Reference Number</div>
+            <div class="trans-id" style="font-size: 20px;">{{ $enrollment->transaction_number }}</div>
         </div>
 
         <div class="footer">
-            <table class="signatures">
-                <tr>
-                    <td class="signature-box" style="width: 50%;">
-                        <div class="sig-line">AUTOMATICALLY GENERATED</div>
-                        <div class="sig-sub">System-Verified Enrollment</div>
-                    </td>
-                    <td style="width: 10%;"></td>
-                    <td class="signature-box" style="width: 40%;">
-                        <div class="sig-line" style="border-top: none;">
-                            <img src="data:image/svg+xml;base64,{{ base64_encode('<svg width="150" height="40" xmlns="http://www.w3.org/2000/svg"><text x="0" y="30" font-family="Arial" font-size="14" fill="#000" font-style="italic">Registrar Official</text></svg>') }}">
-                        </div>
-                        <div class="sig-line">SCHOOL REGISTRAR</div>
-                        <div class="sig-sub">Authorized Signature</div>
-                    </td>
-                </tr>
-            </table>
+            <div class="footer-text">
+                <strong>Tanza National Trade School - Registrar's Office</strong><br>
+                Brgy. Paradahan I, Tanza, Cavite | established 1959<br>
+                (046) 437-0123 | registrar@tnts.edu.ph | tnts.edu.ph
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Guide -->
+    <div class="container" style="page-break-before: always;">
+        <div class="header" style="border-bottom: 2px solid #1b0d0d; margin-bottom: 20px;">
+            <h1 class="school-name" style="color: #1b0d0d; font-size: 20px;">Physical Verification Guide</h1>
+            <div class="aspire-tagline" style="color: #888;">TNTS ASPIRE | SY 2026-2027</div>
         </div>
 
-        <div class="qr-placeholder">
-            VERIFICATION QR
-            <br>
-            {{ $enrollment->lrn }}
+        <div class="guide-section" style="margin-bottom: 25px;">
+            <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Checklist of Requirements</h3>
+            <div class="checklist-box" style="padding: 15px;">
+                <div class="check-item"><strong>Printed Copy</strong> of this Certificate of Admission</div>
+                <div class="check-item"><strong>Original & Photocopy</strong> of PSA Birth Certificate</div>
+                <div class="check-item"><strong>Original Report Card</strong> (Form 138) from previous school year</div>
+                <div class="check-item">Original <strong>Certificate of Good Moral Character</strong></div>
+                <div class="check-item"><strong>Two (2) pieces 2x2 ID Pictures</strong> (White background, with name tag)</div>
+                <div class="check-item"><strong>Long Brown Envelope</strong> (1 piece)</div>
+                @if($enrollment->grade_level == 'Grade 11')
+                <div class="check-item"><strong>NCAE Results</strong> (for SHS Applicants)</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="guide-section" style="margin-bottom: 25px;">
+            <h3 class="guide-header" style="font-size: 18px; margin-bottom: 15px;">Campus Rules & Etiquette</h3>
+            <div class="checklist-box" style="background: #fff8f8; border-color: #f5e6e6; padding: 15px;">
+                <div class="guide-title" style="color: #1e7e34; margin-bottom: 10px;">✓ Guidelines for Entry</div>
+                <div class="check-item"><strong>Dress Code:</strong> Wear decent attire. Strictly no slippers, sando, or short shorts allowed.</div>
+                <div class="check-item"><strong>Silence:</strong> Maintain silence especially near testing rooms and administrative offices.</div>
+                <div class="check-item"><strong>Punctuality:</strong> Arrive at least 15 minutes before your scheduled verification time.</div>
+                
+                <div class="guide-title" style="color: #d32f2f; margin-top: 15px; margin-bottom: 10px;">✗ Prohibited Actions</div>
+                <div class="check-item warning-item">No smoking or vaping within the school vicinity.</div>
+                <div class="check-item warning-item">Do not bring sharp objects or any hazardous materials.</div>
+                <div class="check-item warning-item">Avoid loitering in restricted student-only areas.</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center; border: 1px dashed #e7cfcf; padding: 15px; border-radius: 10px;">
+            <p style="font-size: 10px; color: #9a8a8a; margin: 0; font-style: italic;">
+                "Dedicated to Excellence in Technical and Vocational Education since 1959"
+            </p>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                For inquiries, visit our official Facebook page: <strong>fb.com/TNTSOfficial</strong>
+            </div>
         </div>
     </div>
 </body>

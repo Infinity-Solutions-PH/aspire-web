@@ -9,7 +9,7 @@ The single entry point strictly uses the student's Learner Reference Number (LRN
 **Database Requirements:**
 Create a `PreEnrollment` model and migration. Key columns: `lrn` (string, unique), `birthdate` (date), `current_step` (integer), `status` (enum: 'draft', 'pending_approval'), and `form_data` (jsonb) to hold all dynamic form inputs.
 
-**Livewire Component Requirements (`EnrollmentWizard`):**
+**Livewire Component Requirements (`Enrollment\Wizard`):**
 Create a full-page Livewire 3 component that handles both the gateway logic and the multi-step form.
 
 1. **The Gateway State (Step 0):** The component mounts with two inputs: `lrn` and `birthdate`. Upon submission, execute the following logic:

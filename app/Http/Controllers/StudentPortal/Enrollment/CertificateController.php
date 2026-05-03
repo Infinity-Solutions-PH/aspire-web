@@ -32,8 +32,19 @@ class CertificateController extends Controller
             return $pdf->download("TNTS_SOA_{$enrollment->lrn}.pdf");
         }
 
-        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment'))
-            ->setPaper('a4', 'portrait');
+        $qrCode = null;
+        try {
+            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($enrollment->transaction_number);
+            $qrData = file_get_contents($qrUrl);
+            $qrCode = 'data:image/png;base64,' . base64_encode($qrData);
+        } catch (\Exception $e) {
+            // Fallback to null if QR generation fails
+        }
+
+        $pdf = Pdf::loadView('pdf.enrollment-certificate', compact('enrollment', 'qrCode'))
+            ->setPaper('a4', 'portrait')
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
 
         return $pdf->download("TNTS_Certificate_{$enrollment->lrn}.pdf");
     }

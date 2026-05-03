@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'Enrollment Gateway | TNTS ASPIRE' }}</title>
-    
+    <title>{{ $title ?? 'Online Enrollment Portal · TNTS ASPIRE' }}</title>
+    <link rel="icon" href="{{ asset('images/logo.png') }}" type="image/png">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -55,15 +55,23 @@
     <!-- Header -->
     <header class="flex items-center justify-between px-8 py-6 bg-white/50 dark:bg-black/20 backdrop-blur-md border-b border-[#e7cfcf] dark:border-white/10 sticky top-0 z-50">
         <div class="flex items-center gap-4 mx-auto max-w-7xl w-full">
-            <div class="flex items-center gap-3">
-                <div class="flex items-center justify-center rounded-lg size-12 text-white">
-                    <x-app-logo-image class="size-full" />
+            <a href="{{ route('home') }}">
+                <div class="flex items-center gap-4">
+                    <div class="size-12 flex items-center justify-center rounded-xl">
+                        <x-app-logo-image class="size-full fill-current text-white" />
+                    </div>
+                    <div class="hidden md:flex flex-col justify-center leading-none mt-1">
+                        <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
+                        <span class="text-primary text-[10px] font-bold uppercase tracking-widest leading-[18px]">Online Enrollment Portal</span>
+                    </div>
+                    <div class="flex md:hidden flex-col justify-center leading-none mt-1">
+                        <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">TNTS</span>
+                        <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
+                            <span class="text-xs font-bold">ASPIRE</span>
+                        </span>
+                    </div>
                 </div>
-                <div class="flex flex-col">
-                    <h1 class="text-[#1b0d0d] dark:text-white text-2xl font-bold leading-none tracking-tighter">TNTS ASPIRE</h1>
-                    <p class="text-primary text-[10px] font-bold uppercase tracking-widest">Public Enrollment Gateway</p>
-                </div>
-            </div>
+            </a>
             <div class="ml-auto">
                 <a href="{{ route('home') }}" class="text-sm font-bold text-gray-500 hover:text-primary transition-colors">Cancel & Return</a>
             </div>
