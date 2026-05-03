@@ -17,6 +17,7 @@
                 <input wire:model.live="search" class="w-full pl-12 pr-4 py-3 bg-background-light dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-lg focus:ring-primary focus:border-primary text-sm transition-all" placeholder="Search by LRN, name, or track..." type="text"/>
             </div>
             <div class="flex items-center gap-3">
+                @if($status !== 'Draft')
                 <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
                     <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Category:</span>
                     <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
@@ -25,6 +26,7 @@
                         <option value="SHS">Senior High</option>
                     </select>
                 </div>
+                @endif
                 <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
                     <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Status:</span>
                     <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
@@ -32,7 +34,8 @@
                         <option value="Draft">Drafts</option>
                     </select>
                 </div>
-                <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
+                @if($status !== 'Draft')
+                <!-- <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
                     <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Type:</span>
                     <select wire:model.live="type" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
                         <option value="">All Types</option>
@@ -40,7 +43,8 @@
                         <option value="Old Student">Old Student</option>
                         <option value="Transferee">Transferee</option>
                     </select>
-                </div>
+                </div> -->
+                @endif
             </div>
         </div>
         <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">

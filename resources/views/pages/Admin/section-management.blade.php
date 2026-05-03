@@ -115,7 +115,7 @@
                     </div>
                 </div>
                 <div class="p-4 bg-[#fcf8f8] dark:bg-[#221010] border-t border-[#f3e7e7] dark:border-[#3d2525] grid grid-cols-2 gap-3">
-                    <button class="h-9 flex items-center justify-center rounded-lg border border-primary text-primary text-xs font-bold hover:bg-primary/5 transition-colors">
+                    <button wire:click="openAdviserModal({{ $section->id }})" class="h-9 flex items-center justify-center rounded-lg border border-primary text-primary text-xs font-bold hover:bg-primary/5 transition-colors">
                         Assign Teacher
                     </button>
                     <button class="h-9 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 transition-opacity">
@@ -183,6 +183,44 @@
 
                         <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-primary/30 hover:opacity-90 transition-all mt-4">
                             Confirm Creation
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Assign Adviser Modal -->
+        @if($showAdviserModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+            <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="$set('showAdviserModal', false)"></div>
+            <div class="bg-white dark:bg-[#2c1818] rounded-3xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl">
+                <div class="p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight">Assign Adviser</h2>
+                            <p class="text-xs text-[#9a4c4c] font-bold uppercase">Section: {{ $currentSectionName }}</p>
+                        </div>
+                        <button wire:click="$set('showAdviserModal', false)" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    
+                    <form wire:submit.prevent="assignAdviser" class="space-y-6">
+                        <div>
+                            <label class="block text-[10px] font-black text-[#9a4c4c] uppercase tracking-widest mb-2">Select Faculty Member</label>
+                            <select wire:model="selectedAdviserId" class="w-full rounded-xl border-[#f3e7e7] dark:border-[#3d2525] bg-[#fdfafb] dark:bg-[#3d2424] focus:ring-primary focus:border-primary h-14 text-sm font-bold px-4">
+                                <option value="">Choose a teacher...</option>
+                                @foreach($teachers as $teacher)
+                                    <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('selectedAdviserId') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-black text-base shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
+                            <span wire:loading wire:target="assignAdviser" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            Save Assignment
                         </button>
                     </form>
                 </div>
