@@ -109,60 +109,69 @@
 
     <!-- Sidebar: Virtual ID & Actions -->
     <div class="space-y-8">
-        <!-- Virtual ID Card -->
-        <div class="relative w-full aspect-[1/1.58] bg-gradient-to-br from-primary to-[#800000] rounded-3xl p-6 text-white shadow-2xl shadow-primary/30 flex flex-col items-center justify-between overflow-hidden group">
-            <!-- ID Header -->
-            <div class="w-full flex items-center justify-between mb-4 relative z-10">
-                <div class="size-12 bg-white rounded-lg p-1">
-                    <x-app-logo-image class="size-full" />
+        <!-- Virtual ID Card (Redesign) -->
+        <div class="relative w-full aspect-[1/1.6] bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 group">
+            <!-- Red Header with Building Overlay -->
+            <div class="absolute top-0 w-full h-[45%] bg-[#c1121f] overflow-hidden">
+                <div class="absolute inset-0 opacity-20 mix-blend-overlay">
+                    <!-- Building Pattern/Image would go here -->
+                    <div class="w-full h-full bg-[url('https://tnts.edu.ph/wp-content/uploads/2023/10/TNTS-Building.jpg')] bg-cover bg-center"></div>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] font-bold uppercase tracking-tighter opacity-80 leading-none">School Year</p>
-                    <p class="text-xs font-bold leading-none mt-1">2024-2025</p>
+                <div class="relative z-10 flex flex-col items-center pt-6 text-white text-center">
+                    <div class="size-16 mb-2">
+                        <x-app-logo-image class="size-full brightness-0 invert" />
+                    </div>
+                    <h1 class="text-xs font-black tracking-tight leading-tight uppercase">Tanza National Trade School</h1>
+                    <p class="text-[8px] font-medium opacity-90 uppercase tracking-widest mt-0.5">Paradahan I, Tanza, Cavite</p>
                 </div>
+                <!-- Curve Bottom -->
+                <div class="absolute bottom-0 w-full h-12 bg-white rounded-t-[100%] scale-x-125 translate-y-6"></div>
             </div>
 
             <!-- Student Photo -->
-            <div class="relative z-10 size-40 rounded-2xl border-4 border-white/20 overflow-hidden shadow-xl mb-6">
-                @if($enrollment->profile_picture)
-                    <img src="{{ asset('storage/' . $enrollment->profile_picture) }}" class="size-full object-cover">
-                @else
-                    <div class="size-full bg-white/10 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-6xl opacity-20">person</span>
-                    </div>
-                @endif
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-            </div>
-
-            <!-- Student Name & Info -->
-            <div class="w-full text-center relative z-10">
-                <h4 class="text-xl font-black uppercase tracking-tight leading-tight mb-1">{{ auth()->user()->name }}</h4>
-                <p class="text-primary-container text-xs font-bold bg-white/10 py-1 px-4 rounded-full inline-block border border-white/10 mb-6">LRN: {{ $enrollment->lrn }}</p>
-                
-                <div class="grid grid-cols-3 gap-2 text-left pt-6 border-t border-white/10 mt-auto">
-                    <div class="col-span-1">
-                        <p class="text-[8px] uppercase font-bold opacity-60 tracking-widest">Grade</p>
-                        <p class="text-xs font-bold leading-none">{{ $enrollment->grade_level }}</p>
-                    </div>
-                    <div class="col-span-2">
-                        <p class="text-[8px] uppercase font-bold opacity-60 tracking-widest">Category</p>
-                        <p class="text-xs font-bold leading-none truncate">{{ $enrollment->school_category }}</p>
-                    </div>
-                    @if($enrollment->strand || $enrollment->specialization)
-                    <div class="col-span-3 mt-3 pt-3 border-t border-white/5">
-                        <p class="text-[8px] uppercase font-bold opacity-60 tracking-widest">{{ $enrollment->strand ? 'Strand' : 'Specialization' }}</p>
-                        <p class="text-xs font-bold leading-none truncate">{{ $enrollment->strand ?: $enrollment->specialization }}</p>
-                    </div>
+            <div class="absolute top-[28%] left-1/2 -translate-x-1/2 z-20">
+                <div class="w-44 aspect-square rounded-[40px] border-[6px] border-white shadow-2xl overflow-hidden bg-gray-50">
+                    @if($enrollment->profile_picture)
+                        <img src="{{ asset('storage/' . $enrollment->profile_picture) }}" class="size-full object-cover">
+                    @else
+                        <div class="size-full flex items-center justify-center text-gray-200">
+                            <span class="material-symbols-outlined text-7xl">person</span>
+                        </div>
                     @endif
                 </div>
             </div>
 
-            <!-- Decorative Patterns -->
-            <div class="absolute -right-16 -bottom-16 size-48 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-colors duration-700"></div>
-            <div class="absolute top-0 right-0 p-4 opacity-10">
-                <span class="material-symbols-outlined text-8xl">verified</span>
+            <!-- Student Info -->
+            <div class="absolute top-[60%] w-full flex flex-col items-center text-center px-4">
+                <p class="text-xl font-black text-[#1b0d0d] tracking-wider mb-1">{{ $enrollment->lrn }}</p>
+                <h2 class="text-3xl font-black text-[#1b0d0d] uppercase leading-none">{{ $enrollment->last_name }}</h2>
+                <h3 class="text-xl font-bold text-[#1b0d0d] uppercase mt-1">
+                    {{ $enrollment->first_name }} {{ $enrollment->middle_name ? substr($enrollment->middle_name, 0, 1) . '.' : '' }}
+                </h3>
+
+                <!-- Principal Area -->
+                <div class="mt-8 flex flex-col items-center">
+                    <div class="relative">
+                        <p class="text-[14px] font-black text-[#1b0d0d] uppercase">ROLANDO P. DILIDILI, EdD.</p>
+                        <!-- Fake Signature -->
+                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-12 opacity-80 pointer-events-none">
+                            <svg viewBox="0 0 200 60" class="w-full h-full text-[#1b0d0d] fill-current">
+                                <path d="M20,40 Q50,20 80,45 T140,30 Q160,20 180,40" stroke="currentColor" fill="none" stroke-width="2" />
+                                <path d="M40,30 Q70,50 100,25 T160,35" stroke="currentColor" fill="none" stroke-width="1.5" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="w-24 h-[1px] bg-black/20 my-0.5"></div>
+                    <p class="text-[8px] font-black text-gray-400 uppercase tracking-widest">School Principal IV</p>
+                </div>
             </div>
-            <div class="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 via-white/20 to-yellow-400 opacity-30"></div>
+
+            <!-- Red Footer -->
+            <div class="absolute bottom-0 w-full h-12 bg-[#c1121f] flex items-center justify-center">
+                <p class="text-white font-black uppercase tracking-[0.2em] text-sm">
+                    {{ $enrollment->school_category === 'Senior High School' ? 'Senior High School' : 'Junior High School' }}
+                </p>
+            </div>
         </div>
 
         <!-- COE Quick Download -->
