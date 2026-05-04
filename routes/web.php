@@ -20,4 +20,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
+Route::get('/demo-reset', function() {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+            '--seed' => true,
+            '--force' => true,
+        ]);
+        return "Database has been refreshed and seeded successfully for demo purposes.";
+    } catch (\Exception $e) {
+        return "Reset failed: " . $e->getMessage();
+    }
+});
+
 require __DIR__.'/settings.php';
