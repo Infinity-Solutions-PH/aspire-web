@@ -49,18 +49,26 @@
     @livewireStyles
 </head>
 <body class="bg-background-light dark:bg-background-dark text-[#1b0d0d] dark:text-[#fcf8f8] min-h-screen">
-    <div class="flex min-h-screen w-full">
+    <div x-data="{ sidebarOpen: false }" class="flex min-h-screen w-full">
+        <!-- Mobile Sidebar Overlay -->
+        <div x-show="sidebarOpen" x-transition.opacity class="fixed inset-0 bg-[#1b0d0d]/40 backdrop-blur-sm z-40 lg:hidden" @click="sidebarOpen = false" x-cloak></div>
+
         <!-- Sidebar -->
-        <aside class="w-64 border-r border-[#e7cfcf] dark:border-[#3d2424] bg-background-light dark:bg-background-dark flex flex-col justify-between p-6 sticky top-0 h-screen">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'" class="fixed lg:sticky top-0 left-0 z-50 w-full lg:w-64 border-r border-[#e7cfcf] dark:border-[#3d2424] bg-background-light dark:bg-background-dark flex flex-col justify-between p-6 h-screen transition-transform duration-300 lg:translate-x-0">
             <div class="flex flex-col gap-8">
-                <div class="flex items-center gap-3">
-                    <div class="flex items-center justify-center rounded-lg size-10 text-white">
-                        <x-app-logo-image />
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center justify-center rounded-lg size-10 text-white shrink-0">
+                            <x-app-logo-image />
+                        </div>
+                        <div class="flex flex-col">
+                            <h1 class="text-[#1b0d0d] dark:text-white text-lg font-bold leading-none">TNTS</h1>
+                            <p class="text-primary text-xs font-medium">Student Portal</p>
+                        </div>
                     </div>
-                    <div class="flex flex-col">
-                        <h1 class="text-[#1b0d0d] dark:text-white text-lg font-bold leading-none">TNTS</h1>
-                        <p class="text-primary text-xs font-medium">Student Portal</p>
-                    </div>
+                    <button @click="sidebarOpen = false" class="lg:hidden flex items-center justify-center size-8 rounded-full bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
                 </div>
                 
                 @php
@@ -127,14 +135,17 @@
         <!-- Main Content Wrapper -->
         <main class="flex-1 flex flex-col overflow-y-auto">
             <!-- Header -->
-            <header class="flex items-center justify-between px-8 py-4 bg-background-light dark:bg-background-dark border-b border-[#e7cfcf] dark:border-[#3d2424]">
-                <div class="flex items-center gap-4 flex-1 max-w-xl">
-                    <div class="relative w-full">
+            <header class="flex items-center justify-between px-4 lg:px-8 py-4 bg-background-light dark:bg-background-dark border-b border-[#e7cfcf] dark:border-[#3d2424]">
+                <div class="flex items-center gap-3 lg:gap-4 flex-1 max-w-xl">
+                    <button @click="sidebarOpen = true" class="lg:hidden flex items-center justify-center size-10 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white shrink-0 transition-colors hover:bg-[#e7cfcf]">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    <div class="relative w-full hidden sm:block">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
                         <input class="w-full bg-[#f3e7e7] dark:bg-[#3d2424] border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-gray-500" placeholder="Search status, fees or documents..." type="text"/>
                     </div>
                 </div>
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-2 lg:gap-4">
                     <button class="size-10 flex items-center justify-center rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white relative">
                         <span class="material-symbols-outlined">notifications</span>
                         <span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
@@ -146,7 +157,7 @@
             </header>
 
             <!-- Content Area -->
-            <div class="p-8 max-w-7xl mx-auto w-full">
+            <div class="p-4 lg:p-8 max-w-7xl mx-auto w-full">
                 {{ $slot }}
             </div>
 

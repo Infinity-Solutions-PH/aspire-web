@@ -1,6 +1,6 @@
 @section('page-title', 'Faculty Management')
 
-<main class="flex-1 px-10 py-8 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal') }">
+<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal') }">
     <!-- Breadcrumbs -->
     <!-- <div class="flex flex-wrap gap-2 mb-4">
         <a class="text-[#9a4c4c] dark:text-primary/70 text-sm font-medium leading-normal hover:underline" href="#">School Management</a>
@@ -116,7 +116,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
+                                    <button wire:click="edit({{ $teacher->id }})" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
                                         <span class="material-symbols-outlined text-lg">edit</span>
                                     </button>
                                     <button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="View Schedule">
@@ -158,8 +158,8 @@
                 <!-- Modal Header -->
                 <div class="px-8 py-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-primary/5">
                     <div>
-                        <h3 class="text-xl font-black text-primary uppercase tracking-tight">Register New Faculty</h3>
-                        <p class="text-xs text-[#9a4c4c] dark:text-white/60">Create a new teacher record and system account.</p>
+                        <h3 class="text-xl font-black text-primary uppercase tracking-tight">{{ $editingId ? 'Edit Faculty Details' : 'Register New Faculty' }}</h3>
+                        <p class="text-xs text-[#9a4c4c] dark:text-white/60">{{ $editingId ? 'Update teacher information and record.' : 'Create a new teacher record and system account.' }}</p>
                     </div>
                     <button @click="showModal = false" class="text-gray-400 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined">close</span>
@@ -230,7 +230,7 @@
                         <button type="button" @click="showModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 transition-colors">Cancel</button>
                         <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
                             <span wire:loading wire:target="save" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                            Register Teacher
+                            {{ $editingId ? 'Update Information' : 'Register Teacher' }}
                         </button>
                     </div>
                 </form>

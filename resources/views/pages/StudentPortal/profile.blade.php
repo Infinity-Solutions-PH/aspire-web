@@ -130,7 +130,7 @@
                     </div>
                     <div class="space-y-1">
                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">Emergency Contact No.</p>
-                        <p class="text-sm font-bold text-primary">{{ $enrollment->contact_no ?: 'N/A' }}</p>
+                        <p class="text-sm font-bold text-primary">+63 {{ $enrollment->contact_no ?: 'N/A' }}</p>
                     </div>
                 </div>
             </section>

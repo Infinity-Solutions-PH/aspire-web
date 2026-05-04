@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Section;
+use Illuminate\Database\Seeder;
 
 class JhsSectionSeeder extends Seeder
 {
@@ -12,48 +12,54 @@ class JhsSectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $grades = ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'];
-        $normalSections = ['A (Rizal)', 'B (Bonifacio)', 'C (Mabini)'];
+        $sections = [
+            'Grade 7' => [
+                'star' => 'Sampaguita',
+                'regular' => ['Gladiola', 'Santan', 'Rose', 'Orchid', 'Daisy', 'Sunflower', 'Daffodil', 'Lily', 'Jasmine']
+            ],
+            'Grade 8' => [
+                'star' => 'Narra',
+                'regular' => ['Molave', 'Ipil-ipil', 'Yakal', 'Mahogany', 'Acacia', 'Oak', 'Pine', 'Bamboo', 'Eucalyptus']
+            ],
+            'Grade 9' => [
+                'star' => 'Love',
+                'regular' => ['Honesty', 'Hope', 'Loyalty', 'Charity', 'Courage', 'Perseverance', 'Faith', 'Humility', 'Modesty']
+            ],
+            'Grade 10' => [
+                'star' => 'Diamond',
+                'regular' => ['Ruby', 'Sapphire', 'Emerald', 'Jade', 'Pearl', 'Amethyst', 'Topaz', 'Garnet', 'Onyx']
+            ]
+        ];
 
-        // 1. Normal Sections (Grades 7 to 10)
-        foreach ($grades as $grade) {
-            foreach ($normalSections as $sec) {
+        foreach ($sections as $grade => $data) {
+            // Create Star Section
+            Section::firstOrCreate(
+                [
+                    'name' => "{$grade} - {$data['star']}",
+                    'grade_level' => $grade,
+                ],
+                [
+                    'track' => null,
+                    'strand' => null,
+                    'specialization' => null,
+                    'capacity' => 40,
+                    'is_star_section' => true,
+                ]
+            );
+
+            // Create Regular Sections
+            foreach ($data['regular'] as $secName) {
                 Section::firstOrCreate(
                     [
-                        'name' => "{$grade} - {$sec}",
+                        'name' => "{$grade} - {$secName}",
+                        'grade_level' => $grade,
                     ],
                     [
-                        'grade_level' => $grade,
                         'track' => null,
                         'strand' => null,
                         'specialization' => null,
-                        'capacity' => 45,
-                    ]
-                );
-            }
-        }
-
-        // 2. Vocational Sections (Grades 8 to 10)
-        $vocationalGrades = ['Grade 8', 'Grade 9', 'Grade 10'];
-        $specializations = [
-            'Computer Systems Servicing',
-            'SMAW Welding',
-            'Cookery',  
-            'Agriculture'
-        ];
-
-        foreach ($vocationalGrades as $grade) {
-            foreach ($specializations as $spec) {
-                Section::firstOrCreate(
-                    [
-                        'name' => "{$grade} - {$spec}",
-                    ],
-                    [
-                        'grade_level' => $grade,
-                        'track' => 'TVE', // Technical-Vocational Education for JHS
-                        'strand' => null,
-                        'specialization' => $spec,
-                        'capacity' => 30, // Smaller capacity for lab/shop classes
+                        'capacity' => 40,
+                        'is_star_section' => false,
                     ]
                 );
             }

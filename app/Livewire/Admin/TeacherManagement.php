@@ -18,6 +18,7 @@ class TeacherManagement extends Component
  
     // Form Properties
     public $showModal = false;
+    public $editingId = null;
     public $teacher_id = '';
     public $name = '';
     public $email = '';
@@ -25,13 +26,20 @@ class TeacherManagement extends Component
     public $form_status = 'Active';
     public $specialization = '';
  
-    protected $rules = [
-        'teacher_id' => 'required|unique:teachers,teacher_id',
-        'name' => 'required|min:3',
-        'email' => 'required|email|unique:users,email',
-        'form_department' => 'required',
-        'form_status' => 'required',
-    ];
+    protected function rules()
+    {
+        $teacher = $this->editingId ? Teacher::find($this->editingId) : null;
+        $userId = $teacher ? $teacher->user_id : null;
+
+        return [
+            'teacher_id' => 'required|unique:teachers,teacher_id,' . $this->editingId,
+            'name' => 'required|min:3',
+            'email' => 'required|email|unique:users,email,' . $userId,
+            'form_department' => 'required',
+            'form_status' => 'required',
+            'specialization' => 'nullable|string',
+        ];
+    }
  
     public function updatingSearch()
     {
@@ -40,7 +48,19 @@ class TeacherManagement extends Component
  
     public function create()
     {
-        $this->reset(['teacher_id', 'name', 'email', 'form_department', 'form_status', 'specialization']);
+        $this->reset(['editingId', 'teacher_id', 'name', 'email', 'form_department', 'form_status', 'specialization']);
+        $this->showModal = true;
+    }
+
+    public function edit(Teacher $teacher)
+    {
+        $this->editingId = $teacher->id;
+        $this->teacher_id = $teacher->teacher_id;
+        $this->name = $teacher->user->name;
+        $this->email = $teacher->user->email;
+        $this->form_department = $teacher->department;
+        $this->form_status = $teacher->status;
+        $this->specialization = $teacher->specialization;
         $this->showModal = true;
     }
  
@@ -48,25 +68,46 @@ class TeacherManagement extends Component
     {
         $this->validate();
  
-        // 1. Create/Find User
-        $user = User::create([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => Hash::make('password'), // Default password
-            'role' => 'teacher',
-        ]);
- 
-        // 2. Create Teacher record
-        Teacher::create([
-            'user_id' => $user->id,
-            'teacher_id' => $this->teacher_id,
-            'department' => $this->form_department,
-            'status' => $this->form_status,
-            'specialization' => $this->specialization,
-        ]);
+        if ($this->editingId) {
+            $teacher = Teacher::findOrFail($this->editingId);
+            $user = $teacher->user;
+
+            $user->update([
+                'name' => $this->name,
+                'email' => $this->email,
+            ]);
+
+            $teacher->update([
+                'teacher_id' => $this->teacher_id,
+                'department' => $this->form_department,
+                'status' => $this->form_status,
+                'specialization' => $this->specialization,
+            ]);
+
+            $message = 'Teacher information successfully updated.';
+        } else {
+            // 1. Create/Find User
+            $user = User::create([
+                'name' => $this->name,
+                'email' => $this->email,
+                'password' => Hash::make('password'), // Default password
+                'role' => 'teacher',
+            ]);
+    
+            // 2. Create Teacher record
+            Teacher::create([
+                'user_id' => $user->id,
+                'teacher_id' => $this->teacher_id,
+                'department' => $this->form_department,
+                'status' => $this->form_status,
+                'specialization' => $this->specialization,
+            ]);
+
+            $message = 'Teacher successfully registered.';
+        }
  
         $this->showModal = false;
-        $this->dispatch('teacher-saved', message: 'Teacher successfully registered.');
+        $this->dispatch('teacher-saved', message: $message);
     }
  
     public function render()

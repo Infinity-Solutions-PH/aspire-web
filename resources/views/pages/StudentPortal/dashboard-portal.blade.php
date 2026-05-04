@@ -110,7 +110,7 @@
     <!-- Sidebar: Virtual ID & Actions -->
     <div class="space-y-8">
         <!-- Virtual ID Card (Redesign) -->
-        <div class="relative w-full aspect-[1/1.6] bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 group">
+        <div class="relative w-full max-w-[340px] mx-auto aspect-[1/1.6] bg-white rounded-[32px] shadow-2xl overflow-hidden border border-gray-100 group">
             <!-- Red Header with Building Overlay -->
             <div class="absolute top-0 w-full h-[45%] bg-[#c1121f] overflow-hidden">
                 <div class="absolute inset-0 opacity-20 mix-blend-overlay">
@@ -129,30 +129,30 @@
             </div>
 
             <!-- Student Photo -->
-            <div class="absolute top-[28%] left-1/2 -translate-x-1/2 z-20">
-                <div class="w-44 aspect-square rounded-[40px] border-[6px] border-white shadow-2xl overflow-hidden bg-gray-50">
+            <div class="absolute top-[28%] left-1/2 -translate-x-1/2 z-20 w-[45%]">
+                <div class="w-full aspect-square rounded-[15%] md:rounded-[40px] border-[4px] md:border-[6px] border-white shadow-xl overflow-hidden bg-gray-50">
                     @if($enrollment->profile_picture)
                         <img src="{{ asset('storage/' . $enrollment->profile_picture) }}" class="size-full object-cover">
                     @else
                         <div class="size-full flex items-center justify-center text-gray-200">
-                            <span class="material-symbols-outlined text-7xl">person</span>
+                            <span class="material-symbols-outlined text-6xl">person</span>
                         </div>
                     @endif
                 </div>
             </div>
 
             <!-- Student Info -->
-            <div class="absolute top-[60%] w-full flex flex-col items-center text-center px-4">
-                <p class="text-xl font-black text-[#1b0d0d] tracking-wider mb-1">{{ $enrollment->lrn }}</p>
-                <h2 class="text-3xl font-black text-[#1b0d0d] uppercase leading-none">{{ $enrollment->last_name }}</h2>
-                <h3 class="text-xl font-bold text-[#1b0d0d] uppercase mt-1">
+            <div class="absolute top-[58%] w-full flex flex-col items-center text-center px-4">
+                <p class="text-base sm:text-xl font-black text-[#1b0d0d] tracking-wider mb-1">{{ $enrollment->lrn }}</p>
+                <h2 class="text-2xl sm:text-3xl font-black text-[#1b0d0d] uppercase leading-none">{{ $enrollment->last_name }}</h2>
+                <h3 class="text-lg sm:text-xl font-bold text-[#1b0d0d] uppercase mt-1">
                     {{ $enrollment->first_name }} {{ $enrollment->middle_name ? substr($enrollment->middle_name, 0, 1) . '.' : '' }}
                 </h3>
 
                 <!-- Principal Area -->
                 <div class="mt-8 flex flex-col items-center">
                     <div class="relative">
-                        <p class="text-[14px] font-black text-[#1b0d0d] uppercase">ROLANDO P. DILIDILI, EdD.</p>
+                        <p class="text-[14px] font-black text-[#1b0d0d]">ROLANDO P. DILIDILI, EdD.</p>
                         <!-- Fake Signature -->
                         <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-32 h-12 opacity-80 pointer-events-none">
                             <svg viewBox="0 0 200 60" class="w-full h-full text-[#1b0d0d] fill-current">

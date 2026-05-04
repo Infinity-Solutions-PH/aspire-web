@@ -108,7 +108,7 @@
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="text-[10px] font-bold text-neutral-400">{{ $pre->updated_at->diffForHumans() }}</span>
-                                    <a href="{{ route('admin.enrollment.review', $pre->id) }}" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                                    <a href="{{ route('admin.pre_enrollment.review', $pre->id) }}" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
                                         <span class="material-symbols-outlined text-lg">arrow_forward</span>
                                     </a>
                                 </div>
