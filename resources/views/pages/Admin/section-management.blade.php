@@ -61,7 +61,7 @@
 
                     <select wire:model.live="activeCourse" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4">
                         <option value="All">All TVL Courses</option>
-                        @foreach(['ICT', 'HE', 'SMAW', 'Auto-Mechanic'] as $course)
+                        @foreach(['ICT', 'CSS', 'Food Industry', 'Automotive', 'Drafting', 'SMAW', 'HE'] as $course)
                             <option value="{{ $course }}">{{ $course }}</option>
                         @endforeach
                     </select>
@@ -110,11 +110,14 @@
                     <div class="space-y-2">
                         <div class="flex justify-between items-center text-xs">
                             <span class="font-medium text-[#9a4c4c]">Enrollment Capacity</span>
-                            <span class="font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $section->enrollments_count }}/{{ $section->capacity }}</span>
+                            @php
+                                $currentCount = $section->track === 'TVL' ? $section->tech_voc_enrollments_count : $section->enrollments_count;
+                            @endphp
+                            <span class="font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $currentCount }}/{{ $section->capacity }}</span>
                         </div>
                         <div class="w-full bg-[#f3e7e7] dark:bg-[#3d2525] h-2 rounded-full overflow-hidden">
                             @php
-                                $percent = min(100, ($section->enrollments_count / max(1, $section->capacity)) * 100);
+                                $percent = min(100, ($currentCount / max(1, $section->capacity)) * 100);
                                 $color = $percent >= 100 ? 'bg-[#1b0d0d]' : 'bg-primary';
                             @endphp
                             <div class="{{ $color }} h-full rounded-full" style="width: {{ $percent }}%;"></div>
@@ -203,8 +206,8 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Tech Voc Course</label>
                                     <select wire:model.live="autoCourseStrand" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm bg-gray-50">
-                                        <option value="">All Courses</option>
-                                        @foreach(['ICT', 'HE', 'SMAW', 'Auto-Mechanic'] as $course)
+                                        <option value="All">All Courses</option>
+                                        @foreach(['ICT', 'CSS', 'Food Industry', 'Automotive', 'Drafting', 'SMAW', 'HE'] as $course)
                                             <option value="{{ $course }}">{{ $course }}</option>
                                         @endforeach
                                     </select>
@@ -222,6 +225,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Strand</label>
                                     <select wire:model.live="autoCourseStrand" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm bg-gray-50">
+                                        <option value="All">All Strands</option>
                                         @foreach(['STEM', 'ICT', 'HUMSS', 'ABM', 'HE', 'Industrial Arts'] as $strand)
                                             <option value="{{ $strand }}">{{ $strand }}</option>
                                         @endforeach

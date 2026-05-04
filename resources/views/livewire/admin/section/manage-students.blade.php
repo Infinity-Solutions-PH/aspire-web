@@ -98,6 +98,9 @@
                         <tr class="bg-[#fdfafb] dark:bg-[#361a1a] border-b border-[#f3e7e7] dark:border-[#3a1f1f]">
                             <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Full Name / LRN</th>
                             <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Sex</th>
+                            @if(in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']) && $section->track !== 'TVL')
+                                <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">TVL Course</th>
+                            @endif
                             <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Contact No</th>
                             <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Status</th>
                             <th class="px-6 py-5 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c] text-center">Actions</th>
@@ -120,6 +123,19 @@
                                 <td class="px-6 py-4">
                                     <span class="text-xs font-black px-2 py-1 rounded-md {{ $student->sex === 'Male' ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400' : 'bg-pink-50 text-pink-600 dark:bg-pink-900/20 dark:text-pink-400' }}">{{ $student->sex }}</span>
                                 </td>
+                                @if(in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']) && $section->track !== 'TVL')
+                                    <td class="px-6 py-4">
+                                        @if($student->techVocSection)
+                                            <span class="px-3 py-1 bg-[#1b0d0d] text-white text-[10px] font-black uppercase rounded-lg tracking-widest whitespace-nowrap">{{ $student->techVocSection->specialization }}</span>
+                                        @elseif($student->specialization)
+                                            <span class="text-[10px] font-bold text-gray-400 uppercase">{{ $student->specialization }} (Pending)</span>
+                                        @elseif(!empty($student->tech_voc_choices))
+                                            <span class="text-[10px] font-bold text-gray-400 uppercase">{{ $student->tech_voc_choices[0] }} (Choice 1)</span>
+                                        @else
+                                            <span class="text-[10px] font-bold text-gray-400 uppercase">None</span>
+                                        @endif
+                                    </td>
+                                @endif
                                 <td class="px-6 py-4">
                                     <span class="text-xs font-medium text-gray-600 dark:text-gray-400">+63 {{ $student->contact_no ?? 'N/A' }}</span>
                                 </td>

@@ -44,4 +44,12 @@ class Section extends Model
     {
         return $this->hasMany(Enrollment::class);
     }
+
+    /**
+     * Get the tech voc enrollments associated with this section.
+     */
+    public function techVocEnrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class, 'tech_voc_section_id');
+    }
 }

@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
     'father_name', 'mother_maiden_name', 'guardian_name', 'contact_no',
     'last_grade_level', 'last_school_year', 'last_school_attended', 'last_school_id',
     'semester', 'track', 'strand', 'shs_track', 'is_shs_aligned', 'specialization', 'modality',
-    'psa_path', 'sf9_path', 'good_moral_path', 'honorable_dismissal_path', 'admin_remarks', 'verified_by', 'finalized_at', 'section_id'
+    'psa_path', 'sf9_path', 'good_moral_path', 'honorable_dismissal_path', 'admin_remarks', 'verified_by', 'finalized_at', 'section_id', 'tech_voc_section_id'
 ])]
 class Enrollment extends Model
 {
@@ -63,6 +63,14 @@ class Enrollment extends Model
     public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class);
+    }
+
+    /**
+     * Get the tech voc section assigned to the enrollment.
+     */
+    public function techVocSection(): BelongsTo
+    {
+        return $this->belongsTo(Section::class, 'tech_voc_section_id');
     }
 
     /**

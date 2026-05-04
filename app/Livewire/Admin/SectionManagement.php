@@ -2,13 +2,13 @@
  
 namespace App\Livewire\Admin;
  
-use App\Models\Section;
 use App\Models\User;
-use App\Models\Enrollment;
+use App\Models\Section;
 use App\Models\Setting;
-use App\Services\SectioningService;
 use Livewire\Component;
+use App\Models\Enrollment;
 use Livewire\WithPagination;
+use App\Services\SectioningService;
  
 class SectionManagement extends Component
 {
@@ -59,10 +59,10 @@ class SectionManagement extends Component
             $this->autoCourseStrand = '';
         } elseif ($value === 'tvl') {
             $this->autoGrade = 'Grade 8';
-            $this->autoCourseStrand = '';
+            $this->autoCourseStrand = 'All';
         } elseif ($value === 'shs') {
             $this->autoGrade = 'Grade 11';
-            $this->autoCourseStrand = 'STEM';
+            $this->autoCourseStrand = 'All';
         }
     }
 
@@ -114,6 +114,12 @@ class SectionManagement extends Component
         } else {
             $this->newSection['name'] = '';
         }
+    }
+
+    public function setNewSectionType($type)
+    {
+        $this->newSection['type'] = $type;
+        $this->generateAutoSectionName();
     }
 
     public function createSection()
@@ -177,19 +183,22 @@ class SectionManagement extends Component
 
     public function getUnsectionedStatsProperty()
     {
-        $query = Enrollment::where('status', 'Enrolled')->whereNull('section_id');
+        $query = Enrollment::where('status', 'Enrolled');
+
+        if ($this->activeAutoTab === 'tvl') {
+            $query->whereNull('tech_voc_section_id');
+        } else {
+            $query->whereNull('section_id');
+        }
 
         if ($this->autoGrade) {
             $query->where('grade_level', $this->autoGrade);
         }
 
         if ($this->activeAutoTab === 'jhs') {
-            $query->where(function($q) {
-                $q->whereNull('track')->orWhere('track', '!=', 'TVL');
-            });
+            // All JHS students (including TVL) need a normal section, so we don't exclude the TVL track here.
         } elseif ($this->activeAutoTab === 'tvl') {
-            $query->where('track', 'TVL');
-            if ($this->autoCourseStrand) {
+            if ($this->autoCourseStrand && $this->autoCourseStrand !== 'All') {
                 // Assuming specialization or strand represents the course in TVL
                 $query->where(function($q) {
                     $q->where('specialization', $this->autoCourseStrand)
@@ -197,7 +206,7 @@ class SectionManagement extends Component
                 });
             }
         } elseif ($this->activeAutoTab === 'shs') {
-            if ($this->autoCourseStrand) {
+            if ($this->autoCourseStrand && $this->autoCourseStrand !== 'All') {
                 $query->where('strand', $this->autoCourseStrand);
             }
         }
@@ -222,9 +231,11 @@ class SectionManagement extends Component
             if ($this->activeAutoTab === 'jhs') {
                 $result = $service->runJhsShsSectioning($this->autoGrade);
             } elseif ($this->activeAutoTab === 'tvl') {
-                $result = $service->runTechVocSectioning($this->autoGrade, $this->autoCourseStrand);
+                $course = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
+                $result = $service->runTechVocSectioning($this->autoGrade, $course);
             } elseif ($this->activeAutoTab === 'shs') {
-                $result = $service->runJhsShsSectioning($this->autoGrade, $this->autoCourseStrand);
+                $strand = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
+                $result = $service->runJhsShsSectioning($this->autoGrade, $strand);
             }
  
             session()->flash('message', $result['message']);
@@ -236,8 +247,8 @@ class SectionManagement extends Component
  
     public function render()
     {
-        $query = Section::with(['adviser', 'enrollments'])
-            ->withCount('enrollments')
+        $query = Section::with(['adviser', 'enrollments', 'techVocEnrollments'])
+            ->withCount(['enrollments', 'techVocEnrollments'])
             ->orderBy('is_star_section', 'desc')
             ->orderBy('name', 'asc');
  

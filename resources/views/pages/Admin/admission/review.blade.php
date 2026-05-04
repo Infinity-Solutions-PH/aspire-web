@@ -2,10 +2,17 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 pb-8 border-b border-gray-100 dark:border-white/10">
         <div>
             <div class="flex items-center gap-2 mb-2">
-                <a href="{{ route('admin.admissions') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
-                    <span class="material-symbols-outlined text-sm">arrow_back</span>
-                    Back to Dashboard
-                </a>
+                @if($isPre)
+                    <a href="{{ route('admin.admissions') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Admissions
+                    </a>
+                @else
+                    <a href="{{ route('admin.dashboard') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Back to Enrollments
+                    </a>
+                @endif
             </div>
             <h1 class="text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">Review Application</h1>
             <p class="text-gray-500 mt-2 font-medium flex items-center gap-2">
@@ -167,21 +174,34 @@
                     <h3 class="text-lg font-bold text-gray-900 uppercase tracking-tight">Final Section Assignment</h3>
                 </div>
                 
-                <div class="space-y-3">
-                    <p class="text-[10px] font-bold text-green-700 uppercase tracking-widest">Recommended Section (Based on Capacity & Track)</p>
-                    
-                    <div class="grid grid-cols-1 gap-3">
-                        <select wire:model.defer="selected_section_id" class="form-select w-full rounded-xl border-green-200 bg-white text-sm font-bold text-gray-700 focus:ring-green-500 focus:border-green-500">
-                            <option value="">-- Let System Auto-Assign --</option>
-                            @foreach($availableSections as $section)
-                                <option value="{{ $section->id }}">
-                                    {{ $section->name }} ({{ $section->enrollments_count }}/{{ $section->capacity }} Capacity)
-                                </option>
-                            @endforeach
-                        </select>
-                        <p class="text-[10px] text-gray-400 italic">If no section is selected, the system will automatically find the first available section matching the student's criteria.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-1">Normal Section (Academic)</p>
+                            <select wire:model.defer="selected_section_id" class="form-select w-full rounded-xl border-green-200 bg-white text-sm font-bold text-gray-700 focus:ring-green-500 focus:border-green-500">
+                                <option value="">-- Let System Auto-Assign --</option>
+                                @foreach($availableSections as $section)
+                                    <option value="{{ $section->id }}">
+                                        {{ $section->name }} ({{ $section->enrollments_count }}/{{ $section->capacity }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        @if(in_array($enrollment->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']))
+                        <div>
+                            <p class="text-[10px] font-bold text-green-700 uppercase tracking-widest mb-1">Tech Voc Specialization Section</p>
+                            <select wire:model.defer="selected_tech_voc_section_id" class="form-select w-full rounded-xl border-green-200 bg-white text-sm font-bold text-gray-700 focus:ring-green-500 focus:border-green-500">
+                                <option value="">-- Select Tech Voc Section --</option>
+                                @foreach($availableTechVocSections as $section)
+                                    <option value="{{ $section->id }}">
+                                        {{ $section->name }} - {{ $section->specialization }} ({{ $section->tech_voc_enrollments_count }}/{{ $section->capacity }})
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        @endif
                     </div>
-                </div>
+                    <p class="text-[10px] text-gray-400 italic">Manual assignment is optional. Unassigned slots will be filled by the auto-sectioning engine.</p>
             </section>
             @endif
 
@@ -198,35 +218,26 @@
                 <!-- <span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded italic">Digital Dossier</span> -->
             </div>
             
-            <div class="space-y-4 overflow-y-auto max-h-[80vh] pr-2">
-                @foreach([
-                    '2x2 Student Photo' => $enrollment->profile_picture,
-                    'PSA Birth Certificate' => $enrollment->psa_path,
-                    'Form 138 (SF9)' => $enrollment->sf9_path,
-                    'Good Moral' => $enrollment->good_moral_path,
-                    'Honorable Dismissal' => $enrollment->honorable_dismissal_path
-                ] as $label => $path)
-                    @if($path)
-                    <div class="group relative bg-gray-50 dark:bg-zinc-800 rounded-2xl p-4 border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all">
-                        <div class="flex items-center justify-between mb-4">
-                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $label }}</span>
-                            <a href="{{ Storage::url($path) }}" target="_blank" class="size-8 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm hover:bg-primary hover:text-white transition-all">
-                                <span class="material-symbols-outlined text-lg">open_in_new</span>
-                            </a>
-                        </div>
-                        <div class="aspect-[4/5] rounded-xl overflow-hidden bg-white border border-gray-100 relative">
-                            @if(Str::endsWith($path, '.pdf'))
-                                <div class="absolute inset-0 flex flex-col items-center justify-center text-gray-400">
-                                    <span class="material-symbols-outlined text-4xl mb-2">picture_as_pdf</span>
-                                    <p class="text-[10px] font-bold uppercase">PDF Document</p>
-                                </div>
-                            @else
-                                <img src="{{ Storage::url($path) }}" class="w-full h-full object-cover">
-                            @endif
-                        </div>
+            <div class="space-y-4">
+                @if($enrollment->profile_picture)
+                <div class="group relative bg-gray-50 dark:bg-zinc-800 rounded-2xl p-4 border border-gray-100 dark:border-white/5 hover:border-primary/30 transition-all text-center">
+                    <div class="flex items-center justify-between mb-4 text-left">
+                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">2x2 Student Photo</span>
+                        <a href="{{ Storage::url($enrollment->profile_picture) }}" target="_blank" class="size-8 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm hover:bg-primary hover:text-white transition-all">
+                            <span class="material-symbols-outlined text-lg">open_in_new</span>
+                        </a>
                     </div>
-                    @endif
-                @endforeach
+                    <div class="aspect-square max-w-[240px] mx-auto rounded-xl overflow-hidden bg-white border border-gray-100 relative shadow-inner">
+                        <img src="{{ Storage::url($enrollment->profile_picture) }}" class="w-full h-full object-cover">
+                    </div>
+                    <p class="mt-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Digital Identification Photo</p>
+                </div>
+                @else
+                <div class="py-12 text-center border-2 border-dashed border-gray-100 rounded-2xl">
+                    <span class="material-symbols-outlined text-gray-200 text-5xl">no_photography</span>
+                    <p class="text-xs font-bold text-gray-400 mt-2">No photo submitted</p>
+                </div>
+                @endif
             </div>
         </div>
     </div>

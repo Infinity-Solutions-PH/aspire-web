@@ -13,7 +13,9 @@ class ExportSectionMasterlistController extends Controller
 {
     private function getSortedStudents(Section $section)
     {
-        return Enrollment::where('section_id', $section->id)
+        $sectionColumn = $section->track === 'TVL' ? 'tech_voc_section_id' : 'section_id';
+
+        return Enrollment::where($sectionColumn, $section->id)
             ->orderBy('sex', 'desc') // Male before Female
             ->orderBy('last_name', 'asc')
             ->orderBy('first_name', 'asc')

@@ -32,7 +32,9 @@ class ManageStudents extends Component
 
     public function render()
     {
-        $baseQuery = Enrollment::where('section_id', $this->section->id)
+        $sectionColumn = $this->section->track === 'TVL' ? 'tech_voc_section_id' : 'section_id';
+
+        $baseQuery = Enrollment::with('techVocSection')->where($sectionColumn, $this->section->id)
             ->when($this->search, function($query) {
                 $query->where(function($q) {
                     $q->where('first_name', 'like', '%' . $this->search . '%')

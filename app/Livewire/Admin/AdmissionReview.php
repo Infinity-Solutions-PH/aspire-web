@@ -23,6 +23,7 @@ class AdmissionReview extends Component
     public $selected_specialization;
     public $status;
     public $selected_section_id;
+    public $selected_tech_voc_section_id;
 
     public function mount(Enrollment $enrollment = null, PreEnrollment $preEnrollment = null)
     {
@@ -92,7 +93,7 @@ class AdmissionReview extends Component
         session()->flash('message', 'Application approved successfully.');
     }
 
-    public function enroll(SectioningService $sectioningService, ProvisioningService $provisioningService)
+    public function enroll(ProvisioningService $provisioningService)
     {
         if ($this->isPre) return;
 
@@ -104,19 +105,31 @@ class AdmissionReview extends Component
                 $provisioningService->provisionAccount($user);
             }
 
-            // 2. Assign Section
-            $section = $this->selected_section_id 
-                ? Section::find($this->selected_section_id)
-                : $sectioningService->assignSection($this->record);
-
-            // 3. Finalize Enrollment Status
-            $this->record->update([
+            // 2. Finalize Enrollment Status
+            $updateData = [
                 'status' => 'Enrolled',
-                'section_id' => $section->id,
                 'enrolled_at' => now(),
-            ]);
+            ];
 
-            session()->flash('message', "Student officially enrolled in Section: {$section->name}");
+            $messages = [];
+            if ($this->selected_section_id) {
+                $updateData['section_id'] = $this->selected_section_id;
+                $section = Section::find($this->selected_section_id);
+                $messages[] = "Assigned to Section: {$section->name}";
+            }
+
+            if ($this->selected_tech_voc_section_id) {
+                $updateData['tech_voc_section_id'] = $this->selected_tech_voc_section_id;
+                $tvSection = Section::find($this->selected_tech_voc_section_id);
+                $messages[] = "Assigned to Tech Voc: {$tvSection->name}";
+            }
+
+            $this->record->update($updateData);
+
+            $message = "Student officially enrolled. " . implode(' & ', $messages);
+            if (empty($messages)) $message .= " Awaiting section assignment.";
+
+            session()->flash('message', $message);
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
         }
@@ -155,6 +168,11 @@ class AdmissionReview extends Component
             'enrollment' => $enrollment,
             'isStarQualified' => $sectioningService->checkStarQualification($enrollment),
             'availableSections' => $sectioningService->getAvailableSectionsForEnrollment($enrollment),
+            'availableTechVocSections' => Section::where('grade_level', $enrollment->grade_level)
+                ->where('track', 'TVL')
+                ->withCount('techVocEnrollments')
+                ->get()
+                ->filter(fn($s) => $s->tech_voc_enrollments_count < $s->capacity)
         ]);
     }
 }

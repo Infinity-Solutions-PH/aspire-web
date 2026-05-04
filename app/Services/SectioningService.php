@@ -5,6 +5,7 @@ namespace App\Services;
 use Exception;
 use App\Models\Section;
 use App\Models\Enrollment;
+use Illuminate\Support\Facades\Log;
 
 class SectioningService
 {
@@ -19,11 +20,8 @@ class SectioningService
 
         if ($strand) {
             $query->where('strand', $strand);
-        } else {
-            $query->where(function($q) {
-                $q->whereNull('track')->orWhere('track', '!=', 'TVL');
-            });
         }
+        // If not strand (i.e. JHS), we do not exclude TVL because all JHS students need a normal section.
 
         $unassignedStudents = $query->orderByDesc('gwa')
             ->orderBy('created_at')
@@ -101,9 +99,8 @@ class SectioningService
     public function runTechVocSectioning(string $gradeLevel, ?string $course = null): array
     {
         $query = Enrollment::where('grade_level', $gradeLevel)
-            ->where('track', 'TVL')
             ->where('status', 'Enrolled')
-            ->whereNull('section_id');
+            ->whereNull('tech_voc_section_id');
 
         if ($course) {
             $query->where(function($q) use ($course) {
@@ -144,12 +141,19 @@ class SectioningService
             foreach ($choices as $choice) {
                 // Find a section that matches this choice and has capacity
                 $matchingSection = $sections->filter(function($sec) use ($choice) {
-                    return ($sec->specialization === $choice || $sec->strand === $choice) 
-                           && $sec->enrollments()->count() < $sec->capacity;
+                    $choiceLower = strtolower($choice);
+                    $secSpecLower = strtolower($sec->specialization ?? '');
+                    $secStrandLower = strtolower($sec->strand ?? '');
+                    
+                    $isMatch = ($secSpecLower === $choiceLower || $secStrandLower === $choiceLower) ||
+                               (!empty($secSpecLower) && str_contains($secSpecLower, $choiceLower)) ||
+                               (!empty($choiceLower) && str_contains($choiceLower, $secSpecLower));
+
+                    return $isMatch && $sec->techVocEnrollments()->count() < $sec->capacity;
                 })->first();
 
                 if ($matchingSection) {
-                    $student->update(['section_id' => $matchingSection->id]);
+                    $student->update(['tech_voc_section_id' => $matchingSection->id]);
                     $assignedCount++;
                     $assigned = true;
                     break; // Move to next student
@@ -158,22 +162,21 @@ class SectioningService
 
             // If not assigned after checking all choices, student remains unassigned (requires manual review)
             if (!$assigned && empty($choices)) {
-                 // Try to assign to ANY TVL section if they had no choices and didn't fit anywhere else
-                 $anySection = $sections->filter(function($sec) {
-                     return $sec->enrollments()->count() < $sec->capacity;
-                 })->first();
+                // Try to assign to ANY TVL section if they had no choices and didn't fit anywhere else
+                $anySection = $sections->filter(function($sec) {
+                    return $sec->techVocEnrollments()->count() < $sec->capacity;
+                })->first();
 
-                 if ($anySection) {
-                     $student->update(['section_id' => $anySection->id]);
-                     $assignedCount++;
-                 }
+                if ($anySection) {
+                    $student->update(['tech_voc_section_id' => $anySection->id]);
+                    $assignedCount++;
+                }
             }
         }
 
         $totalRemaining = Enrollment::where('grade_level', $gradeLevel)
-            ->where('track', 'TVL')
             ->where('status', 'Enrolled')
-            ->whereNull('section_id')
+            ->whereNull('tech_voc_section_id')
             ->count();
 
         return [
@@ -287,6 +290,7 @@ class SectioningService
                 return $section;
             }
         }
+        Log::info("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
 
         throw new \Exception("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
     }
