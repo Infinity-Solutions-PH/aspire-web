@@ -150,7 +150,7 @@
             </div>
             @guest
             <div class="mt-20 text-center">
-                <a href="{{ route('enrollment.index') }}" class="px-12 py-5 bg-primary text-white font-black rounded-xl hover:scale-105 transition-all shadow-2xl shadow-primary/30 uppercase tracking-widest text-sm">
+                <a href="{{ route('enroll.public') }}" class="px-12 py-5 bg-primary text-white font-black rounded-xl hover:scale-105 transition-all shadow-2xl shadow-primary/30 uppercase tracking-widest text-sm">
                     Begin Application
                 </a>
             </div>

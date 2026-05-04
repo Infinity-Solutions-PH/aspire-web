@@ -26,7 +26,7 @@
             <h6 class="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">Links</h6>
             <ul class="space-y-4 text-xs font-bold text-stone-600 uppercase tracking-widest">
                 <li><a href="{{ route('home') }}" class="hover:text-primary transition-colors">Home</a></li>
-                <li><a href="{{ route('enrollment.index') }}" class="hover:text-primary transition-colors">Enrollment</a></li>
+                <li><a href="{{ route('enroll.public') }}" class="hover:text-primary transition-colors">Enrollment</a></li>
                 <li><a href="{{ route('programs') }}" class="hover:text-primary transition-colors">Programs</a></li>
                 <li><a href="{{ route('portal.login') }}" class="hover:text-primary transition-colors">Student Portal</a></li>
                 <li><a href="#" class="hover:text-primary transition-colors">Contact</a></li>
