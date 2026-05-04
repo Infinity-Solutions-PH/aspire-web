@@ -62,7 +62,7 @@ class BulkEnrollmentSeeder extends Seeder
             Enrollment::create([
                 'user_id' => $user->id,
                 'transaction_number' => 'TNTS-' . strtoupper(Str::random(8)),
-                'status' => 'Approved',
+                'status' => 'Enrolled',
                 'type' => $faker->randomElement(['New', 'Old', 'Transferee']),
                 'grade_level' => $grade,
                 'lrn' => $lrn,
