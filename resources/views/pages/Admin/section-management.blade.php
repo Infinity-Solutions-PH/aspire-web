@@ -188,6 +188,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Select Grade Level</label>
                                 <select wire:model.live="autoGrade" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm bg-gray-50">
+                                    <option value="All">All JHS Grades</option>
                                     @foreach(['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'] as $grade)
                                         <option value="{{ $grade }}">{{ $grade }}</option>
                                     @endforeach
@@ -198,6 +199,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Grade Level</label>
                                     <select wire:model.live="autoGrade" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm bg-gray-50">
+                                        <option value="All">All Grades</option>
                                         @foreach(['Grade 8', 'Grade 9', 'Grade 10'] as $grade)
                                             <option value="{{ $grade }}">{{ $grade }}</option>
                                         @endforeach
@@ -218,6 +220,7 @@
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Grade Level</label>
                                     <select wire:model.live="autoGrade" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm bg-gray-50">
+                                        <option value="All">All SHS Grades</option>
                                         <option value="Grade 11">Grade 11</option>
                                         <option value="Grade 12">Grade 12</option>
                                     </select>

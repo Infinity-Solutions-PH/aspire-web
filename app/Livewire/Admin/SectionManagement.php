@@ -191,7 +191,7 @@ class SectionManagement extends Component
             $query->whereNull('section_id');
         }
 
-        if ($this->autoGrade) {
+        if ($this->autoGrade && $this->autoGrade !== 'All') {
             $query->where('grade_level', $this->autoGrade);
         }
 
@@ -228,17 +228,32 @@ class SectionManagement extends Component
         }
  
         try {
-            if ($this->activeAutoTab === 'jhs') {
-                $result = $service->runJhsShsSectioning($this->autoGrade);
-            } elseif ($this->activeAutoTab === 'tvl') {
-                $course = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
-                $result = $service->runTechVocSectioning($this->autoGrade, $course);
-            } elseif ($this->activeAutoTab === 'shs') {
-                $strand = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
-                $result = $service->runJhsShsSectioning($this->autoGrade, $strand);
+            $gradesToProcess = ($this->autoGrade === 'All') 
+                ? ($this->activeAutoTab === 'jhs' ? ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'] : 
+                  ($this->activeAutoTab === 'tvl' ? ['Grade 8', 'Grade 9', 'Grade 10'] : 
+                  ['Grade 11', 'Grade 12']))
+                : [$this->autoGrade];
+
+            $totalAssigned = 0;
+            $summaryMessages = [];
+
+            foreach ($gradesToProcess as $grade) {
+                if ($this->activeAutoTab === 'jhs') {
+                    $result = $service->runJhsShsSectioning($grade);
+                } elseif ($this->activeAutoTab === 'tvl') {
+                    $course = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
+                    $result = $service->runTechVocSectioning($grade, $course);
+                } elseif ($this->activeAutoTab === 'shs') {
+                    $strand = ($this->autoCourseStrand === 'All' || empty($this->autoCourseStrand)) ? null : $this->autoCourseStrand;
+                    $result = $service->runJhsShsSectioning($grade, $strand);
+                }
+                
+                if (isset($result['message'])) {
+                    $summaryMessages[] = "{$grade}: {$result['message']}";
+                }
             }
  
-            session()->flash('message', $result['message']);
+            session()->flash('message', 'Auto-sectioning completed. ' . count($summaryMessages) . ' grade levels processed.');
             $this->showAutoSectionModal = false;
         } catch (\Exception $e) {
             session()->flash('error', $e->getMessage());
