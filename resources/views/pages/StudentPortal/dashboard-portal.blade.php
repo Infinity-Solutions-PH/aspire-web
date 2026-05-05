@@ -1,7 +1,8 @@
 @php
-    $adviser = $enrollment->section->adviser ?? null;
+    $adviser = $enrollment?->section?->adviser ?? null;
 @endphp
 
+@if($enrollment)
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <div class="lg:col-span-2 space-y-8">
         <!-- Welcome Section -->
@@ -189,3 +190,18 @@
         </div>
     </div>
 </div>
+@else
+<div class="flex flex-col items-center justify-center py-20 bg-white dark:bg-[#2d1818] rounded-3xl border border-dashed border-[#e7cfcf] dark:border-[#3d2424]">
+    <div class="size-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+        <span class="material-symbols-outlined text-primary text-4xl">assignment_late</span>
+    </div>
+    <h2 class="text-2xl font-bold text-[#1b0d0d] dark:text-white mb-2">No Active Enrollment Found</h2>
+    <p class="text-gray-500 text-center max-w-md px-6">You don't have an active enrollment for the current school year. If you have recently submitted an application, please wait for administrative approval.</p>
+    
+    <div class="mt-8 flex gap-4">
+        <a href="{{ url('/') }}" class="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+            Return to Home
+        </a>
+    </div>
+</div>
+@endif

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DashboardPortal extends Component
 {
-    public Enrollment $enrollment;
+    public ?Enrollment $enrollment = null;
     public $activeTab = 'schedule';
 
     public function mount()
@@ -23,19 +23,16 @@ class DashboardPortal extends Component
 
     public function render()
     {
+        if (!$this->enrollment) {
+            return view('pages.StudentPortal.dashboard-portal', [
+                'schedules' => collect()
+            ]);
+        }
+
         $schedules = $this->enrollment->section ? $this->enrollment->section->schedules : collect();
-        
-        $fees = Fee::where(function($query) {
-            $query->where('track', $this->enrollment->track)
-                  ->orWhere('strand', $this->enrollment->strand)
-                  ->orWhere('specialization', $this->enrollment->specialization)
-                  ->orWhereNull('track');
-        })->get();
 
         return view('pages.StudentPortal.dashboard-portal', [
-            'schedules' => $schedules,
-            'fees' => $fees,
-            'totalFees' => $fees->sum('amount'),
+            'schedules' => $schedules
         ]);
     }
 }
