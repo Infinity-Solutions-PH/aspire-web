@@ -99,10 +99,10 @@
                             <span class="text-sm">Resources</span>
                         </a> --}}
                     @else
-                        <!-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
+                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
                             <span class="material-symbols-outlined">how_to_reg</span>
                             <span class="text-sm">Enrollment</span>
-                        </a> -->
+                        </a> --}}
                     @endif
                 </nav>
             </div>
