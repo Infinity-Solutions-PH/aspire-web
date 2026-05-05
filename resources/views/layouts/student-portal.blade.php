@@ -77,33 +77,26 @@
                 @endphp
                 
                 <nav class="flex flex-col gap-2">
-                    @if($isEnrolled)
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.dashboard') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.dashboard') }}">
-                            <span class="material-symbols-outlined">dashboard</span>
-                            <span class="text-sm">Dashboard</span>
-                        </a>
-                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
-                            <span class="material-symbols-outlined">how_to_reg</span>
-                            <span class="text-sm">Enrolment Status</span>
-                        </a> --}}
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.profile') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.profile') }}">
-                            <span class="material-symbols-outlined">person</span>
-                            <span class="text-sm">Profile</span>
-                        </a>
-                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
-                            <span class="material-symbols-outlined">history_edu</span>
-                            <span class="text-sm">Academic Records</span>
-                        </a>
-                        <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
-                            <span class="material-symbols-outlined">folder_open</span>
-                            <span class="text-sm">Resources</span>
-                        </a> --}}
-                    @else
-                        {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
-                            <span class="material-symbols-outlined">how_to_reg</span>
-                            <span class="text-sm">Enrollment</span>
-                        </a> --}}
-                    @endif
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.dashboard') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.dashboard') }}">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="text-sm">Dashboard</span>
+                    </a>
+                    {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
+                        <span class="material-symbols-outlined">how_to_reg</span>
+                        <span class="text-sm">Enrolment Status</span>
+                    </a> --}}
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.profile') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.profile') }}">
+                        <span class="material-symbols-outlined">person</span>
+                        <span class="text-sm">Profile</span>
+                    </a>
+                    {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+                        <span class="material-symbols-outlined">history_edu</span>
+                        <span class="text-sm">Academic Records</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
+                        <span class="material-symbols-outlined">folder_open</span>
+                        <span class="text-sm">Resources</span>
+                    </a> --}}
                 </nav>
             </div>
             
