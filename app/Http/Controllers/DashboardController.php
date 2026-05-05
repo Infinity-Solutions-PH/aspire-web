@@ -19,11 +19,6 @@ class DashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        $enrollment = Enrollment::where('user_id', auth()->id())->latest()->first();
-        if (!$enrollment || $enrollment->status !== 'Enrolled') {
-            return redirect()->route('enrollment.index');
-        }
-
         return redirect()->route('student.dashboard');
     }
 }

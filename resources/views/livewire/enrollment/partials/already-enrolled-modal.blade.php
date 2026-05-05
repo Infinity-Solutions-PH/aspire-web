@@ -51,7 +51,7 @@
                     </div>
 
                     <div class="mt-8 space-y-3">
-                        <a href="{{ route('login') }}" class="w-full inline-flex items-center justify-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-xl shadow-primary/20 hover:bg-primary/90 hover:scale-[1.02] transition-all">
+                        <a href="{{ route('portal.login') }}" class="w-full inline-flex items-center justify-center gap-3 bg-primary text-white px-6 py-4 rounded-2xl font-bold text-sm tracking-wide shadow-xl shadow-primary/20 hover:bg-primary/90 hover:scale-[1.02] transition-all">
                             <span class="material-symbols-outlined text-lg">login</span>
                             Sign in to Student Portal
                         </a>

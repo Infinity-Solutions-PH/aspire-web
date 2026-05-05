@@ -29,7 +29,7 @@
                     The premier institution for technical mastery and academic excellence in Cavite. Where craftsmanship meets innovation.
                 </p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-primary font-bold rounded-lg hover:bg-surface-container-low transition-all duration-300 shadow-xl shadow-primary/20">
+                    <a href="{{ route('enroll.public') }}" class="px-8 py-4 bg-white text-primary font-bold rounded-lg hover:bg-surface-container-low transition-all duration-300 shadow-xl shadow-primary/20">
                         Start Enrollment 2026
                     </a>
                     <a href="{{ route('programs') }}" class="px-8 py-4 border border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-all duration-300 backdrop-blur-sm">
