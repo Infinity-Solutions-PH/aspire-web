@@ -73,7 +73,6 @@
                 
                 @php
                     $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())->latest()->first();
-                    $isEnrolled = $enrollment && $enrollment->status === 'Enrolled';
                 @endphp
                 
                 <nav class="flex flex-col gap-2">
