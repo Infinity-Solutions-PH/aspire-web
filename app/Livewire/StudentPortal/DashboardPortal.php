@@ -15,7 +15,7 @@ class DashboardPortal extends Component
     public function mount()
     {
         $this->enrollment = Enrollment::where('user_id', Auth::id())
-            ->where('status', 'Enrolled')
+            ->whereIn('status', ['Enrolled', 'Approved'])
             ->with(['section.schedules.subject', 'section.schedules.room', 'section.schedules.teacher'])
             ->latest()
             ->first();
