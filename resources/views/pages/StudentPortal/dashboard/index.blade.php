@@ -9,7 +9,5 @@
         </div>
     </div>
         
-    @if($enrollment->status === 'Enrolled')
-        @livewire('student-portal.dashboard-portal')
-    @endif
+    @livewire('student-portal.dashboard-portal')
 </x-layouts::student-portal>
