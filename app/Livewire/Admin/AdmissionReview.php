@@ -5,12 +5,11 @@ namespace App\Livewire\Admin;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Section;
+use App\Models\Student;
 use Livewire\Component;
+use App\Models\Admission;
 use App\Models\Enrollment;
-use Illuminate\Support\Str;
-use App\Models\PreEnrollment;
 use App\Services\SectioningService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\ProvisioningService;
@@ -25,16 +24,16 @@ class AdmissionReview extends Component
     public $selected_section_id;
     public $selected_tech_voc_section_id;
 
-    public function mount(Enrollment $enrollment = null, PreEnrollment $preEnrollment = null)
+    public function mount(Enrollment $enrollment = null, Admission $Admission = null)
     {
-        if ($preEnrollment && $preEnrollment->exists) {
-            $this->record = $preEnrollment;
+        if ($Admission && $Admission->exists) {
+            $this->record = $Admission;
             $this->isPre = true;
             // Normalize for UI
-            $data = $preEnrollment->form_data;
+            $data = $Admission->form_data;
             $this->admin_remarks = $data['admin_remarks'] ?? '';
             $this->selected_specialization = $data['specialization'] ?? ($data['tech_voc_course1'] ?? '');
-            $this->status = $preEnrollment->status;
+            $this->status = $Admission->status;
         } else {
             $this->record = $enrollment;
             $this->admin_remarks = $enrollment->admin_remarks;
@@ -62,21 +61,42 @@ class AdmissionReview extends Component
                 ]
             );
 
-            // 2. Promote PreEnrollment to Enrollment
-            $enrollment = Enrollment::create(array_merge($data, [
+            // 2. Create Student Record
+            $student = Student::firstOrCreate(
+                ['lrn' => $this->record->lrn],
+                array_merge($data, [
+                    'user_id' => $user->id,
+                    'global_status' => 'active',
+                    'birthdate' => $this->record->birthdate,
+                ])
+            );
+
+            // 3. Promote Admission to Enrollment
+            $enrollment = Enrollment::create([
                 'user_id' => $user->id,
-                'lrn' => $this->record->lrn,
-                'birthdate' => $this->record->birthdate,
+                'student_id' => $student->id,
                 'transaction_number' => $this->record->transaction_number,
                 'status' => 'Approved',
+                'term_status' => 'enrolled',
                 'specialization' => $this->selected_specialization,
                 'admin_remarks' => $this->admin_remarks,
                 'verified_by' => Auth::id(),
                 'type' => $data['enrollment_type'] ?? 'New',
                 'gwa' => $data['last_gwa'] ?? null,
-            ]));
+                'grade_level' => $data['grade_level'] ?? null,
+                'semester' => $data['semester'] ?? null,
+                'track' => $data['track'] ?? null,
+                'strand' => $data['strand'] ?? null,
+                'shs_track' => $data['shs_track'] ?? null,
+                'tech_voc_choices' => array_filter([$data['tech_voc_course1'] ?? null, $data['tech_voc_course2'] ?? null, $data['tech_voc_course3'] ?? null]),
+                'profile_picture' => $data['profile_picture'] ?? null,
+                'psa_path' => $data['psa_path'] ?? null,
+                'sf9_path' => $data['sf9_path'] ?? null,
+                'good_moral_path' => $data['good_moral_path'] ?? null,
+                'honorable_dismissal_path' => $data['honorable_dismissal_path'] ?? null,
+            ]);
 
-            // Delete PreEnrollment data once promoted to Enrollment
+            // Archive Admission data once promoted to Enrollment
             $this->record->delete();
             
             session()->flash('message', 'Application promoted to Enrollment and approved.');

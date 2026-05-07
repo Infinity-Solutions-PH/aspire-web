@@ -11,18 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('enrollments', function (Blueprint $table) {
+        Schema::create('students', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('status')->default('Draft');
-            $table->integer('current_step')->default(1);
+            
+            // Global State Management
+            $table->string('global_status')->default('active'); // active, alumni, inactive, transferred
+            $table->boolean('is_jhs_alumni')->default(false);
+            $table->boolean('is_shs_alumni')->default(false);
 
-            // Phase 1 & 2 Step 1: Learner Information
+            // Learner Information
             $table->string('grade_level')->nullable();
             $table->string('psa_no')->nullable();
-            $table->string('lrn')->nullable();
-            $table->string('last_name')->nullable();
-            $table->string('first_name')->nullable();
+            $table->string('lrn')->unique()->nullable();
+            $table->string('last_name');
+            $table->string('first_name');
             $table->string('middle_name')->nullable();
             $table->string('extension_name')->nullable();
             $table->date('birthdate')->nullable();
@@ -36,7 +39,7 @@ return new class extends Migration
             $table->boolean('has_disability')->default(false);
             $table->json('disability_types')->nullable();
 
-            // Step 2: Address Information
+            // Address Information
             $table->string('current_house_no')->nullable();
             $table->string('current_street')->nullable();
             $table->string('current_barangay')->nullable();
@@ -51,29 +54,17 @@ return new class extends Migration
             $table->string('permanent_province')->nullable();
             $table->string('permanent_zip')->nullable();
 
-            // Step 3: Parent's/Guardian's Information
+            // Parent's/Guardian's Information
             $table->string('father_name')->nullable();
             $table->string('mother_maiden_name')->nullable();
             $table->string('guardian_name')->nullable();
             $table->string('contact_no')->nullable();
 
-            // Step 4: Academic History & Preferences
+            // Academic History
             $table->string('last_grade_level')->nullable();
             $table->string('last_school_year')->nullable();
             $table->string('last_school_attended')->nullable();
             $table->string('last_school_id')->nullable();
-            
-            // Conditional SHS & Tech-Voc
-            $table->string('semester')->nullable();
-            $table->string('track')->nullable();
-            $table->string('strand')->nullable();
-            $table->string('specialization')->nullable();
-            $table->string('modality')->nullable();
-
-            // Step 5: Document Uploads
-            $table->string('psa_path')->nullable();
-            $table->string('sf9_path')->nullable();
-            $table->string('good_moral_path')->nullable();
 
             $table->timestamps();
         });
@@ -84,6 +75,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('enrollments');
+        Schema::dropIfExists('students');
     }
 };

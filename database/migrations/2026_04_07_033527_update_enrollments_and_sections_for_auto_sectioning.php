@@ -11,10 +11,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->decimal('gwa', 5, 2)->nullable()->after('middle_name');
-        });
-
         Schema::table('sections', function (Blueprint $table) {
             $table->boolean('is_star_section')->default(false)->after('name');
             $table->string('room')->nullable()->after('is_star_section');
@@ -40,10 +36,6 @@ return new class extends Migration
         Schema::table('sections', function (Blueprint $table) {
             $table->dropForeign(['adviser_id']);
             $table->dropColumn(['is_star_section', 'room', 'adviser_id']);
-        });
-
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->dropColumn('gwa');
         });
     }
 };

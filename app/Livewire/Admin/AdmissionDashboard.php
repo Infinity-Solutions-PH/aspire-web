@@ -4,7 +4,7 @@ namespace App\Livewire\Admin;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Models\PreEnrollment;
+use App\Models\Admission;
 
 class AdmissionDashboard extends Component
 {
@@ -14,13 +14,13 @@ class AdmissionDashboard extends Component
     public $status = 'pending_approval'; // Default to the new pending status
     public $type = '';
     public $category = '';
-    public $source = 'new'; // 'new' for PreEnrollment, 'returning' for Enrollment (pending_approval)
+    public $source = 'new'; // 'new' for Admission, 'returning' for Enrollment (pending_approval)
 
     public function render()
     {
         // On admission there are 2 status only: Pending approval and drafts
         if ($this->status === 'pending_approval' || $this->status === '') {
-            $enrollments = PreEnrollment::where('status', 'pending_approval')
+            $enrollments = Admission::where('status', 'pending_approval')
                 ->when($this->category, fn($q) => $q->where('form_data->school_category', $this->category))
                 ->when($this->search, function($q) {
                     $q->where('lrn', 'like', "%{$this->search}%")
@@ -31,7 +31,7 @@ class AdmissionDashboard extends Component
                 ->paginate(10);
         } else {
             // Show Drafts from Enrollment table
-            $enrollments = PreEnrollment::where('status', 'draft')
+            $enrollments = Admission::where('status', 'draft')
                 ->when($this->type, fn($q) => $q->where('type', $this->type))
                 ->when($this->category, function($q) {
                     if ($this->category === 'HS') {
