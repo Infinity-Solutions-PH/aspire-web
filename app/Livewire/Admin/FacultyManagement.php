@@ -298,7 +298,7 @@ class FacultyManagement extends Component
         return view('livewire.admin.faculty-management', [
             'faculties' => $faculties,
             'stats' => $stats,
-            'positions' => Position::orderBy('name')->get(),
+            'positions' => Position::orderBy('id')->get(),
             'branches' => Branch::orderBy('name')->get(),
         ]);
     }
