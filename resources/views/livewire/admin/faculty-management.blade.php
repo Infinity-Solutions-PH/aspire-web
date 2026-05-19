@@ -385,7 +385,7 @@
 
                         <!-- Position Select -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">DepEd Position</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Position</label>
                             <select wire:model.live="form_position_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
                                 <option value="">Select Position</option>
                                 @foreach($positions as $p)

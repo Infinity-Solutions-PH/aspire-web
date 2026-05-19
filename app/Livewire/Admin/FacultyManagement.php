@@ -39,11 +39,11 @@ class FacultyManagement extends Component
     public $resigned_date = '';
     public $transfer_date = '';
 
-    // Password Confirmation States & Dirty Tracking
-    public $showPasswordModal = false;
-    public $confirmPassword = '';
-    public $initialValues = [];
-    public $isDirty = false;
+    protected $validationAttributes = [
+        'form_department' => 'department',
+        'form_position_id' => 'position',
+        'form_branch_id' => 'branch',
+    ];
 
     protected function rules()
     {
@@ -119,6 +119,11 @@ class FacultyManagement extends Component
         $this->form_status = 'Active';
         $this->form_level = 'JHS';
         $this->gender = 'Male';
+        
+        // Default school branch to "Main"
+        $mainBranch = Branch::where('name', 'Main')->first();
+        $this->form_branch_id = $mainBranch ? $mainBranch->id : '';
+
         $this->initialValues = [];
         $this->isDirty = true;
         $this->showPasswordModal = false;
