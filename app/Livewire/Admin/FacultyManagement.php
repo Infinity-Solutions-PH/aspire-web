@@ -39,6 +39,12 @@ class FacultyManagement extends Component
     public $resigned_date = '';
     public $transfer_date = '';
 
+    // Password Confirmation States & Dirty Tracking
+    public $showPasswordModal = false;
+    public $confirmPassword = '';
+    public $initialValues = [];
+    public $isDirty = false;
+
     protected $validationAttributes = [
         'form_department' => 'department',
         'form_position_id' => 'position',
