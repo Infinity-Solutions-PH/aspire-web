@@ -13,6 +13,28 @@
         </button>
     </div>
 
+    <!-- Flash Messages -->
+    @if (session()->has('message'))
+        <div x-data="{ show: true }" 
+             x-show="show" 
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-8 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/30 rounded-2xl flex items-center justify-between text-green-800 dark:text-green-400 shadow-sm shadow-green-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                <span class="text-sm font-semibold">{{ session('message') }}</span>
+            </div>
+            <button @click="show = false" class="text-green-500 hover:text-green-700 dark:hover:text-green-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
+
     <!-- Quick Stats Grid (5 Cards for Premium Detail) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 my-10">
         <!-- Card 1: Total -->

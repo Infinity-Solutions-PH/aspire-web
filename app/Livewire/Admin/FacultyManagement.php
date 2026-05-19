@@ -202,6 +202,7 @@ class FacultyManagement extends Component
         $this->confirmPassword = '';
         $this->isDirty = false;
 
+        session()->flash('message', $message);
         $this->dispatch('faculty-saved', message: $message);
     }
 
