@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
             SchoolManagementSeeder::class,
             JhsSectionSeeder::class,
             // FacultySeeder::class,
-            BulkEnrollmentSeeder::class,
+            // BulkEnrollmentSeeder::class,
         ]);
     }
 }
