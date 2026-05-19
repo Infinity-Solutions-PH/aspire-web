@@ -1,6 +1,6 @@
 @section('page-title', 'Faculty Management')
 
-<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal') }">
+<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal'), showDevModal: false }">
     <!-- Page Heading -->
     <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
         <div class="flex flex-col gap-1">
@@ -184,7 +184,7 @@
                                     <button wire:click="edit({{ $faculty->id }})" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
                                         <span class="material-symbols-outlined text-lg">edit</span>
                                     </button>
-                                    <button class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="View Schedule">
+                                    <button @click="showDevModal = true" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="View Schedule">
                                         <span class="material-symbols-outlined text-lg">calendar_month</span>
                                     </button>
                                 </div>
@@ -339,6 +339,55 @@
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development/Feature Coming Soon Modal -->
+    <div x-show="showDevModal" 
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showDevModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-center align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border-t-4 border-amber-500">
+                <!-- Close Button -->
+                <div class="flex justify-end">
+                    <button @click="showDevModal = false" class="text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <div class="flex flex-col items-center gap-4 py-4">
+                    <!-- Pulser Container -->
+                    <div class="size-16 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center animate-pulse">
+                        <span class="material-symbols-outlined text-3xl">construction</span>
+                    </div>
+
+                    <h3 class="text-xl font-black text-amber-600 dark:text-amber-500 uppercase tracking-tight mt-2">Feature In Development</h3>
+                    
+                    <p class="text-sm text-[#9a4c4c] dark:text-white/70 leading-relaxed max-w-xs">
+                        We are currently building this schedule viewer tool to integrate real-time teaching loads. This feature will be available in an upcoming update.
+                    </p>
+                </div>
+
+                <!-- Footer/Action Button -->
+                <div class="mt-6">
+                    <button @click="showDevModal = false" 
+                            class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-black shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]">
+                        Got it, Thanks!
+                    </button>
+                </div>
             </div>
         </div>
     </div>
