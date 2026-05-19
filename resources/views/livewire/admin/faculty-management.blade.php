@@ -1,6 +1,6 @@
 @section('page-title', 'Faculty Management')
 
-<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal'), showDevModal: false }">
+<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal'), showDevModal: false, showPasswordModal: @entangle('showPasswordModal') }">
     <!-- Page Heading -->
     <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
         <div class="flex flex-col gap-1">
@@ -237,28 +237,28 @@
                         <!-- Faculty ID -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Faculty ID</label>
-                            <input wire:model="faculty_id" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. TNTS-2024-001">
+                            <input wire:model.live.debounce.250ms="faculty_id" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. TNTS-2024-001">
                             @error('faculty_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Full Name -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Full Name</label>
-                            <input wire:model="name" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Juan Dela Cruz">
+                            <input wire:model.live.debounce.250ms="name" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Juan Dela Cruz">
                             @error('name') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Email -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Official Email</label>
-                            <input wire:model="email" type="email" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. juan@tnts.edu.ph">
+                            <input wire:model.live.debounce.250ms="email" type="email" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. juan@tnts.edu.ph">
                             @error('email') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Gender -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Gender</label>
-                            <select wire:model="gender" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                            <select wire:model.live="gender" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -269,14 +269,14 @@
                         <!-- Plantilla Item Number -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item Number</label>
-                            <input wire:model="plantilla_item_number" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. OSEC-DECSB-TCH1-310001-2021">
+                            <input wire:model.live.debounce.250ms="plantilla_item_number" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. OSEC-DECSB-TCH1-310001-2021">
                             @error('plantilla_item_number') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Department -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Department</label>
-                            <select wire:model="form_department" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                            <select wire:model.live="form_department" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
                                 <option value="">Select Department</option>
                                 <option value="TVE">TVE</option>
                                 <option value="Academic">Academic</option>
@@ -293,14 +293,14 @@
                         <!-- Specialization -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Specialization</label>
-                            <input wire:model="specialization" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Computer Programming">
+                            <input wire:model.live.debounce.250ms="specialization" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Computer Programming">
                             @error('specialization') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Employment Status -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Employment Status</label>
-                            <select wire:model="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                            <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
                                 <option value="Active">Active</option>
                                 <option value="On Leave">On Leave</option>
                                 <option value="Retired">Retired</option>
@@ -316,7 +316,7 @@
                         <!-- Resigned Date -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-rose-500">Resigned Date</label>
-                            <input wire:model="resigned_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
+                            <input wire:model.live="resigned_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
                             <p class="text-[9px] text-gray-400">Fill in if the faculty member has resigned from service.</p>
                             @error('resigned_date') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
@@ -324,7 +324,7 @@
                         <!-- Transfer Date -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-purple-500">Date of Transfer (If Transferred Out)</label>
-                            <input wire:model="transfer_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
+                            <input wire:model.live="transfer_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
                             <p class="text-[9px] text-gray-400">Fill in if the faculty member was transferred to another school/agency.</p>
                             @error('transfer_date') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
@@ -333,7 +333,9 @@
                     <!-- Modal Footer -->
                     <div class="pt-6 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-3">
                         <button type="button" @click="showModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 transition-colors">Cancel</button>
-                        <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
+                        <button type="submit" 
+                                @if(!$isDirty) disabled @endif
+                                class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
                             <span wire:loading wire:target="save" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                             {{ $editingId ? 'Update Information' : 'Register Faculty' }}
                         </button>
@@ -388,6 +390,59 @@
                         Got it, Thanks!
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Confirmation Modal -->
+    <div x-show="showPasswordModal" 
+         class="fixed inset-0 z-50 overflow-y-auto" 
+         x-cloak
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border-t-4 border-primary">
+                <!-- Modal Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-[#f3e7e7] dark:border-[#3a1f1f] mb-4">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-2xl">shield_lock</span>
+                        <h3 class="text-lg font-black text-primary uppercase tracking-tight">Confirm Security Password</h3>
+                    </div>
+                    <button @click="showPasswordModal = false" class="text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form wire:submit.prevent="confirmPasswordAndSave" class="space-y-4">
+                    <p class="text-xs text-[#9a4c4c] dark:text-white/60 leading-normal">
+                        For security, please enter your administrator password to authorize these changes to the faculty directory.
+                    </p>
+                    
+                    <div class="space-y-1">
+                        <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Administrator Password</label>
+                        <input wire:model="confirmPassword" type="password" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Enter your password" required>
+                        @error('confirmPassword') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="pt-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-3">
+                        <button type="button" @click="showPasswordModal = false" class="px-6 py-2.5 rounded-xl text-xs font-bold text-[#9a4c4c] hover:bg-gray-100 transition-colors">Cancel</button>
+                        <button type="submit" class="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
+                            <span wire:loading wire:target="confirmPasswordAndSave" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            Authorize & Save
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

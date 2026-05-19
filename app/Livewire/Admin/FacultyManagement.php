@@ -30,6 +30,12 @@ class FacultyManagement extends Component
     public $resigned_date = '';
     public $transfer_date = '';
 
+    // Password Confirmation States & Dirty Tracking
+    public $showPasswordModal = false;
+    public $confirmPassword = '';
+    public $initialValues = [];
+    public $isDirty = false;
+
     protected function rules()
     {
         $faculty = $this->editingId ? Faculty::find($this->editingId) : null;
@@ -54,15 +60,40 @@ class FacultyManagement extends Component
         $this->resetPage();
     }
 
+    public function updated($propertyName)
+    {
+        if ($this->editingId) {
+            $currentValues = [
+                'faculty_id' => $this->faculty_id,
+                'name' => $this->name,
+                'email' => $this->email,
+                'form_department' => $this->form_department,
+                'form_status' => $this->form_status,
+                'specialization' => $this->specialization ?: '',
+                'plantilla_item_number' => $this->plantilla_item_number ?: '',
+                'gender' => $this->gender ?: 'Male',
+                'resigned_date' => $this->resigned_date ?: '',
+                'transfer_date' => $this->transfer_date ?: '',
+            ];
+
+            $this->isDirty = $currentValues !== $this->initialValues;
+        } else {
+            $this->isDirty = true;
+        }
+    }
+
     public function create()
     {
         $this->reset([
             'editingId', 'faculty_id', 'name', 'email', 'form_department', 
             'form_status', 'specialization', 'plantilla_item_number', 
-            'gender', 'resigned_date', 'transfer_date'
+            'gender', 'resigned_date', 'transfer_date', 'confirmPassword'
         ]);
         $this->form_status = 'Active';
         $this->gender = 'Male';
+        $this->initialValues = [];
+        $this->isDirty = true;
+        $this->showPasswordModal = false;
         $this->showModal = true;
     }
 
@@ -79,12 +110,46 @@ class FacultyManagement extends Component
         $this->gender = $faculty->gender ?: 'Male';
         $this->resigned_date = $faculty->resigned_date ? $faculty->resigned_date->format('Y-m-d') : '';
         $this->transfer_date = $faculty->transfer_date ? $faculty->transfer_date->format('Y-m-d') : '';
+
+        $this->initialValues = [
+            'faculty_id' => $this->faculty_id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'form_department' => $this->form_department,
+            'form_status' => $this->form_status,
+            'specialization' => $this->specialization ?: '',
+            'plantilla_item_number' => $this->plantilla_item_number ?: '',
+            'gender' => $this->gender ?: 'Male',
+            'resigned_date' => $this->resigned_date ?: '',
+            'transfer_date' => $this->transfer_date ?: '',
+        ];
+
+        $this->isDirty = false;
+        $this->confirmPassword = '';
+        $this->showPasswordModal = false;
         $this->showModal = true;
     }
 
     public function save()
     {
         $this->validate();
+
+        // Instead of immediate save, prompt password confirmation
+        $this->confirmPassword = '';
+        $this->showPasswordModal = true;
+    }
+
+    public function confirmPasswordAndSave()
+    {
+        $this->validate([
+            'confirmPassword' => 'required',
+        ]);
+
+        $admin = auth()->user();
+        if (!Hash::check($this->confirmPassword, $admin->password)) {
+            $this->addError('confirmPassword', 'The password you entered is incorrect.');
+            return;
+        }
 
         if ($this->editingId) {
             $faculty = Faculty::findOrFail($this->editingId);
@@ -112,7 +177,7 @@ class FacultyManagement extends Component
             $user = User::create([
                 'name' => $this->name,
                 'email' => $this->email,
-                'password' => Hash::make('password'), // Default password
+                'password' => Hash::make('password'),
                 'role' => 'teacher',
             ]);
 
@@ -132,7 +197,11 @@ class FacultyManagement extends Component
             $message = 'Faculty successfully registered.';
         }
 
+        $this->showPasswordModal = false;
         $this->showModal = false;
+        $this->confirmPassword = '';
+        $this->isDirty = false;
+
         $this->dispatch('faculty-saved', message: $message);
     }
 
