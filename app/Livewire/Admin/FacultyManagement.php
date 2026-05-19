@@ -302,8 +302,7 @@ class FacultyManagement extends Component
             'active' => Faculty::where('status', 'Active')->count(),
             'on_leave' => Faculty::where('status', 'On Leave')->count(),
             'retired' => Faculty::where('status', 'Retired')->count(),
-            'deceased' => Faculty::where('status', 'Deceased')->count(),
-            'vacant' => Faculty::where('status', 'Vacant')->count(),
+            'inactive' => Faculty::where('status', 'Inactive')->count(),
         ];
 
         return view('livewire.admin.faculty-management', [

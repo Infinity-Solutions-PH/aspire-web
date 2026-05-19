@@ -35,8 +35,8 @@
         </div>
     @endif
 
-    <!-- Quick Stats Grid (6 Cards for Premium Detail) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 my-10">
+    <!-- Quick Stats Grid (5 Cards for Premium Detail) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 my-10">
         <!-- Card 1: Total -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
@@ -81,25 +81,14 @@
             </div>
         </div>
 
-        <!-- Card 5: Deceased -->
+        <!-- Card 5: Inactive -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-xl">person_off</span>
             </div>
             <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Deceased</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['deceased'] }}</p>
-            </div>
-        </div>
-
-        <!-- Card 6: Vacant Positions -->
-        <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm border-dashed border-gray-300 dark:border-red-950/40">
-            <div class="size-10 rounded-lg bg-gray-50 dark:bg-gray-900/30 text-gray-500 dark:text-gray-400 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-xl">contact_support</span>
-            </div>
-            <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Vacant Slots</p>
-                <p class="text-xl font-black text-gray-700 dark:text-gray-300 tracking-tight">{{ $stats['vacant'] }}</p>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Inactive</p>
+                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['inactive'] }}</p>
             </div>
         </div>
     </div>
