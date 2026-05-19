@@ -86,6 +86,11 @@
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.faculty') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.faculty') ? "font-variation-settings: 'FILL' 1" : '' }}">school</span>
                         <span class="text-sm font-bold">Faculty</span>
                     </a>
+
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.plantillas') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.plantillas') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.plantillas') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.plantillas') ? "font-variation-settings: 'FILL' 1" : '' }}">receipt_long</span>
+                        <span class="text-sm font-bold">Plantillas</span>
+                    </a>
                     
                     <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.sections') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.sections') }}">
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.sections') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.sections') ? "font-variation-settings: 'FILL' 1" : '' }}">meeting_room</span>

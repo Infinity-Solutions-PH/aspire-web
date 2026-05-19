@@ -35,16 +35,16 @@
         </div>
     @endif
 
-    <!-- Quick Stats Grid (5 Cards for Premium Detail) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 my-10">
-        <!-- Card 1: Total -->
+    <!-- Quick Stats Grid (4 Cards for Premium Detail) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-10">
+        <!-- Card 1: Total Positions -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-xl">groups</span>
             </div>
             <div>
                 <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Total Positions</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['total'] }}</p>
+                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['total_positions'] }}</p>
             </div>
         </div>
 
@@ -59,38 +59,27 @@
             </div>
         </div>
 
-        <!-- Card 3: On Leave -->
+        <!-- Card 3: Other Status (On Leave / Inactive) -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-xl">event_busy</span>
+                <span class="material-symbols-outlined text-xl">pending_actions</span>
             </div>
             <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">On Leave</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['on_leave'] }}</p>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Other Status</p>
+                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['other_status'] }}</p>
             </div>
         </div>
 
-        <!-- Card 4: Retired -->
-        <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
-            <div class="size-10 rounded-lg bg-blue-50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-xl">history</span>
+        <!-- Card 4: Vacant Positions -->
+        <a href="{{ route('admin.plantillas', ['status' => 'vacant']) }}" class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm border-dashed border-gray-300 dark:border-red-950/40 hover:bg-gray-50 dark:hover:bg-[#3d2424] transition-colors cursor-pointer group block">
+            <div class="size-10 rounded-lg bg-gray-50 dark:bg-gray-900/30 text-gray-500 dark:text-gray-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-xl">contact_support</span>
             </div>
             <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Retired</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['retired'] }}</p>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Vacant Slots</p>
+                <p class="text-xl font-black text-gray-700 dark:text-gray-300 tracking-tight">{{ $stats['vacancies'] }}</p>
             </div>
-        </div>
-
-        <!-- Card 5: Inactive -->
-        <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
-            <div class="size-10 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
-                <span class="material-symbols-outlined text-xl">person_off</span>
-            </div>
-            <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Inactive</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['inactive'] }}</p>
-            </div>
-        </div>
+        </a>
     </div>
 
     <!-- Filters & Search -->
@@ -150,8 +139,6 @@
             <option value="Active">Active</option>
             <option value="On Leave">On Leave</option>
             <option value="Retired">Retired</option>
-            <option value="Deceased">Deceased</option>
-            <option value="Vacant">Vacant</option>
         </select>
     </div>
 
@@ -196,7 +183,7 @@
                             <!-- Plantilla Item # -->
                             <td class="px-6 py-4">
                                 <span class="text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-2 py-1 rounded">
-                                    {{ $faculty->plantilla_item_number ?: 'N/A' }}
+                                    {{ $faculty->plantillaPosition?->plantilla_number ?: 'N/A' }}
                                 </span>
                             </td>
                             <!-- Gender -->
@@ -218,7 +205,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
                                     <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->department }}</span>
-                                    <span class="text-[10px] text-primary font-bold">{{ $faculty->position?->name ?: 'Unassigned' }}</span>
+                                    <span class="text-[10px] text-primary font-bold">{{ $faculty->plantillaPosition?->position?->name ?: 'Unassigned' }}</span>
                                 </div>
                             </td>
                             <!-- Branch & Level -->
@@ -233,9 +220,8 @@
                                 <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider
                                     {{ $faculty->status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 
                                        ($faculty->status === 'On Leave' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' : 
-                                       ($faculty->status === 'Retired' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950/30 dark:text-blue-400' : 
-                                       ($faculty->status === 'Deceased' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400' : 
-                                       'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400'))) }}">
+                                       ($faculty->status === 'Inactive' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400' : 
+                                       'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400')) }}">
                                     {{ $faculty->status }}
                                 </span>
                             </td>
@@ -315,9 +301,7 @@
                             <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
                                 <option value="Active">Active</option>
                                 <option value="On Leave">On Leave</option>
-                                <option value="Retired">Retired</option>
-                                <option value="Deceased">Deceased</option>
-                                <option value="Vacant">Vacant</option>
+                                <option value="Inactive">Inactive</option>
                             </select>
                             @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
@@ -371,7 +355,6 @@
                             </select>
                             @error('form_department') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
-
                         <!-- Position Select -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Position</label>
@@ -383,7 +366,6 @@
                             </select>
                             @error('form_position_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
-
                         <!-- Branch Select -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Branch</label>
@@ -468,7 +450,7 @@
 
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Administrator Password</label>
-                        <input wire:model.defer="confirmPassword" type="password" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Enter your password">
+                        <input wire:model="confirmPassword" type="password" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Enter your password">
                         @error('confirmPassword') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                     </div>
 

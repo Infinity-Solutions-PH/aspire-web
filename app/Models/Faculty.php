@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Faculty extends Model
 {
@@ -15,10 +16,9 @@ class Faculty extends Model
         'faculty_id',
         'department',
         'status',
-        'position_id',
         'branch_id',
         'level',
-        'plantilla_item_number',
+        'plantilla_position_id',
         'gender',
         'resigned_date',
         'transfer_date'
@@ -40,9 +40,21 @@ class Faculty extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function position(): BelongsTo
+    public function plantillaPosition(): BelongsTo
     {
-        return $this->belongsTo(Position::class);
+        return $this->belongsTo(PlantillaPosition::class);
+    }
+
+    public function position(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Position::class, 
+            PlantillaPosition::class, 
+            'id', 
+            'id', 
+            'plantilla_position_id', 
+            'position_id'
+        );
     }
 
     public function branch(): BelongsTo

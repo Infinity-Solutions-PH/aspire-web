@@ -6,6 +6,7 @@ use App\Livewire\Admin\ScheduleManager;
 use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\StudentMasterlist;
 use App\Livewire\Admin\FacultyManagement;
+use App\Livewire\Admin\PlantillaManagement;
 use App\Livewire\Admin\SchoolYearManagement;
 use App\Livewire\Admin\AdmissionDashboard;
 use App\Livewire\Admin\Section\ManageStudents;
@@ -37,5 +38,6 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     
     Route::get('/schedules', ScheduleManager::class)->name('admin.schedules');
     Route::get('/faculty', FacultyManagement::class)->name('admin.faculty');
+    Route::get('/plantillas', PlantillaManagement::class)->name('admin.plantillas');
     Route::get('/school-years', SchoolYearManagement::class)->name('admin.school-years');
 });

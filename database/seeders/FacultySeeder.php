@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Faculty;
-use App\Models\Position;
 use App\Models\Branch;
+use App\Models\PlantillaPosition;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,14 +16,13 @@ class FacultySeeder extends Seeder
      */
     public function run(): void
     {
-        $teacher1 = Position::where('name', 'Teacher I')->first()->id;
-        $teacher2 = Position::where('name', 'Teacher II')->first()->id;
-        $teacher3 = Position::where('name', 'Teacher III')->first()->id;
-        $mt1 = Position::where('name', 'Master Teacher I')->first()->id;
-        $mt2 = Position::where('name', 'Master Teacher II')->first()->id;
-
         $main = Branch::where('name', 'Main')->first()->id;
         $annex = Branch::where('name', 'Annex')->first()->id;
+
+        $plantillas = PlantillaPosition::all()->keyBy('plantilla_number');
+        if ($plantillas->isEmpty()) {
+            return;
+        }
 
         $faculty = [
             [
@@ -33,8 +32,7 @@ class FacultySeeder extends Seeder
                 'dept' => 'TVE',
                 'status' => 'Active',
                 'gender' => 'Male',
-                'plantilla_item_number' => 'OSEC-DECSB-TCH1-310001-2021',
-                'position_id' => $teacher1,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH1-310001-2021']->id ?? null,
                 'branch_id' => $main,
                 'level' => 'JHS',
                 'resigned_date' => null,
@@ -47,8 +45,7 @@ class FacultySeeder extends Seeder
                 'dept' => 'Academic',
                 'status' => 'Active',
                 'gender' => 'Female',
-                'plantilla_item_number' => 'OSEC-DECSB-TCH3-310452-2018',
-                'position_id' => $teacher3,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH3-310006-2021']->id ?? null,
                 'branch_id' => $main,
                 'level' => 'SHS',
                 'resigned_date' => null,
@@ -61,8 +58,7 @@ class FacultySeeder extends Seeder
                 'dept' => 'MAPEH',
                 'status' => 'On Leave',
                 'gender' => 'Male',
-                'plantilla_item_number' => 'OSEC-DECSB-TCH2-310015-2020',
-                'position_id' => $teacher2,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH2-310004-2021']->id ?? null,
                 'branch_id' => $annex,
                 'level' => 'JHS',
                 'resigned_date' => null,
@@ -75,8 +71,7 @@ class FacultySeeder extends Seeder
                 'dept' => 'Science',
                 'status' => 'Active',
                 'gender' => 'Female',
-                'plantilla_item_number' => 'OSEC-DECSB-MTCH1-310088-2015',
-                'position_id' => $mt1,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-MTCH1-310007-2021']->id ?? null,
                 'branch_id' => $main,
                 'level' => 'SHS',
                 'resigned_date' => null,
@@ -89,8 +84,7 @@ class FacultySeeder extends Seeder
                 'dept' => 'TVE',
                 'status' => 'Retired',
                 'gender' => 'Male',
-                'plantilla_item_number' => 'OSEC-DECSB-MTCH2-310009-2010',
-                'position_id' => $mt2,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH2-310005-2021']->id ?? null,
                 'branch_id' => $annex,
                 'level' => 'JHS',
                 'resigned_date' => null,
@@ -101,29 +95,15 @@ class FacultySeeder extends Seeder
                 'email' => 'marie.curie@tnts.edu.ph',
                 'id' => 'TNTS-2021-022',
                 'dept' => 'Science',
-                'status' => 'Deceased',
+                'status' => 'Inactive', // Replaced Deceased with Inactive
                 'gender' => 'Female',
-                'plantilla_item_number' => 'OSEC-DECSB-TCH3-310022-2012',
-                'position_id' => $teacher3,
+                'plantilla_position_id' => $plantillas['OSEC-DECSB-HTCH1-310008-2021']->id ?? null,
                 'branch_id' => $main,
                 'level' => 'SHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
-            ],
-            [
-                'name' => null,
-                'email' => null,
-                'id' => 'TNTS-VACANT-001',
-                'dept' => 'Mathematics',
-                'status' => 'Vacant',
-                'gender' => null,
-                'plantilla_item_number' => 'OSEC-DECSB-TCH1-310002-2024',
-                'position_id' => $teacher1,
-                'branch_id' => $annex,
-                'level' => 'JHS',
-                'resigned_date' => null,
-                'transfer_date' => null,
             ]
+            // We intentionally leave some PlantillaPosition items unassigned to represent Vacancies.
         ];
 
         foreach ($faculty as $f) {
@@ -140,21 +120,22 @@ class FacultySeeder extends Seeder
                 $userId = $user->id;
             }
 
-            Faculty::updateOrCreate(
-                ['faculty_id' => $f['id']],
-                [
-                    'user_id' => $userId,
-                    'department' => $f['dept'],
-                    'status' => $f['status'],
-                    'gender' => $f['gender'],
-                    'plantilla_item_number' => $f['plantilla_item_number'],
-                    'position_id' => $f['position_id'],
-                    'branch_id' => $f['branch_id'],
-                    'level' => $f['level'],
-                    'resigned_date' => $f['resigned_date'],
-                    'transfer_date' => $f['transfer_date'],
-                ]
-            );
+            if ($f['plantilla_position_id']) {
+                Faculty::updateOrCreate(
+                    ['faculty_id' => $f['id']],
+                    [
+                        'user_id' => $userId,
+                        'department' => $f['dept'],
+                        'status' => $f['status'],
+                        'gender' => $f['gender'],
+                        'plantilla_position_id' => $f['plantilla_position_id'],
+                        'branch_id' => $f['branch_id'],
+                        'level' => $f['level'],
+                        'resigned_date' => $f['resigned_date'],
+                        'transfer_date' => $f['transfer_date'],
+                    ]
+                );
+            }
         }
     }
 }

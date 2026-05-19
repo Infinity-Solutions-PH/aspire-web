@@ -19,14 +19,13 @@ return new class extends Migration
             $table->string('status')->default('Active'); // Active, On Leave, Retired, Deceased, Vacant
             
             // Relational fields replacing raw text
-            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
+            $table->foreignId('plantilla_position_id')->nullable()->constrained('plantilla_positions')->nullOnDelete();
             $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
             
             // High school levels JHS / SHS
             $table->string('level')->default('JHS'); // JHS, SHS
             
             // New columns requested by USER
-            $table->string('plantilla_item_number')->nullable();
             $table->string('gender')->nullable();
             $table->date('resigned_date')->nullable();
             $table->date('transfer_date')->nullable(); // date of transfer if transferred out
