@@ -44,8 +44,8 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    public function teacher()
+    public function faculty()
     {
-        return $this->hasOne(Teacher::class);
+        return $this->hasOne(Faculty::class);
     }
 }

@@ -5,7 +5,7 @@ use App\Livewire\Admin\AdmissionReview;
 use App\Livewire\Admin\ScheduleManager;
 use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\StudentMasterlist;
-use App\Livewire\Admin\TeacherManagement;
+use App\Livewire\Admin\FacultyManagement;
 use App\Livewire\Admin\SchoolYearManagement;
 use App\Livewire\Admin\AdmissionDashboard;
 use App\Livewire\Admin\Section\ManageStudents;
@@ -36,6 +36,6 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
     Route::get('/sections/{section}/export/csv', [ExportSectionMasterlistController::class, 'exportCsv'])->name('admin.sections.export.csv');
     
     Route::get('/schedules', ScheduleManager::class)->name('admin.schedules');
-    Route::get('/faculty', TeacherManagement::class)->name('admin.faculty');
+    Route::get('/faculty', FacultyManagement::class)->name('admin.faculty');
     Route::get('/school-years', SchoolYearManagement::class)->name('admin.school-years');
 });

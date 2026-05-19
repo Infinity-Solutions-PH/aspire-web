@@ -11,13 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teachers', function (Blueprint $table) {
+        Schema::create('faculties', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('teacher_id')->unique();
+            $table->string('faculty_id')->unique();
             $table->string('department');
-            $table->string('status')->default('Active'); // Active, On Leave, Inactive
+            $table->string('status')->default('Active'); // Active, On Leave, Retired, Deceased, Vacant
             $table->string('specialization')->nullable();
+            
+            // New columns requested by USER
+            $table->string('plantilla_item_number')->nullable();
+            $table->string('gender')->nullable();
+            $table->date('resigned_date')->nullable();
+            $table->date('transfer_date')->nullable(); // date of transfer if transferred out
+            
             $table->timestamps();
         });
     }
@@ -27,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('teachers');
+        Schema::dropIfExists('faculties');
     }
 };
