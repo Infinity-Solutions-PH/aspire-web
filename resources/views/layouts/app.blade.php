@@ -43,18 +43,25 @@
     @livewireStyles
 </head>
 <body class="bg-background-light dark:bg-background-dark text-[#1b0d0d] dark:text-[#fcf8f8] min-h-screen">
-    <div class="flex h-screen overflow-hidden">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen overflow-hidden relative">
         <!-- Sidebar -->
-        <aside class="w-64 border-r border-[#e7cfcf] dark:border-[#422020] bg-white dark:bg-[#1a0c0c] flex flex-col sticky top-0 h-screen">
+        <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'" 
+               class="fixed lg:sticky top-0 left-0 z-50 w-full lg:w-64 border-r border-[#e7cfcf] dark:border-[#422020] bg-white dark:bg-[#1a0c0c] flex flex-col h-screen transition-transform duration-300 ease-in-out">
             <div class="p-6">
-                <div class="flex items-center gap-3 mb-8">
-                    <div class="size-10 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-[#e7cfcf] dark:border-[#422020] shadow-sm">
-                        <x-app-logo-image class="w-8 h-8 object-contain" />
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-3">
+                        <div class="size-10 rounded-xl overflow-hidden flex items-center justify-center bg-white border border-[#e7cfcf] dark:border-[#422020] shadow-sm">
+                            <x-app-logo-image class="w-8 h-8 object-contain" />
+                        </div>
+                        <div>
+                            <h1 class="text-primary text-lg font-black leading-none">TNTS Admin</h1>
+                            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-[10px] font-bold uppercase tracking-wider">Management System</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-primary text-lg font-black leading-none">TNTS Admin</h1>
-                        <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-[10px] font-bold uppercase tracking-wider">Management System</p>
-                    </div>
+                    <!-- Close button on mobile -->
+                    <button @click="sidebarOpen = false" class="lg:hidden flex items-center justify-center size-10 rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
                 </div>
                 
                 <nav class="flex flex-col gap-1.5">
@@ -127,12 +134,19 @@
         <main class="flex-1 flex flex-col overflow-y-auto bg-background-light dark:bg-background-dark">
             <!-- Top Header -->
             <header class="h-16 border-b border-[#e7cfcf] dark:border-[#422020] bg-white dark:bg-[#1a0c0c] px-8 flex items-center justify-between sticky top-0 z-10">
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-widest">Main</span>
-                    <span class="material-symbols-outlined text-xs text-[#9a4c4c]">chevron_right</span>
-                    <span class="text-sm font-bold text-gray-900 dark:text-white">
-                        @yield('page-title', 'Overview')
-                    </span>
+                <div class="flex items-center gap-3">
+                    <!-- Toggle sidebar button on mobile -->
+                    <button @click="sidebarOpen = true" class="lg:hidden flex items-center justify-center size-10 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white shrink-0 transition-colors hover:bg-[#e7cfcf]">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-widest">Main</span>
+                        <span class="material-symbols-outlined text-xs text-[#9a4c4c]">chevron_right</span>
+                        <span class="text-sm font-bold text-gray-900 dark:text-white">
+                            @yield('page-title', 'Overview')
+                        </span>
+                    </div>
                 </div>
                 
                 <div class="flex items-center gap-6">
