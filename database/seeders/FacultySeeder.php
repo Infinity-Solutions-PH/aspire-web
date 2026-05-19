@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Faculty;
+use App\Models\Position;
+use App\Models\Branch;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,6 +16,15 @@ class FacultySeeder extends Seeder
      */
     public function run(): void
     {
+        $teacher1 = Position::where('name', 'Teacher I')->first()->id;
+        $teacher2 = Position::where('name', 'Teacher II')->first()->id;
+        $teacher3 = Position::where('name', 'Teacher III')->first()->id;
+        $mt1 = Position::where('name', 'Master Teacher I')->first()->id;
+        $mt2 = Position::where('name', 'Master Teacher II')->first()->id;
+
+        $main = Branch::where('name', 'Main')->first()->id;
+        $annex = Branch::where('name', 'Annex')->first()->id;
+
         $faculty = [
             [
                 'name' => 'Juan Dela Cruz',
@@ -23,7 +34,9 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Male',
                 'plantilla_item_number' => 'OSEC-DECSB-TCH1-310001-2021',
-                'specialization' => 'Automotive Servicing',
+                'position_id' => $teacher1,
+                'branch_id' => $main,
+                'level' => 'JHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
@@ -35,7 +48,9 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Female',
                 'plantilla_item_number' => 'OSEC-DECSB-TCH3-310452-2018',
-                'specialization' => 'General Mathematics',
+                'position_id' => $teacher3,
+                'branch_id' => $main,
+                'level' => 'SHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
@@ -47,7 +62,9 @@ class FacultySeeder extends Seeder
                 'status' => 'On Leave',
                 'gender' => 'Male',
                 'plantilla_item_number' => 'OSEC-DECSB-TCH2-310015-2020',
-                'specialization' => 'Physical Education',
+                'position_id' => $teacher2,
+                'branch_id' => $annex,
+                'level' => 'JHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
@@ -59,7 +76,9 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Female',
                 'plantilla_item_number' => 'OSEC-DECSB-MTCH1-310088-2015',
-                'specialization' => 'Chemistry & Physics',
+                'position_id' => $mt1,
+                'branch_id' => $main,
+                'level' => 'SHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
@@ -71,7 +90,9 @@ class FacultySeeder extends Seeder
                 'status' => 'Retired',
                 'gender' => 'Male',
                 'plantilla_item_number' => 'OSEC-DECSB-MTCH2-310009-2010',
-                'specialization' => 'Electrical Installation & Maintenance',
+                'position_id' => $mt2,
+                'branch_id' => $annex,
+                'level' => 'JHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
@@ -83,43 +104,53 @@ class FacultySeeder extends Seeder
                 'status' => 'Deceased',
                 'gender' => 'Female',
                 'plantilla_item_number' => 'OSEC-DECSB-TCH3-310022-2012',
-                'specialization' => 'Nuclear Physics',
+                'position_id' => $teacher3,
+                'branch_id' => $main,
+                'level' => 'SHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ],
             [
-                'name' => 'Vacant Position 1',
-                'email' => 'vacant1@tnts.edu.ph',
+                'name' => null,
+                'email' => null,
                 'id' => 'TNTS-VACANT-001',
                 'dept' => 'Mathematics',
                 'status' => 'Vacant',
-                'gender' => 'Other',
+                'gender' => null,
                 'plantilla_item_number' => 'OSEC-DECSB-TCH1-310002-2024',
-                'specialization' => null,
+                'position_id' => $teacher1,
+                'branch_id' => $annex,
+                'level' => 'JHS',
                 'resigned_date' => null,
                 'transfer_date' => null,
             ]
         ];
 
         foreach ($faculty as $f) {
-            $user = User::firstOrCreate(
-                ['email' => $f['email']],
-                [
-                    'name' => $f['name'],
-                    'password' => Hash::make('password123'),
-                    'role' => 'teacher'
-                ]
-            );
+            $userId = null;
+            if ($f['email']) {
+                $user = User::firstOrCreate(
+                    ['email' => $f['email']],
+                    [
+                        'name' => $f['name'],
+                        'password' => Hash::make('password123'),
+                        'role' => 'teacher'
+                    ]
+                );
+                $userId = $user->id;
+            }
 
             Faculty::updateOrCreate(
-                ['user_id' => $user->id],
+                ['faculty_id' => $f['id']],
                 [
-                    'faculty_id' => $f['id'],
+                    'user_id' => $userId,
                     'department' => $f['dept'],
                     'status' => $f['status'],
                     'gender' => $f['gender'],
                     'plantilla_item_number' => $f['plantilla_item_number'],
-                    'specialization' => $f['specialization'],
+                    'position_id' => $f['position_id'],
+                    'branch_id' => $f['branch_id'],
+                    'level' => $f['level'],
                     'resigned_date' => $f['resigned_date'],
                     'transfer_date' => $f['transfer_date'],
                 ]

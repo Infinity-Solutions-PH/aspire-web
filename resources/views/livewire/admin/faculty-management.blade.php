@@ -35,15 +35,15 @@
         </div>
     @endif
 
-    <!-- Quick Stats Grid (5 Cards for Premium Detail) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 my-10">
+    <!-- Quick Stats Grid (6 Cards for Premium Detail) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 my-10">
         <!-- Card 1: Total -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-xl">groups</span>
             </div>
             <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Total Faculty</p>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Total Positions</p>
                 <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['total'] }}</p>
             </div>
         </div>
@@ -81,27 +81,37 @@
             </div>
         </div>
 
-        <!-- Card 5: Deceased & Vacant -->
+        <!-- Card 5: Deceased -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-xl">person_off</span>
             </div>
             <div>
-                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Other Status</p>
-                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">
-                    {{ $stats['deceased'] + $stats['vacant'] }}
-                    <span class="text-[10px] font-normal text-gray-400 dark:text-white/30">({{ $stats['deceased'] }}D / {{ $stats['vacant'] }}V)</span>
-                </p>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Deceased</p>
+                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['deceased'] }}</p>
+            </div>
+        </div>
+
+        <!-- Card 6: Vacant Positions -->
+        <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm border-dashed border-gray-300 dark:border-red-950/40">
+            <div class="size-10 rounded-lg bg-gray-50 dark:bg-gray-900/30 text-gray-500 dark:text-gray-400 flex items-center justify-center flex-shrink-0">
+                <span class="material-symbols-outlined text-xl">contact_support</span>
+            </div>
+            <div>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Vacant Slots</p>
+                <p class="text-xl font-black text-gray-700 dark:text-gray-300 tracking-tight">{{ $stats['vacant'] }}</p>
             </div>
         </div>
     </div>
 
     <!-- Filters & Search -->
     <div class="flex flex-wrap items-center gap-3 mb-6 bg-white dark:bg-[#2a1515] p-3 rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f]">
-        <div class="flex-1 min-w-[300px] relative">
+        <div class="flex-1 min-w-[250px] relative">
             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#9a4c4c] text-xl">search</span>
-            <input wire:model.live="search" type="text" placeholder="Search by name, email, Faculty ID or Plantilla..." class="w-full pl-10 pr-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary focus:border-primary transition-all">
+            <input wire:model.live="search" type="text" placeholder="Search by name, Faculty ID or Plantilla..." class="w-full pl-10 pr-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary focus:border-primary transition-all">
         </div>
+
+        <!-- Dept Filter -->
         <select wire:model.live="department" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
             <option value="">All Departments</option>
             <option value="TVE">TVE</option>
@@ -113,6 +123,39 @@
             <option value="Science">Science</option>
             <option value="Mathematics">Mathematics</option>
         </select>
+
+        <!-- Level Filter -->
+        <select wire:model.live="level" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Levels</option>
+            <option value="JHS">JHS</option>
+            <option value="SHS">SHS</option>
+        </select>
+
+        <!-- School Branch Filter -->
+        <select wire:model.live="branch_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Branches</option>
+            @foreach($branches as $b)
+                <option value="{{ $b->id }}">{{ $b->name }}</option>
+            @endforeach
+        </select>
+
+        <!-- Position Filter -->
+        <select wire:model.live="position_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Positions</option>
+            @foreach($positions as $p)
+                <option value="{{ $p->id }}">{{ $p->name }}</option>
+            @endforeach
+        </select>
+
+        <!-- Gender Filter -->
+        <select wire:model.live="gender_filter" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <!-- Status Filter -->
         <select wire:model.live="status" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
@@ -133,7 +176,8 @@
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Full Name</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item #</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Gender</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Dept / Spec.</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Dept / Position</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Branch / Level</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Status</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Dates</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c] text-center">Actions</th>
@@ -148,10 +192,17 @@
                             </td>
                             <!-- Full Name -->
                             <td class="px-6 py-4">
-                                <div class="flex flex-col">
-                                    <span class="text-sm font-bold text-[#1b0d0d] dark:text-white">{{ $faculty->user->name }}</span>
-                                    <span class="text-[10px] text-[#9a4c4c] dark:text-white/40">{{ $faculty->user->email }}</span>
-                                </div>
+                                @if($faculty->status === 'Vacant' || !$faculty->user)
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-black text-gray-400 italic">Vacant Position</span>
+                                        <span class="text-[10px] text-gray-400">Unassigned</span>
+                                    </div>
+                                @else
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-[#1b0d0d] dark:text-white">{{ $faculty->user->name }}</span>
+                                        <span class="text-[10px] text-[#9a4c4c] dark:text-white/40">{{ $faculty->user->email }}</span>
+                                    </div>
+                                @endif
                             </td>
                             <!-- Plantilla Item # -->
                             <td class="px-6 py-4">
@@ -161,18 +212,31 @@
                             </td>
                             <!-- Gender -->
                             <td class="px-6 py-4">
-                                <span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wide
-                                    {{ $faculty->gender === 'Male' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/20 dark:text-indigo-400' : 
-                                       ($faculty->gender === 'Female' ? 'bg-pink-50 text-pink-600 dark:bg-pink-950/20 dark:text-pink-400' : 
-                                       'bg-slate-50 text-slate-600 dark:bg-slate-900 dark:text-slate-400') }}">
-                                    {{ $faculty->gender ?: 'Male' }}
-                                </span>
+                                @if($faculty->status === 'Vacant')
+                                    <span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wide bg-slate-50 text-slate-600 dark:bg-slate-900 dark:text-slate-400">
+                                        N/A
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-1 rounded-md text-[10px] font-extrabold uppercase tracking-wide
+                                        {{ $faculty->gender === 'Male' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/20 dark:text-indigo-400' : 
+                                           ($faculty->gender === 'Female' ? 'bg-pink-50 text-pink-600 dark:bg-pink-950/20 dark:text-pink-400' : 
+                                           'bg-slate-50 text-slate-600 dark:bg-slate-900 dark:text-slate-400') }}">
+                                        {{ $faculty->gender ?: 'Male' }}
+                                    </span>
+                                @endif
                             </td>
-                            <!-- Department & Specialization -->
+                            <!-- Department & Position -->
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
                                     <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->department }}</span>
-                                    <span class="text-[10px] text-gray-500 truncate max-w-[150px]">{{ $faculty->specialization ?: 'No Specialization' }}</span>
+                                    <span class="text-[10px] text-primary font-bold">{{ $faculty->position?->name ?: 'Unassigned' }}</span>
+                                </div>
+                            </td>
+                            <!-- Branch & Level -->
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->branch?->name ?: 'Unassigned' }}</span>
+                                    <span class="text-[10px] text-gray-500 font-bold uppercase">{{ $faculty->level }}</span>
                                 </div>
                             </td>
                             <!-- Status -->
@@ -214,29 +278,22 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center text-gray-400 italic">No faculty records found.</td>
+                            <td colspan="9" class="px-6 py-12 text-center text-gray-400 italic">No faculty records found.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
-        <div class="px-6 py-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f]">
-            {{ $faculties->links() }}
-        </div>
+        @if($faculties->hasPages())
+            <div class="px-6 py-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f] bg-[#fdfafb] dark:bg-[#361a1a]">
+                {{ $faculties->links() }}
+            </div>
+        @endif
     </div>
 
-    <!-- Registration/Edit Modal -->
-    <div x-show="showModal" 
-         class="fixed inset-0 z-50 overflow-y-auto" 
-         x-cloak
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-        
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <!-- Registration / Edit Modal -->
+    <div x-show="showModal" class="fixed inset-0 z-40 overflow-y-auto" x-cloak>
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
@@ -263,24 +320,38 @@
                             @error('faculty_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Full Name -->
+                        <!-- Employment Status -->
                         <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Employment Status</label>
+                            <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="Active">Active</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Retired">Retired</option>
+                                <option value="Deceased">Deceased</option>
+                                <option value="Vacant">Vacant</option>
+                            </select>
+                            @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Full Name (Only show/editable if not vacant) -->
+                        <div class="space-y-1 {{ $form_status === 'Vacant' ? 'opacity-40 pointer-events-none' : '' }}">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Full Name</label>
-                            <input wire:model.live.debounce.250ms="name" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Juan Dela Cruz">
+                            <input wire:model.live.debounce.250ms="name" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="{{ $form_status === 'Vacant' ? 'Unassigned (Vacant)' : 'e.g. Juan Dela Cruz' }}" {{ $form_status === 'Vacant' ? 'disabled' : '' }}>
                             @error('name') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Email -->
-                        <div class="space-y-1">
+                        <!-- Email (Only show/editable if not vacant) -->
+                        <div class="space-y-1 {{ $form_status === 'Vacant' ? 'opacity-40 pointer-events-none' : '' }}">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Official Email</label>
-                            <input wire:model.live.debounce.250ms="email" type="email" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. juan@tnts.edu.ph">
+                            <input wire:model.live.debounce.250ms="email" type="email" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="{{ $form_status === 'Vacant' ? 'Unassigned (Vacant)' : 'e.g. juan@tnts.edu.ph' }}" {{ $form_status === 'Vacant' ? 'disabled' : '' }}>
                             @error('email') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Gender -->
-                        <div class="space-y-1">
+                        <!-- Gender (Only show/editable if not vacant) -->
+                        <div class="space-y-1 {{ $form_status === 'Vacant' ? 'opacity-40 pointer-events-none' : '' }}">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Gender</label>
-                            <select wire:model.live="gender" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                            <select wire:model.live="gender" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary" {{ $form_status === 'Vacant' ? 'disabled' : '' }}>
+                                <option value="">Select Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
@@ -312,24 +383,38 @@
                             @error('form_department') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Specialization -->
+                        <!-- Position Select -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Specialization</label>
-                            <input wire:model.live.debounce.250ms="specialization" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Computer Programming">
-                            @error('specialization') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">DepEd Position</label>
+                            <select wire:model.live="form_position_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="">Select Position</option>
+                                @foreach($positions as $p)
+                                    <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('form_position_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Employment Status -->
+                        <!-- Branch Select -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Employment Status</label>
-                            <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="Active">Active</option>
-                                <option value="On Leave">On Leave</option>
-                                <option value="Retired">Retired</option>
-                                <option value="Deceased">Deceased (Decreased)</option>
-                                <option value="Vacant">Vacant</option>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Branch</label>
+                            <select wire:model.live="form_branch_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="">Select Branch</option>
+                                @foreach($branches as $b)
+                                    <option value="{{ $b->id }}">{{ $b->name }}</option>
+                                @endforeach
                             </select>
-                            @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            @error('form_branch_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Level Select -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">High School Level</label>
+                            <select wire:model.live="form_level" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="JHS">Junior High School (JHS)</option>
+                                <option value="SHS">Senior High School (SHS)</option>
+                            </select>
+                            @error('form_level') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
                     </div>
 
@@ -358,7 +443,7 @@
                         <button type="submit" 
                                 @if(!$isDirty) disabled @endif
                                 class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100">
-                            <span wire:loading wire:target="save" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            <span class="material-symbols-outlined text-sm">save</span>
                             {{ $editingId ? 'Update Information' : 'Register Faculty' }}
                         </button>
                     </div>
@@ -367,104 +452,75 @@
         </div>
     </div>
 
-    <!-- Development/Feature Coming Soon Modal -->
-    <div x-show="showDevModal" 
-         class="fixed inset-0 z-50 overflow-y-auto" 
-         x-cloak
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-        
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showDevModal = false"></div>
-
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-
-            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-center align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border-t-4 border-amber-500">
-                <!-- Close Button -->
-                <div class="flex justify-end">
-                    <button @click="showDevModal = false" class="text-gray-400 hover:text-primary transition-colors">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-
-                <!-- Modal Body -->
-                <div class="flex flex-col items-center gap-4 py-4">
-                    <!-- Pulser Container -->
-                    <div class="size-16 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center animate-pulse">
-                        <span class="material-symbols-outlined text-3xl">construction</span>
-                    </div>
-
-                    <h3 class="text-xl font-black text-amber-600 dark:text-amber-500 uppercase tracking-tight mt-2">Feature In Development</h3>
-                    
-                    <p class="text-sm text-[#9a4c4c] dark:text-white/70 leading-relaxed max-w-xs">
-                        We are currently building this schedule viewer tool to integrate real-time teaching loads. This feature will be available in an upcoming update.
-                    </p>
-                </div>
-
-                <!-- Footer/Action Button -->
-                <div class="mt-6">
-                    <button @click="showDevModal = false" 
-                            class="w-full py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-black shadow-lg shadow-amber-500/20 transition-all hover:scale-[1.02]">
-                        Got it, Thanks!
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Password Confirmation Modal -->
-    <div x-show="showPasswordModal" 
-         class="fixed inset-0 z-50 overflow-y-auto" 
-         x-cloak
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0"
-         x-transition:enter-end="opacity-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100"
-         x-transition:leave-end="opacity-0">
-        
-        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+    <!-- Confirm Password Modal -->
+    <div x-show="showPasswordModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-            <div class="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border-t-4 border-primary">
-                <!-- Modal Header -->
-                <div class="flex items-center justify-between pb-4 border-b border-[#f3e7e7] dark:border-[#3a1f1f] mb-4">
-                    <div class="flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary text-2xl">shield_lock</span>
-                        <h3 class="text-lg font-black text-primary uppercase tracking-tight">Confirm Security Password</h3>
+            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl">
+                <!-- Header -->
+                <div class="px-6 py-5 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-red-500/5">
+                    <div class="flex items-center gap-2 text-[#d41111]">
+                        <span class="material-symbols-outlined">security</span>
+                        <h3 class="text-lg font-black uppercase tracking-tight">Confirm Action</h3>
                     </div>
                     <button @click="showPasswordModal = false" class="text-gray-400 hover:text-primary transition-colors">
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
 
-                <!-- Modal Body -->
-                <form wire:submit.prevent="confirmPasswordAndSave" class="space-y-4">
-                    <p class="text-xs text-[#9a4c4c] dark:text-white/60 leading-normal">
-                        For security, please enter your administrator password to authorize these changes to the faculty directory.
+                <!-- Form -->
+                <form wire:submit.prevent="confirmPasswordAndSave" class="p-6 space-y-4">
+                    <p class="text-xs text-[#9a4c4c] dark:text-white/60 leading-relaxed">
+                        To apply changes to the official faculty record, please input your administrator password to authorize this action.
                     </p>
-                    
+
                     <div class="space-y-1">
                         <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Administrator Password</label>
-                        <input wire:model="confirmPassword" type="password" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Enter your password" required>
+                        <input wire:model.defer="confirmPassword" type="password" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="Enter your password">
                         @error('confirmPassword') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                     </div>
 
-                    <!-- Modal Footer -->
-                    <div class="pt-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-3">
-                        <button type="button" @click="showPasswordModal = false" class="px-6 py-2.5 rounded-xl text-xs font-bold text-[#9a4c4c] hover:bg-gray-100 transition-colors">Cancel</button>
-                        <button type="submit" class="px-6 py-2.5 bg-primary text-white rounded-xl text-xs font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform flex items-center gap-2">
-                            <span wire:loading wire:target="confirmPasswordAndSave" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                    <!-- Footer Buttons -->
+                    <div class="pt-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-2">
+                        <button type="button" @click="showPasswordModal = false" class="px-4 py-2 rounded-lg text-xs font-bold text-gray-500 hover:bg-gray-100 transition-colors">Cancel</button>
+                        <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg text-xs font-black shadow-md hover:scale-[1.02] transition-transform">
                             Authorize & Save
                         </button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Calendar View Feature Under Development Modal -->
+    <div x-show="showDevModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Glassmorphism backdrop -->
+            <div class="fixed inset-0 transition-opacity bg-[#1b0d0d]/40 backdrop-blur-md" @click="showDevModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border border-[#f3e7e7] dark:border-[#3a1f1f]">
+                <!-- Construction Visual Icon -->
+                <div class="p-8 text-center bg-gradient-to-b from-amber-500/10 to-transparent flex flex-col items-center justify-center gap-3">
+                    <div class="size-16 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center animate-pulse">
+                        <span class="material-symbols-outlined text-4xl">construction</span>
+                    </div>
+                    <h3 class="text-xl font-black text-amber-800 dark:text-amber-400 uppercase tracking-tight mt-2">Feature Under Development</h3>
+                    <p class="text-xs text-amber-700/70 dark:text-amber-400/60 max-w-xs mx-auto leading-relaxed">
+                        The faculty teaching loads, scheduling modules, and calendar visualizers are currently under active development.
+                    </p>
+                </div>
+
+                <!-- Footer button -->
+                <div class="p-6 border-t border-[#f3e7e7] dark:border-[#3a1f1f] bg-gray-50/50 dark:bg-black/10 flex justify-center">
+                    <button type="button" @click="showDevModal = false" class="px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-black shadow-lg shadow-amber-500/20 hover:scale-[1.02] transition-transform">
+                        Got it, Thanks!
+                    </button>
+                </div>
             </div>
         </div>
     </div>

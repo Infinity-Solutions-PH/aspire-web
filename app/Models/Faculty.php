@@ -15,7 +15,9 @@ class Faculty extends Model
         'faculty_id',
         'department',
         'status',
-        'specialization',
+        'position_id',
+        'branch_id',
+        'level',
         'plantilla_item_number',
         'gender',
         'resigned_date',
@@ -36,6 +38,16 @@ class Faculty extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function position(): BelongsTo
+    {
+        return $this->belongsTo(Position::class);
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(Branch::class);
     }
 
     public function schedules(): HasMany

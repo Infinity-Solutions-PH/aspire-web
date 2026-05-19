@@ -13,11 +13,17 @@ return new class extends Migration
     {
         Schema::create('faculties', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('faculty_id')->unique();
             $table->string('department');
             $table->string('status')->default('Active'); // Active, On Leave, Retired, Deceased, Vacant
-            $table->string('specialization')->nullable();
+            
+            // Relational fields replacing raw text
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
+            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
+            
+            // High school levels JHS / SHS
+            $table->string('level')->default('JHS'); // JHS, SHS
             
             // New columns requested by USER
             $table->string('plantilla_item_number')->nullable();
