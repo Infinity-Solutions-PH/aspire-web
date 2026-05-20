@@ -22,13 +22,14 @@ return new class extends Migration
             $table->foreignId('plantilla_position_id')->nullable()->constrained('plantilla_positions')->nullOnDelete();
             $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
             
-            // High school levels JHS / SHS
+            // Secondary levels JHS / SHS
             $table->string('level')->default('JHS'); // JHS, SHS
             
             // New columns requested by USER
             $table->string('gender')->nullable();
-            $table->date('resigned_date')->nullable();
-            $table->date('transfer_date')->nullable(); // date of transfer if transferred out
+            $table->string('inactive_reason')->nullable();
+            $table->date('effective_date')->nullable();
+            $table->string('transfer_school')->nullable();
             
             $table->timestamps();
         });

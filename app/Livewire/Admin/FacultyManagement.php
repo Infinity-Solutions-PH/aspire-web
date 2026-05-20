@@ -3,12 +3,13 @@
 namespace App\Livewire\Admin;
 
 use App\Models\User;
-use App\Models\Faculty;
-use App\Models\Position;
 use App\Models\Branch;
-use App\Models\PlantillaPosition;
+use App\Models\Faculty;
 use Livewire\Component;
+use App\Models\Position;
+use App\Models\Department;
 use Livewire\WithPagination;
+use App\Models\PlantillaPosition;
 use Illuminate\Support\Facades\Hash;
 
 class FacultyManagement extends Component
@@ -30,15 +31,16 @@ class FacultyManagement extends Component
     public $faculty_id = '';
     public $name = '';
     public $email = '';
-    public $form_department = '';
+    public $form_department_id = '';
     public $form_status = 'Active';
     public $form_position_id = '';
     public $plantilla_item_number = '';
     public $form_branch_id = '';
-    public $form_level = 'JHS';
+    public $form_level = '';
     public $gender = 'Male';
-    public $resigned_date = '';
-    public $transfer_date = '';
+    public $inactive_reason = '';
+    public $effective_date = '';
+    public $transfer_school = '';
 
     // Password Confirmation States & Dirty Tracking
     public $showPasswordModal = false;
@@ -47,9 +49,16 @@ class FacultyManagement extends Component
     public $isDirty = false;
 
     protected $validationAttributes = [
-        'form_department' => 'department',
+        'form_department_id' => 'department',
         'form_position_id' => 'position',
         'form_branch_id' => 'branch',
+        'form_status' => 'status',
+        'form_level' => 'secondary level',
+    ];
+
+    protected $messages = [
+        'effective_date.required_if' => 'The effective date field is required when status is Inactive.',
+        'inactive_reason.required_if' => 'The inactive reason field is required when status is Inactive.',
     ];
 
     protected function rules()
@@ -61,18 +70,24 @@ class FacultyManagement extends Component
             'faculty_id' => 'required|unique:faculties,faculty_id,' . $this->editingId,
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email,' . $userId,
-            'form_department' => 'required',
+            'form_department_id' => 'required|exists:departments,id',
             'form_status' => 'required|in:Active,On Leave,Inactive',
             'form_position_id' => 'required|exists:positions,id',
             'plantilla_item_number' => 'required|string',
             'form_branch_id' => 'required|exists:branches,id',
             'form_level' => 'required|in:JHS,SHS',
             'gender' => 'required|in:Male,Female,Other',
-            'resigned_date' => 'nullable|date',
-            'transfer_date' => 'nullable|date',
+            'inactive_reason' => 'nullable|required_if:form_status,Inactive|in:Resigned,Retired,Transferred',
+            'effective_date' => 'nullable|required_if:form_status,Inactive|date',
+            'transfer_school' => 'nullable|string',
         ];
 
         return $rules;
+    }
+
+    public function updatedFormLevel($value)
+    {
+        $this->form_department_id = '';
     }
 
     public function updatingSearch()
@@ -87,15 +102,16 @@ class FacultyManagement extends Component
                 'faculty_id' => $this->faculty_id,
                 'name' => $this->name,
                 'email' => $this->email,
-                'form_department' => $this->form_department,
+                'form_department_id' => $this->form_department_id,
                 'form_status' => $this->form_status,
                 'form_position_id' => $this->form_position_id,
                 'plantilla_item_number' => $this->plantilla_item_number,
                 'form_branch_id' => $this->form_branch_id,
                 'form_level' => $this->form_level,
                 'gender' => $this->gender ?: '',
-                'resigned_date' => $this->resigned_date ?: '',
-                'transfer_date' => $this->transfer_date ?: '',
+                'inactive_reason' => $this->inactive_reason ?: '',
+                'effective_date' => $this->effective_date ?: '',
+                'transfer_school' => $this->transfer_school ?: '',
             ];
 
             $this->isDirty = $currentValues !== $this->initialValues;
@@ -107,12 +123,13 @@ class FacultyManagement extends Component
     public function create()
     {
         $this->reset([
-            'editingId', 'faculty_id', 'name', 'email', 'form_department', 
+            'editingId', 'faculty_id', 'name', 'email', 'form_department_id', 
             'form_status', 'form_position_id', 'plantilla_item_number', 'form_branch_id', 'form_level',
-            'gender', 'resigned_date', 'transfer_date', 'confirmPassword'
+            'gender', 'confirmPassword',
+            'inactive_reason', 'effective_date', 'transfer_school'
         ]);
         $this->form_status = 'Active';
-        $this->form_level = 'JHS';
+        $this->form_level = '';
         $this->gender = 'Male';
         
         // Default school branch to "Main"
@@ -138,29 +155,31 @@ class FacultyManagement extends Component
             $this->email = '';
         }
         
-        $this->form_department = $faculty->department;
+        $this->form_department_id = $faculty->department_id;
         $this->form_status = $faculty->status;
         $this->plantilla_item_number = $faculty->plantillaPosition ? $faculty->plantillaPosition->plantilla_number : '';
         $this->form_position_id = $faculty->plantillaPosition ? $faculty->plantillaPosition->position_id : '';
         $this->form_branch_id = $faculty->branch_id;
         $this->form_level = $faculty->level;
         $this->gender = $faculty->gender ?: '';
-        $this->resigned_date = $faculty->resigned_date ? $faculty->resigned_date->format('Y-m-d') : '';
-        $this->transfer_date = $faculty->transfer_date ? $faculty->transfer_date->format('Y-m-d') : '';
+        $this->inactive_reason = $faculty->inactive_reason ?: '';
+        $this->effective_date = $faculty->effective_date ? $faculty->effective_date->format('Y-m-d') : '';
+        $this->transfer_school = $faculty->transfer_school ?: '';
 
         $this->initialValues = [
             'faculty_id' => $this->faculty_id,
             'name' => $this->name,
             'email' => $this->email,
-            'form_department' => $this->form_department,
+            'form_department_id' => $this->form_department_id,
             'form_status' => $this->form_status,
             'form_position_id' => $this->form_position_id,
             'plantilla_item_number' => $this->plantilla_item_number,
             'form_branch_id' => $this->form_branch_id,
             'form_level' => $this->form_level,
             'gender' => $this->gender ?: '',
-            'resigned_date' => $this->resigned_date ?: '',
-            'transfer_date' => $this->transfer_date ?: '',
+            'inactive_reason' => $this->inactive_reason ?: '',
+            'effective_date' => $this->effective_date ?: '',
+            'transfer_school' => $this->transfer_school ?: '',
         ];
 
         $this->isDirty = false;
@@ -173,7 +192,7 @@ class FacultyManagement extends Component
     {
         $this->validate();
 
-        // 1. Plantilla Validation Check before password prompt
+        // 1. Plantilla Validation Check
         $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
         
         if ($plantilla) {
@@ -191,9 +210,19 @@ class FacultyManagement extends Component
             }
         }
 
-        // Prompt password confirmation
-        $this->confirmPassword = '';
-        $this->showPasswordModal = true;
+        if ($this->editingId) {
+            // Edit of faculty record: prompt password confirmation
+            $this->confirmPassword = '';
+            $this->showPasswordModal = true;
+        } else {
+            // Create of faculty: save directly
+            // Handle Plantilla Position Dynamic Creation
+            $plantilla = PlantillaPosition::firstOrCreate(
+                ['plantilla_number' => $this->plantilla_item_number],
+                ['position_id' => $this->form_position_id]
+            );
+            $this->executeSave($plantilla);
+        }
     }
 
     public function confirmPasswordAndSave()
@@ -226,6 +255,11 @@ class FacultyManagement extends Component
             return;
         }
 
+        $this->executeSave($plantilla);
+    }
+
+    protected function executeSave($plantilla)
+    {
         $userId = null;
 
         if ($this->editingId) {
@@ -261,14 +295,15 @@ class FacultyManagement extends Component
             $faculty->update([
                 'user_id' => $userId,
                 'faculty_id' => $this->faculty_id,
-                'department' => $this->form_department,
+                'department_id' => $this->form_department_id,
                 'status' => $this->form_status,
                 'plantilla_position_id' => $plantilla->id,
                 'branch_id' => $this->form_branch_id,
                 'level' => $this->form_level,
                 'gender' => $this->gender,
-                'resigned_date' => $this->resigned_date ?: null,
-                'transfer_date' => $this->transfer_date ?: null,
+                'inactive_reason' => $this->form_status === 'Inactive' ? $this->inactive_reason : null,
+                'effective_date' => $this->form_status === 'Inactive' ? ($this->effective_date ?: null) : null,
+                'transfer_school' => ($this->form_status === 'Inactive' && $this->inactive_reason === 'Transferred') ? $this->transfer_school : null,
             ]);
 
             $message = 'Faculty information successfully updated.';
@@ -276,14 +311,15 @@ class FacultyManagement extends Component
             Faculty::create([
                 'user_id' => $userId,
                 'faculty_id' => $this->faculty_id,
-                'department' => $this->form_department,
+                'department_id' => $this->form_department_id,
                 'status' => $this->form_status,
                 'plantilla_position_id' => $plantilla->id,
                 'branch_id' => $this->form_branch_id,
                 'level' => $this->form_level,
                 'gender' => $this->gender,
-                'resigned_date' => $this->resigned_date ?: null,
-                'transfer_date' => $this->transfer_date ?: null,
+                'inactive_reason' => $this->form_status === 'Inactive' ? $this->inactive_reason : null,
+                'effective_date' => $this->form_status === 'Inactive' ? ($this->effective_date ?: null) : null,
+                'transfer_school' => ($this->form_status === 'Inactive' && $this->inactive_reason === 'Transferred') ? $this->transfer_school : null,
             ]);
 
             $message = 'Faculty successfully registered.';
@@ -313,7 +349,7 @@ class FacultyManagement extends Component
                     });
                 });
             })
-            ->when($this->department, fn ($q) => $q->where('department', $this->department))
+            ->when($this->department, fn ($q) => $q->where('department_id', $this->department))
             ->when($this->status, fn ($q) => $q->where('status', $this->status))
             ->when($this->level, fn ($q) => $q->where('level', $this->level))
             ->when($this->branch_id, fn ($q) => $q->where('branch_id', $this->branch_id))
@@ -334,8 +370,10 @@ class FacultyManagement extends Component
         return view('livewire.admin.faculty-management', [
             'faculties' => $faculties,
             'stats' => $stats,
-            'positions' => Position::orderBy('id')->get(),
-            'branches' => Branch::orderBy('name')->get(),
+            'positions' => Position::sortedForForm()->get(),
+            'branches' => Branch::orderBy('id')->get(),
+            'allDepartments' => Department::orderBy('name')->get(),
+            'formDepartments' => $this->form_level ? Department::where('level', $this->form_level)->orderBy('name')->get() : collect(),
         ]);
     }
 }

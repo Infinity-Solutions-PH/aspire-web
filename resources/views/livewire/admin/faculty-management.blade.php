@@ -89,17 +89,12 @@
             <input wire:model.live="search" type="text" placeholder="Search by name, Faculty ID or Plantilla..." class="w-full pl-10 pr-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary focus:border-primary transition-all">
         </div>
 
-        <!-- Dept Filter -->
-        <select wire:model.live="department" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
-            <option value="">All Departments</option>
-            <option value="TVE">TVE</option>
-            <option value="Academic">Academic</option>
-            <option value="MAPEH">MAPEH</option>
-            <option value="AP">AP</option>
-            <option value="Filipino">Filipino</option>
-            <option value="English">English</option>
-            <option value="Science">Science</option>
-            <option value="Mathematics">Mathematics</option>
+        <!-- School Branch Filter -->
+        <select wire:model.live="branch_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Branches</option>
+            @foreach($branches as $b)
+                <option value="{{ $b->id }}">{{ $b->name }}</option>
+            @endforeach
         </select>
 
         <!-- Level Filter -->
@@ -109,19 +104,23 @@
             <option value="SHS">SHS</option>
         </select>
 
-        <!-- School Branch Filter -->
-        <select wire:model.live="branch_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
-            <option value="">All Branches</option>
-            @foreach($branches as $b)
-                <option value="{{ $b->id }}">{{ $b->name }}</option>
+        <!-- Dept Filter -->
+        <select wire:model.live="department" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
+            <option value="">All Departments</option>
+            @foreach($allDepartments as $dept)
+                <option value="{{ $dept->id }}">{{ $dept->name }} ({{ $dept->level }})</option>
             @endforeach
         </select>
 
         <!-- Position Filter -->
         <select wire:model.live="position_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
             <option value="">All Positions</option>
-            @foreach($positions as $p)
-                <option value="{{ $p->id }}">{{ $p->name }}</option>
+            @foreach($positions->groupBy('type') as $type => $group)
+                <optgroup label="{{ $type }}">
+                    @foreach($group as $p)
+                        <option value="{{ $p->id }}">{{ $p->name }}</option>
+                    @endforeach
+                </optgroup>
             @endforeach
         </select>
 
@@ -138,7 +137,7 @@
             <option value="">All Statuses</option>
             <option value="Active">Active</option>
             <option value="On Leave">On Leave</option>
-            <option value="Retired">Retired</option>
+            <option value="Inactive">Inactive</option>
         </select>
     </div>
 
@@ -204,7 +203,7 @@
                             <!-- Department & Position -->
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->department }}</span>
+                                    <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->department?->name ?: 'Unassigned' }}</span>
                                     <span class="text-[10px] text-primary font-bold">{{ $faculty->plantillaPosition?->position?->name ?: 'Unassigned' }}</span>
                                 </div>
                             </td>
@@ -225,16 +224,17 @@
                                     {{ $faculty->status }}
                                 </span>
                             </td>
-                            <!-- Dates (Resigned / Transfer) -->
+                            <!-- Dates (Inactive Details) -->
                             <td class="px-6 py-4">
                                 <div class="flex flex-col gap-0.5 text-[10px] text-gray-500">
-                                    @if($faculty->resigned_date)
-                                        <span class="font-medium text-rose-600 dark:text-rose-400">Resigned: {{ $faculty->resigned_date->format('Y-m-d') }}</span>
-                                    @endif
-                                    @if($faculty->transfer_date)
-                                        <span class="font-medium text-purple-600 dark:text-purple-400">Transferred: {{ $faculty->transfer_date->format('Y-m-d') }}</span>
-                                    @endif
-                                    @if(!$faculty->resigned_date && !$faculty->transfer_date)
+                                    @if($faculty->inactive_reason && $faculty->effective_date)
+                                        <span class="font-medium {{ $faculty->inactive_reason === 'Transferred' ? 'text-purple-600 dark:text-purple-400' : 'text-rose-600 dark:text-rose-400' }}">
+                                            {{ $faculty->inactive_reason }}: {{ $faculty->effective_date->format('Y-m-d') }}
+                                        </span>
+                                        @if($faculty->inactive_reason === 'Transferred' && $faculty->transfer_school)
+                                            <span class="text-[9px] text-gray-400">To: {{ $faculty->transfer_school }}</span>
+                                        @endif
+                                    @else
                                         <span class="italic text-gray-400">-</span>
                                     @endif
                                 </div>
@@ -267,9 +267,9 @@
     </div>
 
     <!-- Registration / Edit Modal -->
-    <div x-show="showModal" class="fixed inset-0 z-40 overflow-y-auto" x-cloak>
+    <div x-show="showModal" class="fixed inset-0 lg:left-64 z-40 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
+            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
@@ -295,17 +295,6 @@
                             @error('faculty_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Employment Status -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Employment Status</label>
-                            <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="Active">Active</option>
-                                <option value="On Leave">On Leave</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
-                            @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
-                        </div>
-
                         <!-- Full Name (Only show/editable if not vacant) -->
                         <div class="space-y-1 {{ $form_status === 'Vacant' ? 'opacity-40 pointer-events-none' : '' }}">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Full Name</label>
@@ -324,12 +313,23 @@
                         <div class="space-y-1 {{ $form_status === 'Vacant' ? 'opacity-40 pointer-events-none' : '' }}">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Gender</label>
                             <select wire:model.live="gender" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary" {{ $form_status === 'Vacant' ? 'disabled' : '' }}>
-                                <option value="">Select Gender</option>
+                                <option value="" selected disabled>Choose Gender</option>
                                 <option value="Male">Male</option>
                                 <option value="Female">Female</option>
                                 <option value="Other">Other</option>
                             </select>
                             @error('gender') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Employment Status -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Employment Status</label>
+                            <select wire:model.live="form_status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="Active">Active</option>
+                                <option value="On Leave">On Leave</option>
+                                <option value="Inactive">Inactive</option>
+                            </select>
+                            @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Plantilla Item Number -->
@@ -339,38 +339,27 @@
                             @error('plantilla_item_number') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Department -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Department</label>
-                            <select wire:model.live="form_department" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="">Select Department</option>
-                                <option value="TVE">TVE</option>
-                                <option value="Academic">Academic</option>
-                                <option value="MAPEH">MAPEH</option>
-                                <option value="AP">AP</option>
-                                <option value="Filipino">Filipino</option>
-                                <option value="English">English</option>
-                                <option value="Science">Science</option>
-                                <option value="Mathematics">Mathematics</option>
-                            </select>
-                            @error('form_department') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
-                        </div>
                         <!-- Position Select -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Position</label>
                             <select wire:model.live="form_position_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="">Select Position</option>
-                                @foreach($positions as $p)
-                                    <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                <option value="" selected disabled>Choose Position</option>
+                                @foreach($positions->groupBy('type') as $type => $group)
+                                    <optgroup label="{{ $type }}">
+                                        @foreach($group as $p)
+                                            <option value="{{ $p->id }}">{{ $p->name }}</option>
+                                        @endforeach
+                                    </optgroup>
                                 @endforeach
                             </select>
                             @error('form_position_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
+
                         <!-- Branch Select -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Branch</label>
                             <select wire:model.live="form_branch_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="">Select Branch</option>
+                                <option value="" selected disabled>Choose School Branch</option>
                                 @foreach($branches as $b)
                                     <option value="{{ $b->id }}">{{ $b->name }}</option>
                                 @endforeach
@@ -380,33 +369,60 @@
 
                         <!-- Level Select -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">High School Level</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Secondary Level</label>
                             <select wire:model.live="form_level" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
+                                <option value="" selected disabled>Choose Secondary Level</option>
                                 <option value="JHS">Junior High School (JHS)</option>
                                 <option value="SHS">Senior High School (SHS)</option>
                             </select>
                             @error('form_level') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
-                    </div>
 
-                    <!-- Date Columns Grid (Subtle and Premium collapsible styling) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-2xl bg-gray-50 dark:bg-[#201010]/30 border border-gray-150 dark:border-red-950/20">
-                        <!-- Resigned Date -->
+                        <!-- Department -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-rose-500">Resigned Date</label>
-                            <input wire:model.live="resigned_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
-                            <p class="text-[9px] text-gray-400">Fill in if the faculty member has resigned from service.</p>
-                            @error('resigned_date') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
-                        </div>
-
-                        <!-- Transfer Date -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-purple-500">Date of Transfer (If Transferred Out)</label>
-                            <input wire:model.live="transfer_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
-                            <p class="text-[9px] text-gray-400">Fill in if the faculty member was transferred to another school/agency.</p>
-                            @error('transfer_date') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Department</label>
+                            <select wire:model.live="form_department_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed" {{ empty($form_level) ? 'disabled' : '' }}>
+                                <option value="" selected disabled>Choose Department</option>
+                                @foreach($formDepartments as $dept)
+                                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
+                                @endforeach
+                            </select>
+                            @error('form_department_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
                     </div>
+
+                    <!-- Inactive Details Section -->
+                    @if($form_status === 'Inactive')
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 rounded-2xl bg-gray-50 dark:bg-[#201010]/30 border border-gray-150 dark:border-red-950/20">
+                            <!-- Inactive Reason -->
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-rose-500">Reason for Inactivity <span class="text-red-500">*</span></label>
+                                <select wire:model.live="inactive_reason" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
+                                    <option value="" selected disabled>Choose Reason for Inactivity</option>
+                                    <option value="Resigned">Resigned</option>
+                                    <option value="Retired">Retired</option>
+                                    <option value="Transferred">Transferred</option>
+                                </select>
+                                @error('inactive_reason') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Effective Date -->
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-rose-500">Effective Date <span class="text-red-500">*</span></label>
+                                <input wire:model.live="effective_date" type="date" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary">
+                                @error('effective_date') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            </div>
+
+                            <!-- Transfer School (Only for Transferred) -->
+                            @if($inactive_reason === 'Transferred')
+                                <div class="space-y-1 md:col-span-2">
+                                    <label class="text-[10px] font-black uppercase tracking-widest text-purple-500">Transferring School Name (Optional)</label>
+                                    <input wire:model.live.debounce.250ms="transfer_school" type="text" class="w-full px-4 py-3 bg-white dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. Trece Martires City National High School">
+                                    @error('transfer_school') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                                </div>
+                            @endif
+                        </div>
+                    @endif
 
                     <!-- Modal Footer -->
                     <div class="pt-6 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-3">
@@ -424,9 +440,9 @@
     </div>
 
     <!-- Confirm Password Modal -->
-    <div x-show="showPasswordModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+    <div x-show="showPasswordModal" class="fixed inset-0 lg:left-64 z-50 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
+            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
@@ -467,10 +483,10 @@
     </div>
 
     <!-- Calendar View Feature Under Development Modal -->
-    <div x-show="showDevModal" class="fixed inset-0 z-50 overflow-y-auto" x-cloak>
+    <div x-show="showDevModal" class="fixed inset-0 lg:left-64 z-50 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <!-- Glassmorphism backdrop -->
-            <div class="fixed inset-0 transition-opacity bg-[#1b0d0d]/40 backdrop-blur-md" @click="showDevModal = false"></div>
+            <div class="absolute inset-0 transition-opacity bg-[#1b0d0d]/40 backdrop-blur-md" @click="showDevModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 

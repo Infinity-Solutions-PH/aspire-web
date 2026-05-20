@@ -131,7 +131,7 @@
 
     <!-- Modal for Create/Edit -->
     @if($showModal)
-    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div class="fixed inset-0 lg:left-64 z-50 flex items-center justify-center bg-black/50 p-4">
         <div class="bg-white dark:bg-[#2a1515] rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl">
             <div class="p-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-between items-center bg-[#fdfafb] dark:bg-[#3d2424]">
                 <h3 class="text-xl font-black text-[#1b0d0d] dark:text-white uppercase tracking-tight">

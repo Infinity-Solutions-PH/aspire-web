@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             JhsSectionSeeder::class,
             PositionSeeder::class,
             BranchSeeder::class,
+            DepartmentSeeder::class,
             // PlantillaPositionSeeder::class,
             // FacultySeeder::class,
             // BulkEnrollmentSeeder::class,

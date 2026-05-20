@@ -72,7 +72,7 @@ class PlantillaManagement extends Component
 
         return view('livewire.admin.plantilla-management', [
             'plantillas' => $plantillas,
-            'positions' => Position::orderBy('id')->get(),
+            'positions' => Position::sortedForForm()->get(),
             'stats' => $stats,
         ]);
     }

@@ -14,14 +14,15 @@ class Faculty extends Model
     protected $fillable = [
         'user_id',
         'faculty_id',
-        'department',
+        'department_id',
         'status',
         'branch_id',
         'level',
         'plantilla_position_id',
         'gender',
-        'resigned_date',
-        'transfer_date'
+        'inactive_reason',
+        'effective_date',
+        'transfer_school'
     ];
 
     /**
@@ -30,14 +31,18 @@ class Faculty extends Model
     protected function casts(): array
     {
         return [
-            'resigned_date' => 'date',
-            'transfer_date' => 'date',
+            'effective_date' => 'date',
         ];
     }
 
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class);
     }
 
     public function plantillaPosition(): BelongsTo

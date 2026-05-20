@@ -12,7 +12,7 @@ class BranchSeeder extends Seeder
      */
     public function run(): void
     {
-        $branches = ['Main', 'Annex'];
+        $branches = ['Main', 'Annex', 'Punta National High School'];
 
         foreach ($branches as $branch) {
             Branch::firstOrCreate(['name' => $branch]);

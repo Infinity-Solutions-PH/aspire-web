@@ -154,7 +154,7 @@
 
         <!-- Auto Sectioning Modal -->
         @if($showAutoSectionModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div class="fixed inset-0 lg:left-64 z-50 flex items-center justify-center px-4">
             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="$set('showAutoSectionModal', false)"></div>
             <div class="bg-white dark:bg-[#2c1818] rounded-3xl w-full max-w-2xl relative z-10 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
                 <div class="p-8 border-b border-[#f3e7e7] dark:border-[#3d2525] flex justify-between items-start">
@@ -265,7 +265,7 @@
         @endif
 
         @if($showCreateModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div class="fixed inset-0 lg:left-64 z-50 flex items-center justify-center px-4">
             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="$set('showCreateModal', false)"></div>
             <div class="bg-white dark:bg-[#2c1818] rounded-3xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl">
                 <div class="p-8">
@@ -355,7 +355,7 @@
 
         <!-- Assign Adviser Modal -->
         @if($showAdviserModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center px-4">
+        <div class="fixed inset-0 lg:left-64 z-50 flex items-center justify-center px-4">
             <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" wire:click="$set('showAdviserModal', false)"></div>
             <div class="bg-white dark:bg-[#2c1818] rounded-3xl w-full max-w-md relative z-10 overflow-hidden shadow-2xl">
                 <div class="p-8">
