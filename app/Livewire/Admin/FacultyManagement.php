@@ -120,7 +120,7 @@ class FacultyManagement extends Component
         }
     }
 
-    public function create()
+    protected function resetForm()
     {
         $this->reset([
             'editingId', 'faculty_id', 'name', 'email', 'form_department_id', 
@@ -137,8 +137,14 @@ class FacultyManagement extends Component
         $this->form_branch_id = $mainBranch ? $mainBranch->id : '';
 
         $this->initialValues = [];
-        $this->isDirty = true;
+        $this->isDirty = false;
         $this->showPasswordModal = false;
+    }
+
+    public function create()
+    {
+        $this->resetForm();
+        $this->isDirty = true;
         $this->showModal = true;
     }
 
@@ -323,6 +329,10 @@ class FacultyManagement extends Component
             ]);
 
             $message = 'Faculty successfully registered.';
+        }
+
+        if (!$this->editingId) {
+            $this->resetForm();
         }
 
         $this->showPasswordModal = false;
