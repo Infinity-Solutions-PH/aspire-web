@@ -23,6 +23,6 @@ class PlantillaPosition extends Model
 
     public function faculty(): HasOne
     {
-        return $this->hasOne(Faculty::class);
+        return $this->hasOne(Faculty::class)->whereIn('status', ['Active', 'On Leave']);
     }
 }

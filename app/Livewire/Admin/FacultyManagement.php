@@ -90,6 +90,30 @@ class FacultyManagement extends Component
         $this->form_department_id = '';
     }
 
+    public function updatedPlantillaItemNumber($value)
+    {
+        if (empty($value)) {
+            return;
+        }
+
+        $plantilla = PlantillaPosition::where('plantilla_number', $value)->first();
+
+        if ($plantilla) {
+            // Check if vacant (no active/on-leave faculty holds it, excluding current editing id)
+            $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
+                ->whereIn('status', ['Active', 'On Leave'])
+                ->when($this->editingId, function ($q) {
+                    $q->where('id', '!=', $this->editingId);
+                })
+                ->exists();
+
+            if (!$assignedFaculty) {
+                $this->form_position_id = $plantilla->position_id;
+            }
+        }
+    }
+
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -267,6 +291,17 @@ class FacultyManagement extends Component
     protected function executeSave($plantilla)
     {
         $userId = null;
+        $isInactive = $this->form_status === 'Inactive';
+        $assignedPlantillaId = $isInactive ? null : $plantilla->id;
+
+        // If assigning this plantilla to an active/on leave faculty, clear it from any previous inactive holders
+        if (!$isInactive) {
+            Faculty::where('plantilla_position_id', $plantilla->id)
+                ->when($this->editingId, function ($q) {
+                    $q->where('id', '!=', $this->editingId);
+                })
+                ->update(['plantilla_position_id' => null]);
+        }
 
         if ($this->editingId) {
             $faculty = Faculty::findOrFail($this->editingId);
@@ -303,7 +338,7 @@ class FacultyManagement extends Component
                 'faculty_id' => $this->faculty_id,
                 'department_id' => $this->form_department_id,
                 'status' => $this->form_status,
-                'plantilla_position_id' => $plantilla->id,
+                'plantilla_position_id' => $assignedPlantillaId,
                 'branch_id' => $this->form_branch_id,
                 'level' => $this->form_level,
                 'gender' => $this->gender,
@@ -319,7 +354,7 @@ class FacultyManagement extends Component
                 'faculty_id' => $this->faculty_id,
                 'department_id' => $this->form_department_id,
                 'status' => $this->form_status,
-                'plantilla_position_id' => $plantilla->id,
+                'plantilla_position_id' => $assignedPlantillaId,
                 'branch_id' => $this->form_branch_id,
                 'level' => $this->form_level,
                 'gender' => $this->gender,
