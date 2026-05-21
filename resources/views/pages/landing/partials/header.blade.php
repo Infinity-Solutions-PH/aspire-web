@@ -5,7 +5,7 @@
                 <div class="size-12 flex items-center justify-center rounded-xl">
                     <x-app-logo-image class="size-full fill-current text-white" />
                 </div>
-                <div class="hidden md:flex flex-col justify-center leading-none mt-1">
+                <div class="hidden min-[600px]:flex flex-col justify-center leading-none mt-1 whitespace-nowrap">
                     <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">Tanza National Trade School</span>
                     <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
                         <span class="text-xs font-bold">A</span>cademic
@@ -16,7 +16,7 @@
                         <span class="text-xs font-bold">E</span>nrollment
                     </span>
                 </div>
-                <div class="flex md:hidden flex-col justify-center leading-none mt-1">
+                <div class="flex min-[600px]:hidden flex-col justify-center leading-none mt-1 whitespace-nowrap">
                     <span class="text-2xl font-black text-primary-container tracking-tighter uppercase leading-[1rem]">TNTS</span>
                     <span class="text-[10px] font-normal text-primary tracking-[0.3px] uppercase">
                         <span class="text-xs font-bold">ASPIRE</span>
@@ -25,7 +25,7 @@
             </div>
         </a>
         
-        <div class="hidden md:flex gap-8 items-center font-headline font-semibold tracking-tight">
+        <div class="hidden lg:flex gap-8 items-center font-headline font-semibold tracking-tight">
             <a class="{{ request()->routeIs('home') ? 'text-primary' : 'text-stone-500' }} hover:text-primary transition-all duration-300" href="{{ route('home') }}">Home</a>
             <a class="{{ request()->routeIs('programs') ? 'text-primary' : 'text-stone-500' }} hover:text-primary transition-all duration-300" href="{{ route('programs') }}">Programs</a>
             <!-- <a class="text-stone-500 hover:text-primary transition-all duration-300" href="#">Admissions</a> -->
@@ -95,7 +95,7 @@
         </div>
 
         <!-- Mobile Menu Toggle -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 text-stone-500 hover:text-primary transition-colors rounded-lg hover:bg-stone-100">
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="lg:hidden p-2 text-stone-500 hover:text-primary transition-colors rounded-lg hover:bg-stone-100">
             <span class="material-symbols-outlined text-3xl" x-text="mobileMenuOpen ? 'close' : 'menu'">menu</span>
         </button>
     </div>
@@ -109,7 +109,7 @@
             x-transition:leave-start="opacity-100 translate-y-0"
             x-transition:leave-end="opacity-0 -translate-y-4"
             @click.away="mobileMenuOpen = false"
-            class="md:hidden absolute top-20 left-0 w-full bg-white border-b border-stone-100 shadow-xl"
+            class="lg:hidden absolute top-20 left-0 w-full bg-white border-b border-stone-100 shadow-xl"
             style="display: none;">
         
         <div class="flex flex-col px-6 py-4 space-y-4 font-headline font-semibold tracking-tight shadow-inner bg-white">
