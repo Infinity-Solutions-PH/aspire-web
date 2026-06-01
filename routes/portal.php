@@ -1,7 +1,11 @@
 <?php
 
 use App\Models\Enrollment;
+use App\Livewire\Faculty\Profile;
+use App\Livewire\Faculty\Dashboard;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Faculty\SectionsList;
+use App\Livewire\Faculty\ManageSectionStudents;
 use App\Http\Controllers\StudentPortal\Enrollment\CertificateController;
 use App\Http\Controllers\Landing\PageController as LandingPageController;
 use App\Http\Controllers\StudentPortal\DashboardController as StudentDashboardController;
@@ -23,4 +27,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route::get('/enrollment', [StudentEnrollmentController::class, 'index'])->name('enrollment.index');
     // Route::post('/enrollment/start', [StudentEnrollmentController::class, 'start'])->name('enrollment.start');
     Route::get('/enrollment/certificate', [CertificateController::class, 'download'])->name('enrollment.certificate');
+});
+
+// Faculty Portal Authenticated Routes
+Route::middleware(['auth', 'verified', 'can:access-faculty'])->prefix('faculty')->group(function () {
+    Route::get('/dashboard', Dashboard::class)->name('faculty.dashboard');
+    Route::get('/sections', SectionsList::class)->name('faculty.sections');
+    Route::get('/sections/{section}', ManageSectionStudents::class)->name('faculty.sections.students');
+    Route::get('/profile', Profile::class)->name('faculty.profile');
+    
+    Route::get('/sections/{section}/export/pdf', [\App\Http\Controllers\Admin\ExportSectionMasterlistController::class, 'exportPdf'])->name('faculty.sections.export.pdf');
+    Route::get('/sections/{section}/export/csv', [\App\Http\Controllers\Admin\ExportSectionMasterlistController::class, 'exportCsv'])->name('faculty.sections.export.csv');
 });
