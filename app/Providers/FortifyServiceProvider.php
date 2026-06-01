@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use App\Actions\Fortify\ResetUserPassword;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -38,6 +39,23 @@ class FortifyServiceProvider extends ServiceProvider
                         ->first();
 
             if ($user && Hash::check($request->password, $user->password)) {
+                if ($user->role === 'teacher' && $user->faculty) {
+                    if ($user->faculty->status === 'Pending') {
+                        throw ValidationException::withMessages([
+                            Fortify::username() => __('Your account registration is pending approval.'),
+                        ]);
+                    }
+                    if ($user->faculty->status === 'Rejected') {
+                        throw ValidationException::withMessages([
+                            Fortify::username() => __('Your account registration has been rejected.'),
+                        ]);
+                    }
+                    if ($user->faculty->status === 'Inactive') {
+                        throw ValidationException::withMessages([
+                            Fortify::username() => __('Your account is inactive.'),
+                        ]);
+                    }
+                }
                 return $user;
             }
         });

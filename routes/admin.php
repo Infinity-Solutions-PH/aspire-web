@@ -1,22 +1,24 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Faculty\SignupWizard;
 use App\Livewire\Admin\AdmissionReview;
 use App\Livewire\Admin\ScheduleManager;
+use App\Livewire\Admin\FacultyManagement;
 use App\Livewire\Admin\SectionManagement;
 use App\Livewire\Admin\StudentMasterlist;
-use App\Livewire\Admin\FacultyManagement;
+use App\Livewire\Admin\AdmissionDashboard;
 use App\Livewire\Admin\PlantillaManagement;
 use App\Livewire\Admin\SchoolYearManagement;
-use App\Livewire\Admin\AdmissionDashboard;
 use App\Livewire\Admin\Section\ManageStudents;
+use App\Http\Controllers\Admin\ExportSectionMasterlistController;
 use App\Http\Controllers\Landing\PageController as LandingPageController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ExportSectionMasterlistController;
 
 // Admin Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('/auth', [LandingPageController::class, 'adminLogin'])->name('admin.login');
+    Route::get('/faculty/create', SignupWizard::class)->name('faculty.signup');
 });
 
 // Admin Authenticated Routes

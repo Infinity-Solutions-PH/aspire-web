@@ -19,6 +19,10 @@ class DashboardController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+        if (auth()->user()->can('access-faculty')) {
+            return redirect()->route('faculty.dashboard');
+        }
+
         return redirect()->route('student.dashboard');
     }
 }
