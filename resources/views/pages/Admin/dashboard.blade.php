@@ -57,7 +57,7 @@
             </a>
 
             <!-- Approved -->
-            <a href="{{ route('admin.admissions', ['status' => 'Approved']) }}" class="glass-card p-6 rounded-3xl border border-blue-200/50 bg-blue-50/50 dark:bg-blue-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+            <a href="{{ route('admin.students.masterlist', ['status' => 'Approved']) }}" class="glass-card p-6 rounded-3xl border border-blue-200/50 bg-blue-50/50 dark:bg-blue-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div class="flex justify-between items-start mb-4">
                     <div class="size-12 bg-blue-100 dark:bg-blue-900/30 rounded-2xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-2xl">verified</span>
@@ -68,7 +68,7 @@
             </a>
 
             <!-- Officially Enrolled -->
-            <a href="{{ route('admin.admissions', ['status' => 'Enrolled']) }}" class="glass-card p-6 rounded-3xl border border-green-200/50 bg-green-50/50 dark:bg-green-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
+            <a href="{{ route('admin.students.masterlist', ['status' => 'Enrolled']) }}" class="glass-card p-6 rounded-3xl border border-green-200/50 bg-green-50/50 dark:bg-green-900/10 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
                 <div class="flex justify-between items-start mb-4">
                     <div class="size-12 bg-green-100 dark:bg-green-900/30 rounded-2xl flex items-center justify-center text-green-600 group-hover:scale-110 transition-transform">
                         <span class="material-symbols-outlined text-2xl">school</span>

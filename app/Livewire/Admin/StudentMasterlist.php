@@ -3,17 +3,48 @@
 namespace App\Livewire\Admin;
 
 use App\Models\Enrollment;
+use App\Models\Section;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 
 class StudentMasterlist extends Component
 {
     use WithPagination;
 
+    #[Url]
     public $search = '';
+
+    #[Url]
     public $grade_level = '';
+
+    #[Url]
     public $status = 'Enrolled';
+
+    #[Url]
     public $category = '';
+
+    // Modal state
+    public $showEditModal = false;
+    public $showSectionModal = false;
+    public $selectedStudentId = null;
+
+    // Edit fields
+    public $edit_first_name = '';
+    public $edit_last_name = '';
+    public $edit_middle_name = '';
+    public $edit_extension_name = '';
+    public $edit_lrn = '';
+    public $edit_birthdate = '';
+    public $edit_sex = '';
+    public $edit_gwa = '';
+    public $edit_contact_no = '';
+    public $edit_status = '';
+    public $edit_grade_level = '';
+
+    // Section assignment fields
+    public $selected_section_id = '';
+    public $selected_tech_voc_section_id = '';
 
     public function updatingSearch()
     {
@@ -30,10 +61,115 @@ class StudentMasterlist extends Component
         $this->resetPage();
     }
 
+    public function editStudent($id)
+    {
+        $student = Enrollment::findOrFail($id);
+        $this->selectedStudentId = $id;
+        $this->edit_first_name = $student->first_name;
+        $this->edit_last_name = $student->last_name;
+        $this->edit_middle_name = $student->middle_name;
+        $this->edit_extension_name = $student->extension_name;
+        $this->edit_lrn = $student->lrn;
+        $this->edit_birthdate = $student->birthdate ? $student->birthdate->format('Y-m-d') : '';
+        $this->edit_sex = $student->sex;
+        $this->edit_gwa = $student->gwa;
+        $this->edit_contact_no = $student->contact_no;
+        $this->edit_status = $student->status;
+        $this->edit_grade_level = $student->grade_level;
+
+        $this->showEditModal = true;
+    }
+
+    public function saveStudent()
+    {
+        $this->validate([
+            'edit_first_name' => 'required|string|max:255',
+            'edit_last_name' => 'required|string|max:255',
+            'edit_middle_name' => 'nullable|string|max:255',
+            'edit_extension_name' => 'nullable|string|max:255',
+            'edit_lrn' => 'required|string|max:20',
+            'edit_birthdate' => 'required|date',
+            'edit_sex' => 'required|in:Male,Female',
+            'edit_gwa' => 'nullable|numeric|min:50|max:100',
+            'edit_contact_no' => 'required|string|max:20',
+            'edit_status' => 'required|string',
+            'edit_grade_level' => 'required|string',
+        ]);
+
+        $student = Enrollment::findOrFail($this->selectedStudentId);
+        $oldGrade = $student->grade_level;
+
+        $student->update([
+            'first_name' => $this->edit_first_name,
+            'last_name' => $this->edit_last_name,
+            'middle_name' => $this->edit_middle_name,
+            'extension_name' => $this->edit_extension_name,
+            'lrn' => $this->edit_lrn,
+            'birthdate' => $this->edit_birthdate,
+            'sex' => $this->edit_sex,
+            'gwa' => $this->edit_gwa,
+            'contact_no' => $this->edit_contact_no,
+            'status' => $this->edit_status,
+            'grade_level' => $this->edit_grade_level,
+        ]);
+
+        if ($oldGrade !== $this->edit_grade_level) {
+            $student->update([
+                'section_id' => null,
+                'tech_voc_section_id' => null,
+            ]);
+        }
+
+        $this->showEditModal = false;
+        session()->flash('message', 'Student record updated successfully.');
+    }
+
+    public function openSectionModal($id)
+    {
+        $student = Enrollment::findOrFail($id);
+        $this->selectedStudentId = $id;
+        $this->selected_section_id = $student->section_id;
+        $this->selected_tech_voc_section_id = $student->tech_voc_section_id;
+        $this->showSectionModal = true;
+    }
+
+    public function saveSection()
+    {
+        $student = Enrollment::findOrFail($this->selectedStudentId);
+
+        $updateData = [
+            'section_id' => $this->selected_section_id ?: null,
+        ];
+
+        $messages = [];
+        if ($this->selected_section_id) {
+            $section = Section::find($this->selected_section_id);
+            $messages[] = "Assigned to Section: {$section->name}";
+        } else {
+            $messages[] = "Removed Academic Section";
+        }
+
+        if (in_array($student->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
+            $updateData['tech_voc_section_id'] = $this->selected_tech_voc_section_id ?: null;
+            if ($this->selected_tech_voc_section_id) {
+                $tvSection = Section::find($this->selected_tech_voc_section_id);
+                $messages[] = "Assigned to Tech Voc Section: {$tvSection->name}";
+            } else {
+                $messages[] = "Removed Tech Voc Section";
+            }
+        }
+
+        $student->update($updateData);
+
+        $this->showSectionModal = false;
+        session()->flash('message', 'Section assignments updated: ' . implode(' & ', $messages));
+    }
+
     public function render()
     {
         $students = Enrollment::query()
-            ->whereIn('status', ['Enrolled', 'Approved', 'Rejected'])
+            ->with(['section', 'techVocSection'])
+            ->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('first_name', 'like', '%' . $this->search . '%')
@@ -53,8 +189,38 @@ class StudentMasterlist extends Component
             ->orderBy('last_name')
             ->paginate(15);
 
+        $availableSections = collect();
+        $availableTechVocSections = collect();
+        $selectedStudentForSection = null;
+
+        if ($this->showSectionModal && $this->selectedStudentId) {
+            $selectedStudentForSection = Enrollment::find($this->selectedStudentId);
+            if ($selectedStudentForSection) {
+                $sectionQuery = Section::where('grade_level', $selectedStudentForSection->grade_level);
+                if ($selectedStudentForSection->strand) {
+                    $sectionQuery->where('strand', $selectedStudentForSection->strand);
+                } else {
+                    $sectionQuery->where(function($q) {
+                        $q->whereNull('track')->orWhere('track', '!=', 'TVL');
+                    });
+                }
+                $availableSections = $sectionQuery->withCount('enrollments')->get();
+
+                if (in_array($selectedStudentForSection->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
+                    $availableTechVocSections = Section::where('grade_level', $selectedStudentForSection->grade_level)
+                        ->where('track', 'TVL')
+                        ->withCount('techVocEnrollments')
+                        ->get();
+                }
+            }
+        }
+
         return view('livewire.admin.student-masterlist', [
-            'students' => $students
+            'students' => $students,
+            'availableSections' => $availableSections,
+            'availableTechVocSections' => $availableTechVocSections,
+            'selectedStudentForSection' => $selectedStudentForSection,
         ]);
     }
 }
+

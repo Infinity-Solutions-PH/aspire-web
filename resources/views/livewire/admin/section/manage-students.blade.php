@@ -1,6 +1,6 @@
 @section('page-title', 'Manage Students - ' . $section->name)
 
-<main class="flex-1 px-10 py-8 max-w-[1400px] mx-auto w-full">
+<main class="flex-1 px-10 py-8 max-w-[1400px] mx-auto w-full" x-data="{ showTransferModal: @entangle('showTransferModal') }">
     <!-- Breadcrumbs & Back Link -->
     <div class="flex items-center gap-2 mb-6">
         <a href="{{ route('admin.sections') }}" class="flex items-center gap-1 text-[#9a4c4c] hover:text-primary transition-colors text-sm font-bold">
@@ -52,6 +52,28 @@
             </div>
         </div>
     </div>
+
+    <!-- Flash Messages -->
+    @if (session()->has('message'))
+        <div x-data="{ show: true }" 
+             x-show="show" 
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-6 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/30 rounded-2xl flex items-center justify-between text-green-800 dark:text-green-400 shadow-sm shadow-green-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                <span class="text-sm font-semibold">{{ session('message') }}</span>
+            </div>
+            <button @click="show = false" class="text-green-500 hover:text-green-700 dark:hover:text-green-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
 
     <!-- Student List Section -->
     <div class="space-y-6">
@@ -150,7 +172,7 @@
                                         <a href="{{ route('admin.enrollment.review', $student->id) }}" class="p-2 hover:bg-primary/10 text-primary rounded-xl transition-all" title="View Full Profile">
                                             <span class="material-symbols-outlined text-lg">visibility</span>
                                         </a>
-                                        <button class="p-2 hover:bg-primary/10 text-primary rounded-xl transition-all" title="Transfer Student">
+                                        <button wire:click="openTransferModal({{ $student->id }})" class="p-2 hover:bg-primary/10 text-primary rounded-xl transition-all" title="Transfer Student">
                                             <span class="material-symbols-outlined text-lg">swap_horiz</span>
                                         </button>
                                     </div>
@@ -158,7 +180,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-6 py-20 text-center">
+                                <td colspan="{{ in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']) && $section->track !== 'TVL' ? 6 : 5 }}" class="px-6 py-20 text-center">
                                     <div class="flex flex-col items-center justify-center opacity-30">
                                         <span class="material-symbols-outlined text-6xl mb-4">person_off</span>
                                         <p class="text-sm font-black uppercase tracking-widest italic">No students assigned to this section yet.</p>
@@ -171,6 +193,78 @@
             </div>
             <div class="px-6 py-4 border-t border-[#f3e7e7] dark:border-[#3a1f1f]">
                 {{ $students->links() }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Student Modal -->
+    <div x-show="showTransferModal" class="fixed inset-0 lg:left-64 z-40 overflow-y-auto" x-cloak>
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showTransferModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border border-[#f3e7e7] dark:border-[#3a1f1f]">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-primary/5">
+                    <div>
+                        <h3 class="text-xl font-black text-primary uppercase tracking-tight">Transfer Student Section</h3>
+                        <p class="text-xs text-[#9a4c4c] dark:text-white/60">
+                            @if($selectedStudentForTransfer)
+                                Transfer <span class="font-bold text-gray-900 dark:text-white">{{ $selectedStudentForTransfer->first_name }} {{ $selectedStudentForTransfer->last_name }}</span> ({{ $selectedStudentForTransfer->grade_level }})
+                            @else
+                                Transfer student
+                            @endif
+                        </p>
+                    </div>
+                    <button @click="showTransferModal = false" class="text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form wire:submit.prevent="saveTransfer" class="p-8 space-y-6">
+                    <div class="space-y-4">
+                        <!-- Academic Section -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Academic Section</label>
+                            <select wire:model="selected_section_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary text-gray-800 dark:text-white">
+                                <option value="">-- Unassigned --</option>
+                                @foreach($availableSections as $sec)
+                                    <option value="{{ $sec->id }}">
+                                        {{ $sec->name }} ({{ $sec->enrollments_count }}/{{ $sec->capacity }})
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('selected_section_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                        </div>
+
+                        <!-- Tech Voc Specialization Section (Grade 8, 9, 10 only) -->
+                        @if($selectedStudentForTransfer && in_array($selectedStudentForTransfer->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']))
+                            <div class="space-y-1">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Tech Voc Specialization Section</label>
+                                <select wire:model="selected_tech_voc_section_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary text-gray-800 dark:text-white">
+                                    <option value="">-- Unassigned --</option>
+                                    @foreach($availableTechVocSections as $sec)
+                                        <option value="{{ $sec->id }}">
+                                            {{ $sec->name }} - {{ $sec->specialization }} ({{ $sec->tech_voc_enrollments_count }}/{{ $sec->capacity }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('selected_tech_voc_section_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="pt-6 border-t border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-end gap-3">
+                        <button type="button" @click="showTransferModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Cancel</button>
+                        <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">save</span>
+                            Transfer Section
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

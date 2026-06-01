@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\User;
 use App\Models\Section;
 use App\Models\Setting;
+use App\Models\Faculty;
 use Livewire\Component;
 use App\Models\Enrollment;
 use Livewire\WithPagination;
@@ -289,7 +290,13 @@ class SectionManagement extends Component
  
         return view('pages.Admin.section-management', [
             'sections' => $query->get(),
-            'teachers' => User::where('role', 'teacher')->orWhere('role', 'dept_head')->get(),
+            'teachers' => Faculty::where('status', 'Active')
+                ->whereHas('user', function ($q) {
+                    $q->where('role', 'teacher');
+                })
+                ->with('user')
+                ->get()
+                ->map(fn($f) => $f->user),
         ])->layout('layouts.app'); // Or pipeline if that's the base
     }
 }
