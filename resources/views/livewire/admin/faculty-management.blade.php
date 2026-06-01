@@ -35,8 +35,29 @@
         </div>
     @endif
 
-    <!-- Quick Stats Grid (4 Cards for Premium Detail) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-10">
+    @if (session()->has('error'))
+        <div x-data="{ show: true }" 
+             x-show="show" 
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-8 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/30 rounded-2xl flex items-center justify-between text-red-800 dark:text-red-400 shadow-sm shadow-red-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+                <span class="text-sm font-semibold">{{ session('error') }}</span>
+            </div>
+            <button @click="show = false" class="text-red-500 hover:text-red-700 dark:hover:text-red-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
+
+    <!-- Quick Stats Grid (5 Cards for Premium Detail) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 my-10">
         <!-- Card 1: Total Positions -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
@@ -59,7 +80,7 @@
             </div>
         </div>
 
-        <!-- Card 3: Other Status (On Leave / Inactive) -->
+        <!-- Card 3: Other Status -->
         <div class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm">
             <div class="size-10 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
                 <span class="material-symbols-outlined text-xl">pending_actions</span>
@@ -80,6 +101,23 @@
                 <p class="text-xl font-black text-gray-700 dark:text-gray-300 tracking-tight">{{ $stats['vacancies'] }}</p>
             </div>
         </a>
+
+        <!-- Card 5: Pending Requests -->
+        <button wire:click="$set('status', 'Pending')" class="p-4 bg-white dark:bg-[#2a1515] rounded-xl border border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center gap-3 shadow-sm hover:bg-gray-50 dark:hover:bg-[#3d2424] transition-all text-left w-full group relative">
+            @if($stats['pending_requests'] > 0)
+                <span class="absolute top-2 right-2 flex h-3.5 w-3.5">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-amber-500"></span>
+                </span>
+            @endif
+            <div class="size-10 rounded-lg bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-xl">person_pin</span>
+            </div>
+            <div>
+                <p class="text-[#9a4c4c] dark:text-white/60 text-xs font-semibold uppercase tracking-wider">Pending Requests</p>
+                <p class="text-xl font-black text-[#1b0d0d] dark:text-white tracking-tight">{{ $stats['pending_requests'] }}</p>
+            </div>
+        </button>
     </div>
 
     <!-- Filters & Search -->
@@ -138,6 +176,8 @@
             <option value="Active">Active</option>
             <option value="On Leave">On Leave</option>
             <option value="Inactive">Inactive</option>
+            <option value="Pending">Pending Approval</option>
+            <option value="Rejected">Rejected</option>
         </select>
     </div>
 
@@ -220,7 +260,9 @@
                                     {{ $faculty->status === 'Active' ? 'bg-green-100 text-green-700 dark:bg-green-950/30 dark:text-green-400' : 
                                        ($faculty->status === 'On Leave' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400' : 
                                        ($faculty->status === 'Inactive' ? 'bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400' : 
-                                       'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400')) }}">
+                                       ($faculty->status === 'Pending' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/30 dark:text-amber-400' :
+                                       ($faculty->status === 'Rejected' ? 'bg-red-100 text-red-700 dark:bg-red-950/30 dark:text-red-400' :
+                                       'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400')))) }}">
                                     {{ $faculty->status }}
                                 </span>
                             </td>
@@ -242,6 +284,14 @@
                             <!-- Actions -->
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
+                                    @if($faculty->status === 'Pending')
+                                        <button wire:click="approveFaculty({{ $faculty->id }})" class="p-1.5 hover:bg-green-50 text-green-600 dark:hover:bg-green-950/20 rounded transition-colors" title="Approve Registration">
+                                            <span class="material-symbols-outlined text-lg font-bold">check_circle</span>
+                                        </button>
+                                        <button wire:click="rejectFaculty({{ $faculty->id }})" class="p-1.5 hover:bg-red-50 text-red-600 dark:hover:bg-red-950/20 rounded transition-colors" title="Reject Registration">
+                                            <span class="material-symbols-outlined text-lg font-bold">cancel</span>
+                                        </button>
+                                    @endif
                                     <button wire:click="edit({{ $faculty->id }})" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
                                         <span class="material-symbols-outlined text-lg">edit</span>
                                     </button>
@@ -328,6 +378,8 @@
                                 <option value="Active">Active</option>
                                 <option value="On Leave">On Leave</option>
                                 <option value="Inactive">Inactive</option>
+                                <option value="Pending">Pending Approval</option>
+                                <option value="Rejected">Rejected</option>
                             </select>
                             @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>

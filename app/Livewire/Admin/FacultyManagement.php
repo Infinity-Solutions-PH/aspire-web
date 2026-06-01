@@ -71,7 +71,7 @@ class FacultyManagement extends Component
             'name' => 'required|min:3',
             'email' => 'required|email|unique:users,email,' . $userId,
             'form_department_id' => 'required|exists:departments,id',
-            'form_status' => 'required|in:Active,On Leave,Inactive',
+            'form_status' => 'required|in:Active,On Leave,Inactive,Pending,Rejected',
             'form_position_id' => 'required|exists:positions,id',
             'plantilla_item_number' => 'required|string',
             'form_branch_id' => 'required|exists:branches,id',
@@ -379,6 +379,41 @@ class FacultyManagement extends Component
         $this->dispatch('faculty-saved', message: $message);
     }
 
+    public function approveFaculty($facultyId)
+    {
+        $faculty = Faculty::findOrFail($facultyId);
+
+        // Verify plantilla is vacant
+        if ($faculty->plantillaPosition) {
+            $assignedFaculty = Faculty::where('plantilla_position_id', $faculty->plantilla_position_id)
+                ->whereIn('status', ['Active', 'On Leave'])
+                ->where('id', '!=', $faculty->id)
+                ->exists();
+
+            if ($assignedFaculty) {
+                session()->flash('error', 'Cannot approve: the requested plantilla number is already occupied by an active faculty member.');
+                $this->dispatch('faculty-error', message: 'Cannot approve: plantilla occupied.');
+                return;
+            }
+        }
+
+        $faculty->update(['status' => 'Active']);
+
+        $message = 'Faculty request approved successfully.';
+        session()->flash('message', $message);
+        $this->dispatch('faculty-saved', message: $message);
+    }
+
+    public function rejectFaculty($facultyId)
+    {
+        $faculty = Faculty::findOrFail($facultyId);
+        $faculty->update(['status' => 'Rejected']);
+
+        $message = 'Faculty request rejected.';
+        session()->flash('message', $message);
+        $this->dispatch('faculty-saved', message: $message);
+    }
+
     public function render()
     {
         $faculties = Faculty::with(['user', 'plantillaPosition.position', 'branch'])
@@ -410,6 +445,7 @@ class FacultyManagement extends Component
             'active' => Faculty::where('status', 'Active')->count(),
             'other_status' => Faculty::whereIn('status', ['On Leave', 'Inactive'])->count(),
             'vacancies' => max(0, $totalPlantillas - $assignedPlantillas),
+            'pending_requests' => Faculty::where('status', 'Pending')->count(),
         ];
 
         return view('livewire.admin.faculty-management', [
