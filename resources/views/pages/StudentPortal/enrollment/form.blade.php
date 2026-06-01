@@ -254,7 +254,7 @@
                 </label>
                 <label class="flex flex-col gap-2">
                     <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Last School Year Completed</span>
-                    <input wire:model.defer="last_school_year" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm" placeholder="e.g. 2023-2024" type="text"/>
+                    <input wire:model.defer="last_school_year" class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 bg-white/50 dark:bg-black/20 focus:border-primary focus:ring-primary h-12 text-sm" placeholder="e.g. 2026-2027" type="text"/>
                 </label>
                 <label class="flex flex-col gap-2 md:col-span-2">
                     <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Last School Attended</span>

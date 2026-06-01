@@ -5,7 +5,7 @@
     <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
         <div class="flex flex-col gap-1">
             <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Masterlist</h2>
-            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage and view all enrolled students for S.Y. 2023-2024.</p>
+            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage and view all enrolled students for S.Y. 2026-2027.</p>
         </div>
         <button class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20">
             <span class="material-symbols-outlined text-lg">person_add</span>
