@@ -20,7 +20,7 @@ class ProvisioningService
 
         // Check for duplicates
         if (User::where('email', $institutionalEmail)->exists()) {
-            $institutionalEmail = "{$firstName}.{$lastName}" . Str::lower(Str::random(2)) . "@tnts.edu.ph";
+            $institutionalEmail = "{$firstName}.{$lastName}" . Str::lower(Str::random(2)) . '@tnts.edu.ph';
         }
 
         // 2. Update user record (this becomes their primary login for the portal)

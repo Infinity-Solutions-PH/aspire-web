@@ -2,8 +2,6 @@
 
 namespace App\Livewire\Faculty;
 
-use App\Models\User;
-use App\Models\Faculty;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Hash;

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\StudentPortal;
 
-use App\Models\Enrollment;
 use App\Http\Controllers\Controller;
+use App\Models\Enrollment;
 
 class DashboardController extends Controller
 {

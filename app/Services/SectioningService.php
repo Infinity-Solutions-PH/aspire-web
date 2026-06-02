@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Exception;
-use App\Models\Section;
 use App\Models\Enrollment;
+use App\Models\Section;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class SectioningService
@@ -35,7 +35,7 @@ class SectioningService
         if ($strand) {
             $sectionQuery->where('strand', $strand);
         } else {
-            $sectionQuery->where(function($q) {
+            $sectionQuery->where(function ($q) {
                 $q->whereNull('track')->orWhere('track', '!=', 'TVL');
             });
         }
@@ -53,8 +53,9 @@ class SectioningService
 
         // Step 1: Star Section Allocation (GWA >= 90)
         if ($starSections->isNotEmpty()) {
-            $starCandidates = $remainingStudents->filter(function($student) {
+            $starCandidates = $remainingStudents->filter(function ($student) {
                 $gwa = (float) ($student->gwa ?? ($student->last_gwa ?? 0));
+
                 return $gwa >= 90;
             });
 
@@ -66,8 +67,8 @@ class SectioningService
                         $student->update(['section_id' => $starSection->id]);
                         $assignedCount++;
                         // Remove from pools
-                        $starCandidates = $starCandidates->reject(fn($s) => $s->id === $student->id);
-                        $remainingStudents = $remainingStudents->reject(fn($s) => $s->id === $student->id);
+                        $starCandidates = $starCandidates->reject(fn ($s) => $s->id === $student->id);
+                        $remainingStudents = $remainingStudents->reject(fn ($s) => $s->id === $student->id);
                     }
                 }
             }
@@ -85,7 +86,9 @@ class SectioningService
         $totalRemaining = Enrollment::where('grade_level', $gradeLevel)
             ->where('status', 'Enrolled')
             ->whereNull('section_id');
-        if ($strand) $totalRemaining->where('strand', $strand);
+        if ($strand) {
+            $totalRemaining->where('strand', $strand);
+        }
 
         return [
             'status' => 'success',
@@ -103,7 +106,7 @@ class SectioningService
             ->whereNull('tech_voc_section_id');
 
         if ($course) {
-            $query->where(function($q) use ($course) {
+            $query->where(function ($q) use ($course) {
                 $q->where('specialization', $course)->orWhere('strand', $course);
             });
         }
@@ -131,8 +134,11 @@ class SectioningService
             $choices = $student->tech_voc_choices ?? [];
             if (empty($choices)) {
                 // If they don't have choices but selected a specific strand/specialization during enrollment
-                if ($student->specialization) $choices[] = $student->specialization;
-                elseif ($student->strand) $choices[] = $student->strand;
+                if ($student->specialization) {
+                    $choices[] = $student->specialization;
+                } elseif ($student->strand) {
+                    $choices[] = $student->strand;
+                }
             }
 
             $assigned = false;
@@ -140,14 +146,14 @@ class SectioningService
             // Evaluate 1st, 2nd, 3rd choices
             foreach ($choices as $choice) {
                 // Find a section that matches this choice and has capacity
-                $matchingSection = $sections->filter(function($sec) use ($choice) {
+                $matchingSection = $sections->filter(function ($sec) use ($choice) {
                     $choiceLower = strtolower($choice);
                     $secSpecLower = strtolower($sec->specialization ?? '');
                     $secStrandLower = strtolower($sec->strand ?? '');
-                    
+
                     $isMatch = ($secSpecLower === $choiceLower || $secStrandLower === $choiceLower) ||
-                               (!empty($secSpecLower) && str_contains($secSpecLower, $choiceLower)) ||
-                               (!empty($choiceLower) && str_contains($choiceLower, $secSpecLower));
+                               (! empty($secSpecLower) && str_contains($secSpecLower, $choiceLower)) ||
+                               (! empty($choiceLower) && str_contains($choiceLower, $secSpecLower));
 
                     return $isMatch && $sec->techVocEnrollments()->count() < $sec->capacity;
                 })->first();
@@ -161,9 +167,9 @@ class SectioningService
             }
 
             // If not assigned after checking all choices, student remains unassigned (requires manual review)
-            if (!$assigned && empty($choices)) {
+            if (! $assigned && empty($choices)) {
                 // Try to assign to ANY TVL section if they had no choices and didn't fit anywhere else
-                $anySection = $sections->filter(function($sec) {
+                $anySection = $sections->filter(function ($sec) {
                     return $sec->techVocEnrollments()->count() < $sec->capacity;
                 })->first();
 
@@ -206,7 +212,7 @@ class SectioningService
                     $student->update(['section_id' => $section->id]);
                     $assigned++;
                     $found = true;
-                    
+
                     // Move to next section in serpentine pattern
                     if ($direction == 1) {
                         if ($currentIndex == $sectionCount - 1) {
@@ -226,12 +232,20 @@ class SectioningService
 
                 // If full, skip to next in current direction or wrap
                 $currentIndex += $direction;
-                if ($currentIndex >= $sectionCount) { $currentIndex = $sectionCount - 1; $direction = -1; }
-                if ($currentIndex < 0) { $currentIndex = 0; $direction = 1; }
+                if ($currentIndex >= $sectionCount) {
+                    $currentIndex = $sectionCount - 1;
+                    $direction = -1;
+                }
+                if ($currentIndex < 0) {
+                    $currentIndex = 0;
+                    $direction = 1;
+                }
                 $attempts++;
             }
 
-            if (!$found) break; // All sections full
+            if (! $found) {
+                break;
+            } // All sections full
         }
 
         return $assigned;
@@ -246,7 +260,9 @@ class SectioningService
             ->where('is_star_section', true)
             ->first();
 
-        if (!$starSection) return 0;
+        if (! $starSection) {
+            return 0;
+        }
 
         return (float) $starSection->enrollments()->avg('gwa') ?: 0;
     }
@@ -258,6 +274,7 @@ class SectioningService
     {
         $avg = $this->getStarSectionAverage($enrollment->grade_level);
         $gwa = (float) ($enrollment->gwa ?? ($enrollment->last_gwa ?? 0));
+
         return $gwa >= $avg && $avg > 0;
     }
 
@@ -277,9 +294,15 @@ class SectioningService
         // For individual assignment, we just find the first available section matching criteria
         $query = Section::where('grade_level', $enrollment->grade_level);
 
-        if ($enrollment->track ?? null) $query->where('track', $enrollment->track);
-        if ($enrollment->strand ?? null) $query->where('strand', $enrollment->strand);
-        if ($enrollment->specialization ?? null) $query->where('specialization', $enrollment->specialization);
+        if ($enrollment->track ?? null) {
+            $query->where('track', $enrollment->track);
+        }
+        if ($enrollment->strand ?? null) {
+            $query->where('strand', $enrollment->strand);
+        }
+        if ($enrollment->specialization ?? null) {
+            $query->where('specialization', $enrollment->specialization);
+        }
 
         $sections = $query->get();
 
@@ -287,12 +310,13 @@ class SectioningService
             /** @var Section $section */
             if ($section->enrollments()->count() < $section->capacity) {
                 $enrollment->update(['section_id' => $section->id]);
+
                 return $section;
             }
         }
         Log::info("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
 
-        throw new \Exception("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
+        throw new Exception("No available capacity in matching sections for Grade {$enrollment->grade_level}.");
     }
 
     /**
@@ -302,11 +326,17 @@ class SectioningService
     {
         $query = Section::where('grade_level', $enrollment->grade_level);
 
-        if ($enrollment->track ?? null) $query->where('track', $enrollment->track);
-        if ($enrollment->strand ?? null) $query->where('strand', $enrollment->strand);
-        if ($enrollment->specialization ?? null) $query->where('specialization', $enrollment->specialization);
+        if ($enrollment->track ?? null) {
+            $query->where('track', $enrollment->track);
+        }
+        if ($enrollment->strand ?? null) {
+            $query->where('strand', $enrollment->strand);
+        }
+        if ($enrollment->specialization ?? null) {
+            $query->where('specialization', $enrollment->specialization);
+        }
 
-        return $query->withCount('enrollments')->get()->filter(function($section) {
+        return $query->withCount('enrollments')->get()->filter(function ($section) {
             return $section->enrollments_count < $section->capacity;
         });
     }

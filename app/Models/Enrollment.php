@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable([
     'user_id', 'transaction_number', 'status', 'current_step', 'type', 'tech_voc_choices', 'profile_picture',
@@ -16,7 +15,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
     'father_name', 'mother_maiden_name', 'guardian_name', 'contact_no',
     'last_grade_level', 'last_school_year', 'last_school_attended', 'last_school_id',
     'semester', 'track', 'strand', 'shs_track', 'is_shs_aligned', 'specialization', 'modality',
-    'psa_path', 'sf9_path', 'good_moral_path', 'honorable_dismissal_path', 'admin_remarks', 'verified_by', 'finalized_at', 'section_id', 'tech_voc_section_id'
+    'psa_path', 'sf9_path', 'good_moral_path', 'honorable_dismissal_path', 'admin_remarks', 'verified_by', 'finalized_at', 'section_id', 'tech_voc_section_id',
 ])]
 class Enrollment extends Model
 {
@@ -79,6 +78,7 @@ class Enrollment extends Model
     public function getSchoolCategoryAttribute(): string
     {
         $grade = (int) str_replace('Grade ', '', $this->grade_level);
+
         return ($grade >= 11) ? 'Senior High School' : 'High School';
     }
 }

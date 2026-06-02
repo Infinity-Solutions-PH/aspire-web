@@ -2,9 +2,9 @@
 
 namespace App\Livewire\StudentPortal;
 
-use App\Models\SafetyWaiver as WaiverModel;
-use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use App\Models\SafetyWaiver as WaiverModel;
 
 class SafetyWaiver extends Component
 {

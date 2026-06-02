@@ -11,6 +11,7 @@ class PageController extends Controller
         if (auth()->check()) {
             return redirect()->route('dashboard');
         }
+
         return view('pages.landing.home');
     }
 

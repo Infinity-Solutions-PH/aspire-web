@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'is_star_section', 'room', 'adviser_id', 'grade_level', 'track', 'strand', 'specialization', 'capacity'])]
 class Section extends Model
@@ -29,6 +29,7 @@ class Section extends Model
     {
         return $this->belongsTo(User::class, 'adviser_id');
     }
+
     /**
      * Get the schedules associated with this section.
      */

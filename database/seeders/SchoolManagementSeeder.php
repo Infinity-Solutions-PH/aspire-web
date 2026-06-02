@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Fee;
 use App\Models\Room;
+use App\Models\Schedule;
 use App\Models\Section;
 use App\Models\Subject;
-use App\Models\Schedule;
-use App\Models\Fee;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 

@@ -2,14 +2,15 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\Section;
 use App\Models\Room;
 use App\Models\Schedule;
+use App\Models\Section;
 use Livewire\Component;
 
 class ScheduleManager extends Component
 {
     public $search = '';
+
     public $activeTrack = null;
 
     protected $queryString = ['search', 'activeTrack'];
@@ -18,8 +19,8 @@ class ScheduleManager extends Component
     {
         $sections = Section::withCount('enrollments')
             ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('track', 'like', '%' . $this->search . '%');
+                $query->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('track', 'like', '%'.$this->search.'%');
             })
             ->when($this->activeTrack, function ($query) {
                 $query->where('track', $this->activeTrack);
@@ -27,7 +28,7 @@ class ScheduleManager extends Component
             ->get();
 
         $rooms = Room::with(['schedules.section', 'schedules.subject'])->get();
-        
+
         $schedules = Schedule::with(['section', 'subject', 'room', 'teacher'])
             ->latest()
             ->take(10)

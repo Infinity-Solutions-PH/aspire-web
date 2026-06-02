@@ -15,19 +15,19 @@ class JhsSectionSeeder extends Seeder
         $sections = [
             'Grade 7' => [
                 'star' => 'Sampaguita',
-                'regular' => ['Gladiola', 'Santan', 'Rose', 'Orchid', 'Daisy', 'Sunflower', 'Daffodil', 'Lily', 'Jasmine']
+                'regular' => ['Gladiola', 'Santan', 'Rose', 'Orchid', 'Daisy', 'Sunflower', 'Daffodil', 'Lily', 'Jasmine'],
             ],
             'Grade 8' => [
                 'star' => 'Narra',
-                'regular' => ['Molave', 'Ipil-ipil', 'Yakal', 'Mahogany', 'Acacia', 'Oak', 'Pine', 'Bamboo', 'Eucalyptus']
+                'regular' => ['Molave', 'Ipil-ipil', 'Yakal', 'Mahogany', 'Acacia', 'Oak', 'Pine', 'Bamboo', 'Eucalyptus'],
             ],
             'Grade 9' => [
                 'star' => 'Love',
-                'regular' => ['Honesty', 'Hope', 'Loyalty', 'Charity', 'Courage', 'Perseverance', 'Faith', 'Humility', 'Modesty']
+                'regular' => ['Honesty', 'Hope', 'Loyalty', 'Charity', 'Courage', 'Perseverance', 'Faith', 'Humility', 'Modesty'],
             ],
             'Grade 10' => [
                 'star' => 'Diamond',
-                'regular' => ['Ruby', 'Sapphire', 'Emerald', 'Jade', 'Pearl', 'Amethyst', 'Topaz', 'Garnet', 'Onyx']
+                'regular' => ['Ruby', 'Sapphire', 'Emerald', 'Jade', 'Pearl', 'Amethyst', 'Topaz', 'Garnet', 'Onyx'],
             ]
         ];
 

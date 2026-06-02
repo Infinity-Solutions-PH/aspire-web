@@ -5,7 +5,6 @@ namespace App\Livewire\StudentPortal;
 use Livewire\Component;
 use App\Models\Enrollment;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class EnrollmentForm extends Component
@@ -109,11 +108,11 @@ class EnrollmentForm extends Component
     public function mount()
     {
         $user = Auth::user();
-        
+
         // Conditional Auto-Progression Detection (Phase 2 Recommendation)
         if ($user->role === 'student' || $user->role === 'student') {
             $this->enrollment_type = 'Promoted';
-            
+
             // Fetch the most recent finalized enrollment to pre-fill
             $latest = Enrollment::where('user_id', $user->id)
                 ->where('status', 'Enrolled')
@@ -129,7 +128,7 @@ class EnrollmentForm extends Component
                     'is_same_address', 'permanent_house_no', 'permanent_street', 'permanent_barangay', 'permanent_municipality', 'permanent_province', 'permanent_zip',
                     'father_name', 'mother_maiden_name', 'guardian_name', 'contact_no'
                 ]));
-                
+
                 // Auto-set the next grade level
                 $this->last_grade_level = $latest->grade_level;
                 $this->grade_level = $this->calculateNextGrade($latest->grade_level);
@@ -181,7 +180,7 @@ class EnrollmentForm extends Component
         $data['user_id'] = Auth::id();
         $data['status'] = 'Draft';
         $data['type'] = $this->enrollment_type;
-        
+
         if ($this->rank1 || $this->rank2 || $this->rank3) {
             $data['tech_voc_choices'] = [$this->rank1, $this->rank2, $this->rank3];
         }

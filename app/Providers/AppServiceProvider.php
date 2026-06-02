@@ -2,13 +2,13 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
-use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,8 +32,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('access-faculty', function (User $user) {
-            return $user->role === 'teacher' && 
-                   $user->faculty && 
+            return $user->role === 'teacher' &&
+                   $user->faculty &&
                    in_array($user->faculty->status, ['Active', 'On Leave']);
         });
     }

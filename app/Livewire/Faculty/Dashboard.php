@@ -2,11 +2,10 @@
 
 namespace App\Livewire\Faculty;
 
-use App\Models\User;
 use App\Models\Section;
+use Livewire\Component;
 use App\Models\Schedule;
 use App\Models\Enrollment;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.faculty-portal')]
@@ -30,13 +29,13 @@ class Dashboard extends Component
         $adviserSections = Section::where('adviser_id', $userId)->get();
         $adviserNormalSectionIds = $adviserSections->where('track', '!=', 'TVL')->pluck('id');
         $adviserTvlSectionIds = $adviserSections->where('track', 'TVL')->pluck('id');
-        
+
         $adviseesCount = 0;
         if ($adviserNormalSectionIds->isNotEmpty() || $adviserTvlSectionIds->isNotEmpty()) {
             $adviseesCount = Enrollment::where('status', 'Enrolled')
                 ->where(function ($q) use ($adviserNormalSectionIds, $adviserTvlSectionIds) {
                     $q->whereIn('section_id', $adviserNormalSectionIds)
-                      ->orWhereIn('tech_voc_section_id', $adviserTvlSectionIds);
+                        ->orWhereIn('tech_voc_section_id', $adviserTvlSectionIds);
                 })
                 ->count();
         }
@@ -46,13 +45,13 @@ class Dashboard extends Component
         $taughtSections = Section::whereIn('id', $taughtSectionIds)->get();
         $taughtNormalSectionIds = $taughtSections->where('track', '!=', 'TVL')->pluck('id');
         $taughtTvlSectionIds = $taughtSections->where('track', 'TVL')->pluck('id');
-        
+
         $totalStudentsCount = 0;
         if ($taughtNormalSectionIds->isNotEmpty() || $taughtTvlSectionIds->isNotEmpty()) {
             $totalStudentsCount = Enrollment::where('status', 'Enrolled')
                 ->where(function ($q) use ($taughtNormalSectionIds, $taughtTvlSectionIds) {
                     $q->whereIn('section_id', $taughtNormalSectionIds)
-                      ->orWhereIn('tech_voc_section_id', $taughtTvlSectionIds);
+                        ->orWhereIn('tech_voc_section_id', $taughtTvlSectionIds);
                 })
                 ->distinct('user_id')
                 ->count('user_id');
@@ -61,12 +60,12 @@ class Dashboard extends Component
         // 5. Schedules for display
         $schedules = Schedule::with(['section', 'subject', 'room'])
             ->where('teacher_id', $userId)
-            ->orderByRaw("CASE day 
-                WHEN 'Monday' THEN 1 
-                WHEN 'Tuesday' THEN 2 
-                WHEN 'Wednesday' THEN 3 
-                WHEN 'Thursday' THEN 4 
-                WHEN 'Friday' THEN 5 
+            ->orderByRaw("CASE day
+                WHEN 'Monday' THEN 1
+                WHEN 'Tuesday' THEN 2
+                WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4
+                WHEN 'Friday' THEN 5
                 ELSE 6 END")
             ->orderBy('start_time')
             ->get();

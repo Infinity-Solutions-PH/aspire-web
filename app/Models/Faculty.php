@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Faculty extends Model
@@ -53,11 +53,11 @@ class Faculty extends Model
     public function position(): HasOneThrough
     {
         return $this->hasOneThrough(
-            Position::class, 
-            PlantillaPosition::class, 
-            'id', 
-            'id', 
-            'plantilla_position_id', 
+            Position::class,
+            PlantillaPosition::class,
+            'id',
+            'id',
+            'plantilla_position_id',
             'position_id'
         );
     }

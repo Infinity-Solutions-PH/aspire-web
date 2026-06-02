@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['section_id', 'subject_id', 'room_id', 'teacher_id', 'day', 'start_time', 'end_time'])]
 class Schedule extends Model

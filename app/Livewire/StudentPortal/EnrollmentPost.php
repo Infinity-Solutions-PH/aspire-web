@@ -4,6 +4,7 @@ namespace App\Livewire\StudentPortal;
 
 use Livewire\Component;
 use App\Models\Enrollment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 
 class EnrollmentPost extends Component
@@ -14,11 +15,11 @@ class EnrollmentPost extends Component
     {
         $this->enrollment = Enrollment::where('user_id', Auth::id())->latest()->first();
 
-        if (!$this->enrollment) {
+        if (! $this->enrollment) {
             return redirect()->route('enrollment.index');
         }
 
-        // If the enrollment is already verified (i.e. registrar checked), 
+        // If the enrollment is already verified (i.e. registrar checked),
         // they shouldn't be seeing the post-enrollment schedule screen anymore.
         if ($this->enrollment->status === 'Verified') {
             return redirect()->route('dashboard');
@@ -29,19 +30,19 @@ class EnrollmentPost extends Component
     {
         $qrCode = null;
         try {
-            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($this->enrollment->transaction_number);
+            $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($this->enrollment->transaction_number);
             $qrData = file_get_contents($qrUrl);
             $qrCode = 'data:image/png;base64,' . base64_encode($qrData);
         } catch (\Exception $e) {
             // Fallback
         }
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.enrollment-certificate', [
+        $pdf = Pdf::loadView('pdf.enrollment-certificate', [
             'enrollment' => $this->enrollment,
             'qrCode' => $qrCode
         ])->setPaper('a4', 'portrait')
-          ->setOption('isRemoteEnabled', true)
-          ->setOption('isHtml5ParserEnabled', true);
+            ->setOption('isRemoteEnabled', true)
+            ->setOption('isHtml5ParserEnabled', true);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();

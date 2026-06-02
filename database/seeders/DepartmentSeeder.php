@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Department;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DepartmentSeeder extends Seeder
@@ -16,9 +15,9 @@ class DepartmentSeeder extends Seeder
         $departments = [
             'SHS' => ['Techpro', 'Academic'],
             'JHS' => [
-                'English', 'Science', 'Mathematics', 'Filipino', 
-                'Araling Panlipunan', 'Edukasyon sa Pagpapakatao', 
-                'MAPEH', 'Industrial Arts', 'Home Economics', 'Personnel'
+                'English', 'Science', 'Mathematics', 'Filipino',
+                'Araling Panlipunan', 'Edukasyon sa Pagpapakatao',
+                'MAPEH', 'Industrial Arts', 'Home Economics', 'Personnel',
             ]
         ];
 

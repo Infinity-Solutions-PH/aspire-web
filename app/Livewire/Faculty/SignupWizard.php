@@ -5,11 +5,11 @@ namespace App\Livewire\Faculty;
 use App\Models\User;
 use App\Models\Branch;
 use App\Models\Faculty;
+use Livewire\Component;
 use App\Models\Position;
 use App\Models\Department;
-use App\Models\PlantillaPosition;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use App\Models\PlantillaPosition;
 use Illuminate\Support\Facades\Hash;
 
 #[Layout('layouts.guest')]
@@ -45,21 +45,21 @@ class SignupWizard extends Component
     protected function getRulesForStep($step)
     {
         switch ($step) {
-            Case 1:
+            case 1:
                 return [
                     'name' => 'required|min:3',
                     'gender' => 'required|in:Male,Female,Other',
                     'email' => 'required|email|unique:users,email',
                     'password' => 'required|min:8|confirmed',
                 ];
-            Case 2:
+            case 2:
                 return [
                     'faculty_id' => 'required|unique:faculties,faculty_id',
                     'branch_id' => 'required|exists:branches,id',
                     'level' => 'required|in:JHS,SHS',
                     'department_id' => 'required|exists:departments,id',
                 ];
-            Case 3:
+            case 3:
                 return [
                     'position_id' => 'required|exists:positions,id',
                     'plantilla_item_number' => 'required|string',

@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use App\Models\Faculty;
 use App\Models\Branch;
+use App\Models\Department;
+use App\Models\Faculty;
 use App\Models\PlantillaPosition;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -108,7 +109,7 @@ class FacultySeeder extends Seeder
                 'inactive_reason' => 'Retired',
                 'effective_date' => '2021-01-01',
                 'transfer_school' => null,
-            ]
+            ],
             // We intentionally leave some PlantillaPosition items unassigned to represent Vacancies.
         ];
 
@@ -127,7 +128,7 @@ class FacultySeeder extends Seeder
                     [
                         'name' => $f['name'],
                         'password' => Hash::make('password123'),
-                        'role' => 'teacher'
+                        'role' => 'teacher',
                     ]
                 );
                 $userId = $user->id;
@@ -135,7 +136,7 @@ class FacultySeeder extends Seeder
 
             if ($f['plantilla_position_id']) {
                 $deptName = $deptMap[$f['dept']] ?? $f['dept'];
-                $department = \App\Models\Department::where('name', $deptName)->first();
+                $department = Department::where('name', $deptName)->first();
                 $departmentId = $department ? $department->id : null;
 
                 Faculty::updateOrCreate(

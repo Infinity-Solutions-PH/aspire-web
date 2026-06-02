@@ -4,9 +4,9 @@ namespace App\Livewire\Admin;
 
 use App\Models\PlantillaPosition;
 use App\Models\Position;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Url;
 
 class PlantillaManagement extends Component
 {
@@ -40,7 +40,7 @@ class PlantillaManagement extends Component
     {
         $plantillasQuery = PlantillaPosition::with(['position', 'faculty.user'])
             ->when($this->search, function ($query) {
-                $query->where('plantilla_number', 'like', '%' . $this->search . '%');
+                $query->where('plantilla_number', 'like', '%'.$this->search.'%');
             })
             ->when($this->position_id, function ($query) {
                 $query->where('position_id', $this->position_id);
@@ -63,7 +63,7 @@ class PlantillaManagement extends Component
         $assignedPositions = PlantillaPosition::whereHas('faculty', function ($query) {
             $query->whereIn('status', ['Active', 'On Leave']);
         })->count();
-        
+
         $stats = [
             'total' => $totalPositions,
             'assigned' => $assignedPositions,

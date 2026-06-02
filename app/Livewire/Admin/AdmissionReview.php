@@ -2,30 +2,34 @@
 
 namespace App\Livewire\Admin;
 
-use Carbon\Carbon;
-use App\Models\User;
-use App\Models\Section;
-use Livewire\Component;
 use App\Models\Enrollment;
-use Illuminate\Support\Str;
 use App\Models\PreEnrollment;
+use App\Models\Section;
+use App\Models\User;
+use App\Services\ProvisioningService;
 use App\Services\SectioningService;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Services\ProvisioningService;
+use Livewire\Component;
 
 class AdmissionReview extends Component
 {
     public $record;
+
     public $isPre = false;
+
     public $admin_remarks;
+
     public $selected_specialization;
+
     public $status;
+
     public $selected_section_id;
+
     public $selected_tech_voc_section_id;
 
-    public function mount(Enrollment $enrollment = null, PreEnrollment $preEnrollment = null)
+    public function mount(?Enrollment $enrollment = null, ?PreEnrollment $preEnrollment = null)
     {
         if ($preEnrollment && $preEnrollment->exists) {
             $this->record = $preEnrollment;
@@ -47,16 +51,16 @@ class AdmissionReview extends Component
     {
         if ($this->isPre) {
             $data = $this->record->form_data;
-            
+
             // 1. Create Student Portal Account
             $username = $this->record->lrn;
             $passwordStr = $this->record->birthdate->format('mdY');
-            
+
             $user = User::firstOrCreate(
                 ['student_id' => $username],
                 [
-                    'name' => ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? ''),
-                    'email' => $username . '@tnts.edu.ph',
+                    'name' => ($data['first_name'] ?? '').' '.($data['last_name'] ?? ''),
+                    'email' => $username.'@tnts.edu.ph',
                     'password' => Hash::make($passwordStr),
                     'role' => 'student',
                 ]
@@ -78,8 +82,9 @@ class AdmissionReview extends Component
 
             // Delete PreEnrollment data once promoted to Enrollment
             $this->record->delete();
-            
+
             session()->flash('message', 'Application promoted to Enrollment and approved.');
+
             return redirect()->route('admin.enrollment.review', $enrollment->id);
         }
 
@@ -95,7 +100,9 @@ class AdmissionReview extends Component
 
     public function enroll(ProvisioningService $provisioningService)
     {
-        if ($this->isPre) return;
+        if ($this->isPre) {
+            return;
+        }
 
         try {
             // 1. Transition applicant to student role and provision IT accounts
@@ -126,8 +133,10 @@ class AdmissionReview extends Component
 
             $this->record->update($updateData);
 
-            $message = "Student officially enrolled. " . implode(' & ', $messages);
-            if (empty($messages)) $message .= " Awaiting section assignment.";
+            $message = 'Student officially enrolled. '.implode(' & ', $messages);
+            if (empty($messages)) {
+                $message .= ' Awaiting section assignment.';
+            }
 
             session()->flash('message', $message);
         } catch (\Exception $e) {
@@ -172,7 +181,7 @@ class AdmissionReview extends Component
                 ->where('track', 'TVL')
                 ->withCount('techVocEnrollments')
                 ->get()
-                ->filter(fn($s) => $s->tech_voc_enrollments_count < $s->capacity)
+                ->filter(fn ($s) => $s->tech_voc_enrollments_count < $s->capacity),
         ]);
     }
 }

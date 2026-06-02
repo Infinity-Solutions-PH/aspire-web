@@ -6,7 +6,7 @@ use Livewire\Component;
 
 class EnrollmentPipeline extends Component
 {
-    public $currentStep = 2; 
+    public $currentStep = 2;
 
     public $steps = [
         1 => ['id' => 1, 'title' => 'Portal Registration', 'status' => 'completed', 'icon' => 'user-plus'],

@@ -2,15 +2,15 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
 use App\Models\Branch;
-use App\Models\Faculty;
-use Livewire\Component;
-use App\Models\Position;
 use App\Models\Department;
-use Livewire\WithPagination;
+use App\Models\Faculty;
 use App\Models\PlantillaPosition;
+use App\Models\Position;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class FacultyManagement extends Component
 {
@@ -18,34 +18,57 @@ class FacultyManagement extends Component
 
     // Filters
     public $search = '';
+
     public $department = '';
+
     public $status = '';
+
     public $level = '';
+
     public $branch_id = '';
+
     public $position_id = '';
+
     public $gender_filter = '';
 
     // Form Properties
     public $showModal = false;
+
     public $editingId = null;
+
     public $faculty_id = '';
+
     public $name = '';
+
     public $email = '';
+
     public $form_department_id = '';
+
     public $form_status = 'Active';
+
     public $form_position_id = '';
+
     public $plantilla_item_number = '';
+
     public $form_branch_id = '';
+
     public $form_level = '';
+
     public $gender = 'Male';
+
     public $inactive_reason = '';
+
     public $effective_date = '';
+
     public $transfer_school = '';
 
     // Password Confirmation States & Dirty Tracking
     public $showPasswordModal = false;
+
     public $confirmPassword = '';
+
     public $initialValues = [];
+
     public $isDirty = false;
 
     protected $validationAttributes = [
@@ -67,9 +90,9 @@ class FacultyManagement extends Component
         $userId = $faculty ? $faculty->user_id : null;
 
         $rules = [
-            'faculty_id' => 'required|unique:faculties,faculty_id,' . $this->editingId,
+            'faculty_id' => 'required|unique:faculties,faculty_id,'.$this->editingId,
             'name' => 'required|min:3',
-            'email' => 'required|email|unique:users,email,' . $userId,
+            'email' => 'required|email|unique:users,email,'.$userId,
             'form_department_id' => 'required|exists:departments,id',
             'form_status' => 'required|in:Active,On Leave,Inactive,Pending,Rejected',
             'form_position_id' => 'required|exists:positions,id',
@@ -107,12 +130,11 @@ class FacultyManagement extends Component
                 })
                 ->exists();
 
-            if (!$assignedFaculty) {
+            if (! $assignedFaculty) {
                 $this->form_position_id = $plantilla->position_id;
             }
         }
     }
-
 
     public function updatingSearch()
     {
@@ -147,15 +169,15 @@ class FacultyManagement extends Component
     protected function resetForm()
     {
         $this->reset([
-            'editingId', 'faculty_id', 'name', 'email', 'form_department_id', 
+            'editingId', 'faculty_id', 'name', 'email', 'form_department_id',
             'form_status', 'form_position_id', 'plantilla_item_number', 'form_branch_id', 'form_level',
             'gender', 'confirmPassword',
-            'inactive_reason', 'effective_date', 'transfer_school'
+            'inactive_reason', 'effective_date', 'transfer_school',
         ]);
         $this->form_status = 'Active';
         $this->form_level = '';
         $this->gender = 'Male';
-        
+
         // Default school branch to "Main"
         $mainBranch = Branch::where('name', 'Main')->first();
         $this->form_branch_id = $mainBranch ? $mainBranch->id : '';
@@ -176,7 +198,7 @@ class FacultyManagement extends Component
     {
         $this->editingId = $faculty->id;
         $this->faculty_id = $faculty->faculty_id;
-        
+
         if ($faculty->user) {
             $this->name = $faculty->user->name;
             $this->email = $faculty->user->email;
@@ -184,7 +206,7 @@ class FacultyManagement extends Component
             $this->name = '';
             $this->email = '';
         }
-        
+
         $this->form_department_id = $faculty->department_id;
         $this->form_status = $faculty->status;
         $this->plantilla_item_number = $faculty->plantillaPosition ? $faculty->plantillaPosition->plantilla_number : '';
@@ -224,11 +246,11 @@ class FacultyManagement extends Component
 
         // 1. Plantilla Validation Check
         $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
-        
+
         if ($plantilla) {
             $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
                 ->whereIn('status', ['Active', 'On Leave'])
-                ->when($this->editingId, function($q) {
+                ->when($this->editingId, function ($q) {
                     $q->where('id', '!=', $this->editingId);
                 })
                 ->first();
@@ -236,6 +258,7 @@ class FacultyManagement extends Component
             if ($assignedFaculty) {
                 $this->addError('plantilla_item_number', 'This plantilla is already assigned to another active faculty.');
                 $this->addError('form_position_id', 'Cannot assign this position.');
+
                 return;
             }
         }
@@ -260,8 +283,9 @@ class FacultyManagement extends Component
         $this->validate();
 
         $admin = auth()->user();
-        if (!Hash::check($this->confirmPassword, $admin->password)) {
+        if (! Hash::check($this->confirmPassword, $admin->password)) {
             $this->addError('confirmPassword', 'The password you entered is incorrect.');
+
             return;
         }
 
@@ -274,7 +298,7 @@ class FacultyManagement extends Component
         // Double check assignment just in case
         $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
             ->whereIn('status', ['Active', 'On Leave'])
-            ->when($this->editingId, function($q) {
+            ->when($this->editingId, function ($q) {
                 $q->where('id', '!=', $this->editingId);
             })
             ->first();
@@ -282,6 +306,7 @@ class FacultyManagement extends Component
         if ($assignedFaculty) {
             $this->showPasswordModal = false;
             $this->addError('plantilla_item_number', 'This plantilla is already assigned to another active faculty.');
+
             return;
         }
 
@@ -295,7 +320,7 @@ class FacultyManagement extends Component
         $assignedPlantillaId = $isInactive ? null : $plantilla->id;
 
         // If assigning this plantilla to an active/on leave faculty, clear it from any previous inactive holders
-        if (!$isInactive) {
+        if (! $isInactive) {
             Faculty::where('plantilla_position_id', $plantilla->id)
                 ->when($this->editingId, function ($q) {
                     $q->where('id', '!=', $this->editingId);
@@ -307,7 +332,7 @@ class FacultyManagement extends Component
             $faculty = Faculty::findOrFail($this->editingId);
             $user = $faculty->user;
 
-            if (!$user) {
+            if (! $user) {
                 $user = User::create([
                     'name' => $this->name,
                     'email' => $this->email,
@@ -366,7 +391,7 @@ class FacultyManagement extends Component
             $message = 'Faculty successfully registered.';
         }
 
-        if (!$this->editingId) {
+        if (! $this->editingId) {
             $this->resetForm();
         }
 
@@ -393,6 +418,7 @@ class FacultyManagement extends Component
             if ($assignedFaculty) {
                 session()->flash('error', 'Cannot approve: the requested plantilla number is already occupied by an active faculty member.');
                 $this->dispatch('faculty-error', message: 'Cannot approve: plantilla occupied.');
+
                 return;
             }
         }
@@ -420,26 +446,26 @@ class FacultyManagement extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->whereHas('user', function ($uq) {
-                        $uq->where('name', 'like', '%' . $this->search . '%')
-                           ->orWhere('email', 'like', '%' . $this->search . '%');
+                        $uq->where('name', 'like', '%'.$this->search.'%')
+                            ->orWhere('email', 'like', '%'.$this->search.'%');
                     })
-                    ->orWhere('faculty_id', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('plantillaPosition', function ($pq) {
-                        $pq->where('plantilla_number', 'like', '%' . $this->search . '%');
-                    });
+                        ->orWhere('faculty_id', 'like', '%'.$this->search.'%')
+                        ->orWhereHas('plantillaPosition', function ($pq) {
+                            $pq->where('plantilla_number', 'like', '%'.$this->search.'%');
+                        });
                 });
             })
             ->when($this->department, fn ($q) => $q->where('department_id', $this->department))
             ->when($this->status, fn ($q) => $q->where('status', $this->status))
             ->when($this->level, fn ($q) => $q->where('level', $this->level))
             ->when($this->branch_id, fn ($q) => $q->where('branch_id', $this->branch_id))
-            ->when($this->position_id, fn ($q) => $q->whereHas('plantillaPosition', fn($pq) => $pq->where('position_id', $this->position_id)))
+            ->when($this->position_id, fn ($q) => $q->whereHas('plantillaPosition', fn ($pq) => $pq->where('position_id', $this->position_id)))
             ->when($this->gender_filter, fn ($q) => $q->where('gender', $this->gender_filter))
             ->paginate(10);
 
         $totalPlantillas = PlantillaPosition::count();
         $assignedPlantillas = Faculty::whereIn('status', ['Active', 'On Leave'])->whereNotNull('plantilla_position_id')->count();
-        
+
         $stats = [
             'total_positions' => $totalPlantillas,
             'active' => Faculty::where('status', 'Active')->count(),

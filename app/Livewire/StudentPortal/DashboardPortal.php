@@ -2,7 +2,6 @@
 
 namespace App\Livewire\StudentPortal;
 
-use App\Models\Fee;
 use Livewire\Component;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Auth;

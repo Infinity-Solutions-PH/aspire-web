@@ -23,7 +23,7 @@ class Wizard extends Component
     public $showPSAModal = false;
     public $transaction_number;
 
-    private $prefix = "TNTS-";
+    private $prefix = 'TNTS-';
 
     // Credentials
     public $lrn;
@@ -161,7 +161,7 @@ class Wizard extends Component
 
         foreach ($this->stepRules as $stepNum => $step) {
             $allRules = array_merge($allRules, $step);
-            
+
             // Add conditional permanent address rules
             if ($stepNum == 3 && !($this->formData['is_same_address'] ?? true)) {
                 $allRules['formData.permanent_house_no'] = 'required';
@@ -207,11 +207,17 @@ class Wizard extends Component
 
         // Prevent duplicate tech-voc courses
         if ($propertyName === 'formData.tech_voc_course1') {
-            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course2']) $this->formData['tech_voc_course2'] = '';
-            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course3']) $this->formData['tech_voc_course3'] = '';
+            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course2']) {
+                $this->formData['tech_voc_course2'] = '';
+            }
+            if ($this->formData['tech_voc_course1'] === $this->formData['tech_voc_course3']) {
+                $this->formData['tech_voc_course3'] = '';
+            }
         }
         if ($propertyName === 'formData.tech_voc_course2') {
-            if ($this->formData['tech_voc_course2'] === $this->formData['tech_voc_course3']) $this->formData['tech_voc_course3'] = '';
+            if ($this->formData['tech_voc_course2'] === $this->formData['tech_voc_course3']) {
+                $this->formData['tech_voc_course3'] = '';
+            }
         }
     }
 
@@ -272,7 +278,9 @@ class Wizard extends Component
     public function resumeDraft()
     {
         $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
-        if (!$preEnrollment) return;
+        if (!$preEnrollment) {
+            return;
+        }
 
         // Hydrate state
         $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
@@ -280,7 +288,7 @@ class Wizard extends Component
         $this->school_category = $this->formData['school_category'] ?? '';
         $this->enrollment_type = $this->formData['enrollment_type'] ?? '';
         $this->is_resumed = true;
-        
+
         // Strictly skip Step 1 and enforce Grade 6 for Incoming Grade 7
         if (in_array($this->enrollment_type, ['Incoming Grade 7', 'Incoming Grade 11'])) {
             $this->formData['last_grade_level'] = ($this->enrollment_type === 'Incoming Grade 7') ? 'Grade 6' : 'Grade 10';
@@ -338,13 +346,13 @@ class Wizard extends Component
         } else {
             $this->currentStep = 1;
         }
-        
+
         $this->startForm();
     }
 
     public function startForm()
     {
-        
+
         // Finalize draft creation if brand new
         $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
         if (!$preEnrollment) {
@@ -362,7 +370,7 @@ class Wizard extends Component
     {
         if (isset($this->stepRules[$this->currentStep])) {
             $rules = $this->stepRules[$this->currentStep];
-            
+
             // Add conditional permanent address rules for Step 3
             if ($this->currentStep == 3 && !$this->formData['is_same_address']) {
                 $rules['formData.permanent_house_no'] = 'required';
@@ -378,7 +386,7 @@ class Wizard extends Component
                 if (in_array($this->enrollment_type, ['Incoming Grade 7', 'Incoming Grade 11'])) {
                     $rules['formData.last_grade_level'] = 'required|in:' . ($this->enrollment_type === 'Incoming Grade 7' ? 'Grade 6' : 'Grade 10');
                 }
-                
+
                 if ($this->formData['grade_level'] == 'Grade 8') {
                     $rules['formData.tech_voc_course1'] = 'required';
                     $rules['formData.tech_voc_course2'] = 'required';
@@ -388,7 +396,7 @@ class Wizard extends Component
 
             $this->validate($rules);
         }
-        
+
         $this->saveProgress();
         $this->currentStep++;
     }
@@ -418,7 +426,7 @@ class Wizard extends Component
     public function submit()
     {
         $hasExistingPicture = !empty($this->formData['profile_picture'] ?? null);
-        
+
         $this->validate([
             'profile_picture_upload' => $hasExistingPicture ? 'nullable|image|max:5120' : 'required|image|max:5120',
         ]);
@@ -458,9 +466,9 @@ class Wizard extends Component
 
         $qrCode = null;
         try {
-            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($enrollment->transaction_number);
+            $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($enrollment->transaction_number);
             $qrData = file_get_contents($qrUrl);
-            $qrCode = 'data:image/png;base64,' . base64_encode($qrData);
+            $qrCode = 'data:image/png;base64,'.base64_encode($qrData);
         } catch (\Exception $e) {
             // Fallback
         }
@@ -478,15 +486,24 @@ class Wizard extends Component
 
     public function maskValue($key, $value)
     {
-        if (empty($value)) return '';
+        if (empty($value)) {
+            return '';
+        }
         if (in_array($key, ['last_name', 'first_name', 'middle_name'])) {
-            if (strlen($value) <= 2) return $value;
-            return substr($value, 0, 1) . str_repeat('*', strlen($value) - 2) . substr($value, -1);
+            if (strlen($value) <= 2) {
+                return $value;
+            }
+
+            return substr($value, 0, 1).str_repeat('*', strlen($value) - 2).substr($value, -1);
         }
         if ($key === 'contact_no') {
-            if (strlen($value) < 10) return str_repeat('*', strlen($value));
-            return substr($value, 0, 4) . '-***-**' . substr($value, -2);
+            if (strlen($value) < 10) {
+                return str_repeat('*', strlen($value));
+            }
+
+            return substr($value, 0, 4).'-***-**'.substr($value, -2);
         }
+
         return $value;
     }
 

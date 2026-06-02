@@ -3,8 +3,8 @@
 namespace App\Livewire\Admin\Section;
 
 use App\Models\Section;
-use App\Models\Enrollment;
 use Livewire\Component;
+use App\Models\Enrollment;
 use Livewire\WithPagination;
 
 class ManageStudents extends Component
@@ -58,7 +58,7 @@ class ManageStudents extends Component
             $newSec = Section::find($this->selected_section_id);
             $messages[] = "Transferred to Section: {$newSec->name}";
         } else {
-            $messages[] = "Removed Academic Section";
+            $messages[] = 'Removed Academic Section';
         }
 
         if (in_array($student->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
@@ -67,14 +67,14 @@ class ManageStudents extends Component
                 $tvSec = Section::find($this->selected_tech_voc_section_id);
                 $messages[] = "Transferred to Tech Voc Section: {$tvSec->name}";
             } else {
-                $messages[] = "Removed Tech Voc Section";
+                $messages[] = 'Removed Tech Voc Section';
             }
         }
 
         $student->update($updateData);
 
         $this->showTransferModal = false;
-        session()->flash('message', 'Student section transfer completed: ' . implode(' & ', $messages));
+        session()->flash('message', 'Student section transfer completed: '.implode(' & ', $messages));
     }
 
     public function render()
@@ -82,20 +82,20 @@ class ManageStudents extends Component
         $sectionColumn = $this->section->track === 'TVL' ? 'tech_voc_section_id' : 'section_id';
 
         $baseQuery = Enrollment::with('techVocSection')->where($sectionColumn, $this->section->id)
-            ->when($this->search, function($query) {
-                $query->where(function($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('lrn', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('first_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('lrn', 'like', '%'.$this->search.'%');
                 });
             });
 
         $totalMales = (clone $baseQuery)->where('sex', 'Male')->count();
         $totalFemales = (clone $baseQuery)->where('sex', 'Female')->count();
 
-        $students = $baseQuery->when($this->activeSex !== 'All', function($query) {
-                $query->where('sex', $this->activeSex);
-            })
+        $students = $baseQuery->when($this->activeSex !== 'All', function ($query) {
+            $query->where('sex', $this->activeSex);
+        })
             ->orderBy('sex', 'desc') // 'Male' before 'Female'
             ->orderBy('last_name', 'asc')
             ->orderBy('first_name', 'asc')
@@ -112,7 +112,7 @@ class ManageStudents extends Component
                 if ($selectedStudentForTransfer->strand) {
                     $sectionQuery->where('strand', $selectedStudentForTransfer->strand);
                 } else {
-                    $sectionQuery->where(function($q) {
+                    $sectionQuery->where(function ($q) {
                         $q->whereNull('track')->orWhere('track', '!=', 'TVL');
                     });
                 }
@@ -137,4 +137,3 @@ class ManageStudents extends Component
         ])->layout('layouts.app');
     }
 }
-

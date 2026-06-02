@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\StudentPortal\Enrollment;
 
-use App\Models\Fee;
-use App\Models\Enrollment;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
+use App\Models\Enrollment;
+use App\Models\Fee;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CertificateController extends Controller
@@ -19,11 +19,11 @@ class CertificateController extends Controller
             ->firstOrFail();
 
         if ($request->has('soa')) {
-            $fees = Fee::where(function($query) use ($enrollment) {
+            $fees = Fee::where(function ($query) use ($enrollment) {
                 $query->where('track', $enrollment->track)
-                      ->orWhere('strand', $enrollment->strand)
-                      ->orWhere('specialization', $enrollment->specialization)
-                      ->orWhereNull('track');
+                    ->orWhere('strand', $enrollment->strand)
+                    ->orWhere('specialization', $enrollment->specialization)
+                    ->orWhereNull('track');
             })->get();
 
             $pdf = Pdf::loadView('pdf.soa', compact('enrollment', 'fees'))
@@ -34,9 +34,9 @@ class CertificateController extends Controller
 
         $qrCode = null;
         try {
-            $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode($enrollment->lrn);
+            $qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='.urlencode($enrollment->lrn);
             $qrData = file_get_contents($qrUrl);
-            $qrCode = 'data:image/png;base64,' . base64_encode($qrData);
+            $qrCode = 'data:image/png;base64,'.base64_encode($qrData);
         } catch (\Exception $e) {
             // Fallback to null if QR generation fails
         }

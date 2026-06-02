@@ -3,9 +3,9 @@
 namespace App\Livewire\Faculty;
 
 use App\Models\Section;
-use App\Models\Enrollment;
-use App\Models\Schedule;
 use Livewire\Component;
+use App\Models\Schedule;
+use App\Models\Enrollment;
 use Livewire\WithPagination;
 use Livewire\Attributes\Layout;
 
@@ -50,20 +50,20 @@ class ManageSectionStudents extends Component
         $baseQuery = Enrollment::with('techVocSection')
             ->where('status', 'Enrolled')
             ->where($sectionColumn, $this->section->id)
-            ->when($this->search, function($query) {
-                $query->where(function($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('lrn', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('first_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('lrn', 'like', '%'.$this->search.'%');
                 });
             });
 
         $totalMales = (clone $baseQuery)->where('sex', 'Male')->count();
         $totalFemales = (clone $baseQuery)->where('sex', 'Female')->count();
 
-        $students = $baseQuery->when($this->activeSex !== 'All', function($query) {
-                $query->where('sex', $this->activeSex);
-            })
+        $students = $baseQuery->when($this->activeSex !== 'All', function ($query) {
+            $query->where('sex', $this->activeSex);
+        })
             ->orderBy('sex', 'desc') // 'Male' before 'Female'
             ->orderBy('last_name', 'asc')
             ->orderBy('first_name', 'asc')

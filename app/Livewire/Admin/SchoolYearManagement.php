@@ -11,7 +11,9 @@ class SchoolYearManagement extends Component
     use WithPagination;
 
     public $showModal = false;
+
     public $isEdit = false;
+
     public $schoolYearId;
 
     public $form = [
@@ -52,8 +54,8 @@ class SchoolYearManagement extends Component
 
     public function save()
     {
-        $nameRule = $this->isEdit 
-            ? 'required|string|max:255|unique:school_years,name,' . $this->schoolYearId
+        $nameRule = $this->isEdit
+            ? 'required|string|max:255|unique:school_years,name,'.$this->schoolYearId
             : 'required|string|max:255|unique:school_years,name';
 
         $this->validate([

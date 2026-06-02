@@ -3,9 +3,9 @@
 namespace App\Livewire\Faculty;
 
 use App\Models\Section;
+use Livewire\Component;
 use App\Models\Schedule;
 use App\Models\Enrollment;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
 
 #[Layout('layouts.faculty-portal')]
@@ -22,14 +22,14 @@ class SectionsList extends Component
         $sections = Section::with('adviser')
             ->where(function ($q) use ($userId, $taughtSectionIds) {
                 $q->where('adviser_id', $userId)
-                  ->orWhereIn('id', $taughtSectionIds);
+                    ->orWhereIn('id', $taughtSectionIds);
             })
             ->get();
 
         // Map section details (role and student count)
         $mappedSections = $sections->map(function ($section) use ($userId) {
             $isAdviser = $section->adviser_id === $userId;
-            
+
             // Student count logic based on track (normal vs TVL)
             $count = Enrollment::where('status', 'Enrolled')
                 ->where(function ($q) use ($section) {

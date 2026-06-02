@@ -35,7 +35,7 @@ class BulkEnrollmentSeeder extends Seeder
             $grade = $faker->randomElement($grades);
             $sex = $faker->randomElement($sexes);
             $lrn = $faker->numerify('############'); // 12 digits
-            
+
             // Create user first
             $user = User::create([
                 'name' => $faker->name($sex === 'Male' ? 'male' : 'female'),

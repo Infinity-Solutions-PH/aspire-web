@@ -4,9 +4,9 @@ namespace App\Livewire\Admin;
 
 use App\Models\Enrollment;
 use App\Models\Section;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use Livewire\Attributes\Url;
 
 class StudentMasterlist extends Component
 {
@@ -26,24 +26,46 @@ class StudentMasterlist extends Component
 
     // Modal state
     public $showEditModal = false;
+
     public $showSectionModal = false;
+
     public $selectedStudentId = null;
+
+    public $showExportModal = false;
+
+    // Export Modal state
+    public $export_school_level = 'All';
+
+    public $export_grade_level = 'All';
+
+    public $export_section_id = 'All';
 
     // Edit fields
     public $edit_first_name = '';
+
     public $edit_last_name = '';
+
     public $edit_middle_name = '';
+
     public $edit_extension_name = '';
+
     public $edit_lrn = '';
+
     public $edit_birthdate = '';
+
     public $edit_sex = '';
+
     public $edit_gwa = '';
+
     public $edit_contact_no = '';
+
     public $edit_status = '';
+
     public $edit_grade_level = '';
 
     // Section assignment fields
     public $selected_section_id = '';
+
     public $selected_tech_voc_section_id = '';
 
     public function updatingSearch()
@@ -146,7 +168,7 @@ class StudentMasterlist extends Component
             $section = Section::find($this->selected_section_id);
             $messages[] = "Assigned to Section: {$section->name}";
         } else {
-            $messages[] = "Removed Academic Section";
+            $messages[] = 'Removed Academic Section';
         }
 
         if (in_array($student->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
@@ -155,14 +177,14 @@ class StudentMasterlist extends Component
                 $tvSection = Section::find($this->selected_tech_voc_section_id);
                 $messages[] = "Assigned to Tech Voc Section: {$tvSection->name}";
             } else {
-                $messages[] = "Removed Tech Voc Section";
+                $messages[] = 'Removed Tech Voc Section';
             }
         }
 
         $student->update($updateData);
 
         $this->showSectionModal = false;
-        session()->flash('message', 'Section assignments updated: ' . implode(' & ', $messages));
+        session()->flash('message', 'Section assignments updated: '.implode(' & ', $messages));
     }
 
     public function render()
@@ -172,13 +194,13 @@ class StudentMasterlist extends Component
             ->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated'])
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                        ->orWhere('lrn', 'like', '%' . $this->search . '%');
+                    $q->where('first_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('last_name', 'like', '%'.$this->search.'%')
+                        ->orWhere('lrn', 'like', '%'.$this->search.'%');
                 });
             })
             ->when($this->grade_level && $this->grade_level !== 'All Levels', fn ($q) => $q->where('grade_level', $this->grade_level))
-            ->when($this->category, function($q) {
+            ->when($this->category, function ($q) {
                 if ($this->category === 'HS') {
                     $q->whereIn('grade_level', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']);
                 } elseif ($this->category === 'SHS') {
@@ -200,7 +222,7 @@ class StudentMasterlist extends Component
                 if ($selectedStudentForSection->strand) {
                     $sectionQuery->where('strand', $selectedStudentForSection->strand);
                 } else {
-                    $sectionQuery->where(function($q) {
+                    $sectionQuery->where(function ($q) {
                         $q->whereNull('track')->orWhere('track', '!=', 'TVL');
                     });
                 }
@@ -215,12 +237,191 @@ class StudentMasterlist extends Component
             }
         }
 
+        $exportSections = collect();
+        if ($this->export_school_level !== 'All' && $this->export_grade_level !== 'All') {
+            $exportSections = Section::where('grade_level', $this->export_grade_level)
+                ->orderBy('name')
+                ->get();
+        }
+
         return view('livewire.admin.student-masterlist', [
             'students' => $students,
             'availableSections' => $availableSections,
             'availableTechVocSections' => $availableTechVocSections,
             'selectedStudentForSection' => $selectedStudentForSection,
+            'exportSections' => $exportSections,
         ]);
     }
-}
 
+    public function updatedExportSchoolLevel($value)
+    {
+        $this->export_grade_level = 'All';
+        $this->export_section_id = 'All';
+    }
+
+    public function updatedExportGradeLevel($value)
+    {
+        $this->export_section_id = 'All';
+    }
+
+    public function openExportModal()
+    {
+        $this->export_school_level = 'All';
+        $this->export_grade_level = 'All';
+        $this->export_section_id = 'All';
+        $this->showExportModal = true;
+    }
+
+    private function formatStudentRow($student)
+    {
+        $middleInitial = $student->middle_name ? ' '.strtoupper(substr($student->middle_name, 0, 1)) : '';
+        $name = strtoupper("{$student->last_name}, {$student->first_name}{$middleInitial}");
+
+        $address = trim("{$student->current_house_no} {$student->current_street} {$student->current_barangay} {$student->current_municipality} {$student->current_province}");
+
+        $sectionName = 'N/A';
+        $adviserName = 'N/A';
+        if ($student->section) {
+            $sectionName = $student->section->name;
+            if ($student->section->adviser) {
+                $adviserName = $student->section->adviser->name;
+            }
+            if ($student->techVocSection) {
+                $sectionName .= ' / TVL: '.$student->techVocSection->name;
+                if ($adviserName === 'N/A' && $student->techVocSection->adviser) {
+                    $adviserName = $student->techVocSection->adviser->name;
+                }
+            }
+        } elseif ($student->techVocSection) {
+            $sectionName = 'TVL: '.$student->techVocSection->name;
+            if ($student->techVocSection->adviser) {
+                $adviserName = $student->techVocSection->adviser->name;
+            }
+        }
+
+        return [
+            $student->lrn,
+            $name,
+            $student->birthdate ? $student->birthdate->format('Y-m-d') : 'N/A',
+            $student->guardian_name ?? 'N/A',
+            $address ?: 'N/A',
+            $student->contact_no ?? 'N/A',
+            $student->grade_level,
+            $sectionName,
+            $adviserName,
+        ];
+    }
+
+    public function exportMasterlist()
+    {
+        // 1. Fetch filtered students
+        $query = Enrollment::query()
+            ->with(['section.adviser', 'techVocSection.adviser'])
+            ->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated']);
+
+        if ($this->status && $this->status !== 'All Status') {
+            $query->where('status', $this->status);
+        }
+
+        if ($this->export_school_level === 'JHS') {
+            $query->whereIn('grade_level', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']);
+        } elseif ($this->export_school_level === 'SHS') {
+            $query->whereIn('grade_level', ['Grade 11', 'Grade 12']);
+        }
+
+        if ($this->export_school_level !== 'All' && $this->export_grade_level !== 'All') {
+            $query->where('grade_level', $this->export_grade_level);
+        }
+
+        if ($this->export_school_level !== 'All' && $this->export_grade_level !== 'All' && $this->export_section_id !== 'All') {
+            $query->where(function ($q) {
+                $q->where('section_id', $this->export_section_id)
+                    ->orWhere('tech_voc_section_id', $this->export_section_id);
+            });
+        }
+
+        $students = $query->get();
+
+        if ($students->isEmpty()) {
+            session()->flash('message', 'No student records found matching the export criteria.');
+            $this->showExportModal = false;
+
+            return;
+        }
+
+        // 2. Separate male and female students
+        $males = $students->where('sex', 'Male')->sortBy('last_name')->sortBy('first_name');
+        $females = $students->where('sex', 'Female')->sortBy('last_name')->sortBy('first_name');
+
+        // 3. Generate CSV content
+        $csvHeaders = ['LRN', 'NAME', 'BIRTHDATE', 'GUARDIAN NAME', 'CURRENT ADDRESS', 'CONTACT NUMBER', 'GRADE LEVEL', 'SECTION', 'ADVISER'];
+
+        $tempCsv = fopen('php://temp', 'r+');
+
+        // Write Male section
+        fputcsv($tempCsv, ['Male Students']);
+        fputcsv($tempCsv, $csvHeaders);
+        foreach ($males as $student) {
+            fputcsv($tempCsv, $this->formatStudentRow($student));
+        }
+
+        // Space
+        fputcsv($tempCsv, []);
+
+        // Write Female section
+        fputcsv($tempCsv, ['Female Students']);
+        fputcsv($tempCsv, $csvHeaders);
+        foreach ($females as $student) {
+            fputcsv($tempCsv, $this->formatStudentRow($student));
+        }
+
+        rewind($tempCsv);
+        $csvContent = stream_get_contents($tempCsv);
+        fclose($tempCsv);
+
+        // 4. Create ZIP Archive
+        $zip = new \ZipArchive;
+        $zipPath = tempnam(sys_get_temp_dir(), 'student_export_').'.zip';
+
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
+            session()->flash('message', 'Failed to create zip file.');
+            $this->showExportModal = false;
+
+            return;
+        }
+
+        // Add CSV file to zip
+        $zip->addFromString('Student_Masterlist.csv', $csvContent);
+
+        // Add profile pictures / images to zip
+        $addedFiles = [];
+        foreach ($students as $student) {
+            if ($student->profile_picture && \Storage::disk('public')->exists($student->profile_picture)) {
+                $imageContent = \Storage::disk('public')->get($student->profile_picture);
+                $ext = pathinfo($student->profile_picture, PATHINFO_EXTENSION) ?: 'jpg';
+
+                $middleInitial = $student->middle_name ? ' '.strtoupper(substr($student->middle_name, 0, 1)) : '';
+                $baseName = strtoupper($student->last_name).', '.strtoupper($student->first_name).$middleInitial;
+
+                $imageFileName = $baseName.'.'.$ext;
+
+                // Handle name collision
+                if (isset($addedFiles[$imageFileName])) {
+                    $imageFileName = $baseName.' ('.$student->lrn.').'.$ext;
+                }
+
+                $addedFiles[$imageFileName] = true;
+                $zip->addFromString($imageFileName, $imageContent);
+            }
+        }
+
+        $zip->close();
+
+        // 5. Trigger download and delete temporary zip file
+        $fileName = 'Student_Masterlist_Export_'.date('Ymd_His').'.zip';
+
+        $this->showExportModal = false;
+
+        return response()->download($zipPath, $fileName)->deleteFileAfterSend(true);
+    }
+}
