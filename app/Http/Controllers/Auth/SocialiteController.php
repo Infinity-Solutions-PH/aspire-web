@@ -31,17 +31,13 @@ class SocialiteController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
         } catch (\Exception $e) {
-            return redirect()->route('home')->with('error', 'Google authentication failed.');
+            return redirect()->route('admin.login')->withErrors(['email' => __('Google authentication failed.')]);
         }
 
         // Find user by Google ID
         $user = User::where('google_id', $googleUser->getId())->first();
 
-        if ($user) {
-            // Update avatar if changed
-            $user->update(['avatar' => $googleUser->getAvatar()]);
-            Auth::login($user);
-        } else {
+        if (!$user) {
             // Find user by email
             $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -52,18 +48,34 @@ class SocialiteController extends Controller
                     'avatar' => $googleUser->getAvatar(),
                 ]);
             } else {
-                // Create new user
-                $user = User::create([
-                    'name' => $googleUser->getName(),
-                    'email' => $googleUser->getEmail(),
-                    'google_id' => $googleUser->getId(),
-                    'avatar' => $googleUser->getAvatar(),
-                    'password' => Hash::make(Str::random(16)),
-                ]);
+                // Do not create a user
+                return redirect()->route('admin.login')->withErrors(['email' => __('This Google account is not registered.')]);
             }
-
-            Auth::login($user);
+        } else {
+            // Update avatar if changed
+            $user->update(['avatar' => $googleUser->getAvatar()]);
         }
+
+        // Check if faculty role and active
+        if ($user->role === 'teacher') {
+            if (!$user->faculty) {
+                return redirect()->route('admin.login')->withErrors(['email' => __('Faculty profile not found.')]);
+            }
+            if ($user->faculty->status === 'Pending') {
+                return redirect()->route('admin.login')->withErrors(['email' => __('Your account registration is pending approval.')]);
+            }
+            if ($user->faculty->status === 'Rejected') {
+                return redirect()->route('admin.login')->withErrors(['email' => __('Your account registration has been rejected.')]);
+            }
+            if ($user->faculty->status === 'Inactive') {
+                return redirect()->route('admin.login')->withErrors(['email' => __('Your account is inactive.')]);
+            }
+            if (!in_array($user->faculty->status, ['Active', 'On Leave'])) {
+                return redirect()->route('admin.login')->withErrors(['email' => __('Your account is not active.')]);
+            }
+        }
+
+        Auth::login($user);
 
         return redirect()->route('dashboard');
     }
