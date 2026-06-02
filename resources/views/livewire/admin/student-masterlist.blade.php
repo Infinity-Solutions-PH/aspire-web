@@ -1,22 +1,28 @@
 @section('page-title', 'Student Masterlist')
 
-<div x-data="{ showEditModal: @entangle('showEditModal'), showSectionModal: @entangle('showSectionModal') }">
+<div x-data="{ showEditModal: @entangle('showEditModal'), showSectionModal: @entangle('showSectionModal'), showExportModal: @entangle('showExportModal') }">
     <!-- Page Heading -->
     <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
         <div class="flex flex-col gap-1">
             <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Masterlist</h2>
             <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage and view all enrolled students for S.Y. 2026-2027.</p>
         </div>
-        <button class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20">
-            <span class="material-symbols-outlined text-lg">person_add</span>
-            <span>Add Student</span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button wire:click="openExportModal" class="flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-gray-50 dark:bg-[#1a0c0c] dark:hover:bg-[#2a1515] text-[#9a4c4c] border border-[#e7cfcf] dark:border-[#422020] rounded-lg font-bold text-sm transition-all shadow-sm">
+                <span class="material-symbols-outlined text-lg">download</span>
+                <span>Export Masterlist</span>
+            </button>
+            <button class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined text-lg">person_add</span>
+                <span>Add Student</span>
+            </button>
+        </div>
     </div>
 
     <!-- Flash Messages -->
     @if (session()->has('message'))
-        <div x-data="{ show: true }" 
-             x-show="show" 
+        <div x-data="{ show: true }"
+             x-show="show"
              x-init="setTimeout(() => show = false, 5000)"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-y-[-10px]"
@@ -155,8 +161,8 @@
                         </td>
                         <td class="px-6 py-4">
                             <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide
-                                {{ $student->status == 'Enrolled' ? 'bg-green-100 text-green-700' : 
-                                   ($student->status == 'Approved' ? 'bg-blue-100 text-blue-700' : 
+                                {{ $student->status == 'Enrolled' ? 'bg-green-100 text-green-700' :
+                                   ($student->status == 'Approved' ? 'bg-blue-100 text-blue-700' :
                                    ($student->status == 'Submitted' ? 'bg-amber-100 text-amber-700' :
                                    ($student->status == 'Rejected' ? 'bg-red-100 text-red-700' :
                                    ($student->status == 'Dropped' ? 'bg-primary/10 text-primary' : 'bg-gray-100 text-gray-700')))) }}">
@@ -190,7 +196,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Pagination -->
         <div class="px-6 py-4 bg-background-light/30 dark:bg-white/5 border-t border-[#f3e7e7] dark:border-white/10">
             {{ $students->links() }}
@@ -393,6 +399,84 @@
                         <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
                             <span class="material-symbols-outlined text-sm">save</span>
                             Assign Section
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Masterlist Modal -->
+    <div x-show="showExportModal" class="fixed inset-0 lg:left-64 z-40 overflow-y-auto" x-cloak>
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showExportModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-lg overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#1a0c0c] rounded-3xl shadow-2xl border border-[#e7cfcf] dark:border-[#422020]">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 border-b border-[#e7cfcf] dark:border-[#422020] flex items-center justify-between bg-primary/5">
+                    <div>
+                        <h3 class="text-xl font-black text-primary uppercase tracking-tight">Export Student Masterlist</h3>
+                        <p class="text-xs text-[#9a4c4c] dark:text-white/60">Configure filters and download a ZIP file of the masterlist.</p>
+                    </div>
+                    <button @click="showExportModal = false" class="text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+
+                <!-- Modal Body -->
+                <form wire:submit.prevent="exportMasterlist" class="p-8 space-y-6">
+                    <div class="space-y-4">
+                        <!-- School Level -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Level</label>
+                            <select wire:model.live="export_school_level" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary text-gray-800 dark:text-white">
+                                <option value="All">All School Levels</option>
+                                <option value="JHS">Junior High School (JHS)</option>
+                                <option value="SHS">Senior High School (SHS)</option>
+                            </select>
+                        </div>
+
+                        <!-- Grade Level -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Grade Level</label>
+                            <select wire:model.live="export_grade_level" 
+                                    {{ $export_school_level === 'All' ? 'disabled' : '' }} 
+                                    class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary text-gray-800 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                                <option value="All">All Grade Levels</option>
+                                @if($export_school_level === 'JHS')
+                                    <option value="Grade 7">Grade 7</option>
+                                    <option value="Grade 8">Grade 8</option>
+                                    <option value="Grade 9">Grade 9</option>
+                                    <option value="Grade 10">Grade 10</option>
+                                @elseif($export_school_level === 'SHS')
+                                    <option value="Grade 11">Grade 11</option>
+                                    <option value="Grade 12">Grade 12</option>
+                                @endif
+                            </select>
+                        </div>
+
+                        <!-- Section -->
+                        <div class="space-y-1">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Section</label>
+                            <select wire:model.live="export_section_id" 
+                                    {{ $export_school_level === 'All' || $export_grade_level === 'All' ? 'disabled' : '' }} 
+                                    class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary text-gray-800 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed">
+                                <option value="All">All Sections</option>
+                                @foreach($exportSections as $sec)
+                                    <option value="{{ $sec->id }}">{{ $sec->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="pt-6 border-t border-[#e7cfcf] dark:border-[#422020] flex justify-end gap-3">
+                        <button type="button" @click="showExportModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Cancel</button>
+                        <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm">download</span>
+                            Export
                         </button>
                     </div>
                 </form>

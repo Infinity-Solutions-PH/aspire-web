@@ -291,13 +291,14 @@
                                         <button wire:click="rejectFaculty({{ $faculty->id }})" class="p-1.5 hover:bg-red-50 text-red-600 dark:hover:bg-red-950/20 rounded transition-colors" title="Reject Registration">
                                             <span class="material-symbols-outlined text-lg font-bold">cancel</span>
                                         </button>
+                                    @else
+                                        <button wire:click="edit({{ $faculty->id }})" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
+                                            <span class="material-symbols-outlined text-lg">edit</span>
+                                        </button>
+                                        <button @click="showDevModal = true" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="View Schedule">
+                                            <span class="material-symbols-outlined text-lg">calendar_month</span>
+                                        </button>
                                     @endif
-                                    <button wire:click="edit({{ $faculty->id }})" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="Edit Profile">
-                                        <span class="material-symbols-outlined text-lg">edit</span>
-                                    </button>
-                                    <button @click="showDevModal = true" class="p-1.5 hover:bg-primary/10 text-primary rounded transition-colors" title="View Schedule">
-                                        <span class="material-symbols-outlined text-lg">calendar_month</span>
-                                    </button>
                                 </div>
                             </td>
                         </tr>
@@ -378,8 +379,6 @@
                                 <option value="Active">Active</option>
                                 <option value="On Leave">On Leave</option>
                                 <option value="Inactive">Inactive</option>
-                                <option value="Pending">Pending Approval</option>
-                                <option value="Rejected">Rejected</option>
                             </select>
                             @error('form_status') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
@@ -454,6 +453,7 @@
                                     <option value="Resigned">Resigned</option>
                                     <option value="Retired">Retired</option>
                                     <option value="Transferred">Transferred</option>
+                                    <option value="Deceased">Deceased</option>
                                 </select>
                                 @error('inactive_reason') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                             </div>
