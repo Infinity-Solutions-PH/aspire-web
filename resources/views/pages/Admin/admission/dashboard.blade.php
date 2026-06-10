@@ -16,40 +16,58 @@
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9a4c4c]">search</span>
                 <input wire:model.live="search" class="w-full pl-12 pr-4 py-3 bg-background-light dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-lg focus:ring-primary focus:border-primary text-sm transition-all" placeholder="Search by LRN, name, or track..." type="text"/>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 @if($status !== 'Draft')
-                <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
-                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Category:</span>
-                    <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
+                <div class="flex items-center justify-between sm:justify-start bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1 w-full sm:w-auto">
+                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2 whitespace-nowrap">Category:</span>
+                    <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8 w-full sm:w-auto text-right sm:text-left">
                         <option value="">All Categories</option>
                         <option value="HS">High School</option>
                         <option value="SHS">Senior High</option>
                     </select>
                 </div>
                 @endif
-                <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
-                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Status:</span>
-                    <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
+
+                <div class="flex items-center justify-between sm:justify-start bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1 w-full sm:w-auto">
+                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2 whitespace-nowrap">Grade Level:</span>
+                    <select wire:model.live="grade_level" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8 w-full sm:w-auto text-right sm:text-left">
+                        <option value="">All Grades</option>
+                        @if($category === 'HS')
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                        @elseif($category === 'SHS')
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                        @else
+                            <option value="Grade 7">Grade 7</option>
+                            <option value="Grade 8">Grade 8</option>
+                            <option value="Grade 9">Grade 9</option>
+                            <option value="Grade 10">Grade 10</option>
+                            <option value="Grade 11">Grade 11</option>
+                            <option value="Grade 12">Grade 12</option>
+                        @endif
+                    </select>
+                </div>
+
+                <div class="flex items-center justify-between sm:justify-start bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1 w-full sm:w-auto">
+                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2 whitespace-nowrap">Status:</span>
+                    <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8 w-full sm:w-auto text-right sm:text-left">
                         <option value="pending_approval">Pending Review</option>
                         <option value="Draft">Drafts</option>
                     </select>
                 </div>
-                @if($status !== 'Draft')
-                <!-- <div class="flex items-center bg-[#f3e7e7] dark:bg-[#361a1a] rounded-lg px-3 py-1">
-                    <span class="text-xs font-bold text-[#9a4c4c] uppercase mr-2">Type:</span>
-                    <select wire:model.live="type" class="bg-transparent border-none focus:ring-0 text-sm font-medium py-1 pl-0 pr-8">
-                        <option value="">All Types</option>
-                        <option value="New Student">New Student</option>
-                        <option value="Old Student">Old Student</option>
-                        <option value="Transferee">Transferee</option>
-                    </select>
-                </div> -->
-                @endif
             </div>
         </div>
-        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">
-            <button wire:click="$set('status', 'pending_approval')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ ($status === 'pending_approval' || $status === '') ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Pending Review</button>
-            <button wire:click="$set('status', 'Draft')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Draft' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Drafts</button>
+        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">
+            <div class="flex flex-wrap gap-2">
+                <button wire:click="setStatus('pending_approval')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ ($status === 'pending_approval' || $status === '') ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Pending Review</button>
+                <button wire:click="setStatus('Draft')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Draft' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Drafts</button>
+            </div>
+            <div class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-wider">
+                Total Filtered: <span class="text-sm font-black text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $enrollments->total() }}</span> applications
+            </div>
         </div>
     </div>
 

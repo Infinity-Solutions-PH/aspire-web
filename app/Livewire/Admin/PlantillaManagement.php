@@ -36,6 +36,22 @@ class PlantillaManagement extends Component
         $this->resetPage();
     }
 
+    public function deletePlantilla($id)
+    {
+        $plantilla = PlantillaPosition::findOrFail($id);
+
+        // Double check it doesn't have active faculty assigned to it
+        $hasActiveFaculty = $plantilla->faculty()->exists();
+
+        if ($hasActiveFaculty) {
+            session()->flash('error', 'Cannot delete plantilla position because it has an active faculty assigned to it.');
+            return;
+        }
+
+        $plantilla->delete();
+        session()->flash('message', 'Plantilla position deleted successfully.');
+    }
+
     public function render()
     {
         $plantillasQuery = PlantillaPosition::with(['position', 'faculty.user'])
