@@ -1,4 +1,47 @@
 <div>
+    <!-- Flash Messages -->
+    @if (session()->has('message'))
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-6 p-4 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/30 rounded-2xl flex items-center justify-between text-green-800 dark:text-green-400 shadow-sm shadow-green-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-green-600 dark:text-green-400">check_circle</span>
+                <span class="text-sm font-semibold">{{ session('message') }}</span>
+            </div>
+            <button @click="show = false" class="text-green-500 hover:text-green-700 dark:hover:text-green-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-6 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/30 rounded-2xl flex items-center justify-between text-red-800 dark:text-red-400 shadow-sm shadow-red-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+                <span class="text-sm font-semibold">{{ session('error') }}</span>
+            </div>
+            <button @click="show = false" class="text-red-500 hover:text-red-700 dark:hover:text-red-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
+
     <!-- Header Section -->
     <div class="mb-8">
         <div class="flex items-center gap-3 mb-2">
@@ -81,6 +124,7 @@
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Position</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Status</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Current Assignee</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c] text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#f3e7e7] dark:divide-[#3a1f1f]">
@@ -124,10 +168,20 @@
                                     <span class="text-xs text-gray-400 italic">No Assignee</span>
                                 @endif
                             </td>
+                            <!-- Actions -->
+                            <td class="px-6 py-4 text-center">
+                                @if(!$activeFaculty)
+                                    <button wire:click="deletePlantilla({{ $plantilla->id }})" wire:confirm="Are you sure you want to delete this vacant plantilla position?" class="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded transition-colors group/btn" title="Delete Plantilla">
+                                        <span class="material-symbols-outlined text-lg group-hover/btn:scale-110 transition-transform">delete</span>
+                                    </button>
+                                @else
+                                    <span class="text-xs text-gray-400 italic font-medium">-</span>
+                                @endif
+                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic">No plantilla items found.</td>
+                            <td colspan="5" class="px-6 py-12 text-center text-gray-400 italic">No plantilla items found.</td>
                         </tr>
                     @endforelse
                 </tbody>

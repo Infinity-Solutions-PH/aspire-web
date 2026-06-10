@@ -2,7 +2,7 @@
     <!-- Google Fonts: Lexend -->
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
-    
+
     <div class="layout-container flex h-full grow flex-col font-display" style="font-family: 'Lexend', sans-serif;">
         <!-- Page Heading -->
         <div class="flex flex-wrap justify-between items-end gap-4 mb-6 px-10 pt-8">
@@ -36,30 +36,30 @@
 
         <!-- ToolBar & Chips -->
         <div class="mx-10 bg-white dark:bg-[#2c1818] rounded-xl p-4 mb-8 shadow-sm border border-[#f3e7e7] dark:border-[#3d2525] flex flex-wrap items-center justify-between gap-4">
-            <div class="flex gap-3 flex-wrap items-center">
-                <div class="relative">
+            <div class="flex gap-3 flex-wrap items-center w-full md:w-auto">
+                <div class="relative w-full md:w-auto">
                     <input wire:model.live.debounce.300ms="search" class="form-input flex w-full min-w-[240px] border-none bg-[#f3e7e7] dark:bg-[#3d2525] text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-0 h-10 placeholder:text-[#9a4c4c] px-10 rounded-lg text-sm font-normal" placeholder="Search sections..." />
                     <span class="material-symbols-outlined absolute left-3 top-2.5 text-[#9a4c4c] text-xl">search</span>
                 </div>
-                
-                <div class="h-10 w-[1px] bg-[#f3e7e7] dark:bg-[#3d2525] mx-2"></div>
 
-                <div class="flex gap-2">
-                    <select wire:model.live="activeGrade" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4">
+                <div class="hidden md:block h-10 w-[1px] bg-[#f3e7e7] dark:bg-[#3d2525] mx-2"></div>
+
+                <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                    <select wire:model.live="activeGrade" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4 w-full sm:w-auto">
                         <option value="All">All Grades</option>
                         @foreach(['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'] as $grade)
                             <option value="{{ $grade }}">{{ $grade }}</option>
                         @endforeach
                     </select>
 
-                    <select wire:model.live="activeStrand" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4">
+                    <select wire:model.live="activeStrand" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4 w-full sm:w-auto">
                         <option value="All">All Strands</option>
                         @foreach(['STEM', 'ICT', 'HUMSS', 'ABM', 'HE', 'Industrial Arts'] as $strand)
                             <option value="{{ $strand }}">{{ $strand }}</option>
                         @endforeach
                     </select>
 
-                    <select wire:model.live="activeCourse" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4">
+                    <select wire:model.live="activeCourse" class="bg-[#f3e7e7] dark:bg-[#3d2525] border-none rounded-lg text-xs font-bold text-[#1b0d0d] dark:text-[#fcf8f8] focus:ring-primary h-10 px-4 w-full sm:w-auto">
                         <option value="All">All TVL Courses</option>
                         @foreach(['ICT', 'CSS', 'Food Industry', 'Automotive', 'Drafting', 'SMAW', 'HE'] as $course)
                             <option value="{{ $course }}">{{ $course }}</option>
@@ -72,7 +72,7 @@
         <!-- Section Grid -->
         <div class="mx-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
             @forelse($sections as $section)
-            <div class="bg-white dark:bg-[#2c1818] rounded-xl overflow-hidden border border-[#f3e7e7] dark:border-[#3d2525] flex flex-col shadow-sm hover:shadow-md transition-shadow">
+            <div class="bg-white dark:bg-[#2c1818] rounded-xl overflow-hidden border border-[#f3e7e7] dark:border-[#3d2525] flex flex-col shadow-sm hover:shadow-md transition-shadow relative">
                 <div class="h-32 bg-primary/10 relative overflow-hidden">
                     <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#d41111 2px, transparent 2px); background-size: 20px 20px;"></div>
                     <div class="absolute bottom-4 left-4">
@@ -89,6 +89,15 @@
                             @endif
                         </hgroup>
                     </div>
+                    <!-- Delete Section Button (only if no students assigned) -->
+                    @php
+                        $hasStudents = $section->track === 'TVL' ? $section->tech_voc_enrollments_count > 0 : $section->enrollments_count > 0;
+                    @endphp
+                    @if(!$hasStudents)
+                        <button wire:click="deleteSection({{ $section->id }})" wire:confirm="Are you sure you want to delete the section '{{ $section->name }}'?" class="absolute top-4 right-4 text-primary hover:text-red-700 transition-colors bg-white/80 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 size-8 rounded-lg flex items-center justify-center shadow-sm z-10" title="Delete Section">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    @endif
                 </div>
                 <div class="p-5 flex-1">
                     <div class="space-y-3 mb-6">
@@ -275,7 +284,7 @@
                             <span class="material-symbols-outlined">close</span>
                         </button>
                     </div>
-                    
+
                     <form wire:submit.prevent="createSection" class="space-y-4">
                         <div class="flex gap-2 p-1 bg-gray-100 rounded-xl mb-4">
                             <button type="button" wire:click="setNewSectionType('normal')" class="flex-1 py-2 text-sm font-bold rounded-lg transition-colors {{ $newSection['type'] === 'normal' ? 'bg-white shadow text-primary' : 'text-gray-500 hover:text-gray-700' }}">Normal Section</button>
@@ -368,23 +377,62 @@
                             <span class="material-symbols-outlined">close</span>
                         </button>
                     </div>
-                    
                     <form wire:submit.prevent="assignAdviser" class="space-y-6">
-                        <div>
-                            <label class="block text-[10px] font-black text-[#9a4c4c] uppercase tracking-widest mb-2">Select Faculty Member</label>
-                            <select wire:model="selectedAdviserId" class="w-full rounded-xl border-[#f3e7e7] dark:border-[#3d2525] bg-[#fdfafb] dark:bg-[#3d2424] focus:ring-primary focus:border-primary h-14 text-sm font-bold px-4">
-                                <option value="">Choose a teacher...</option>
-                                @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
-                                @endforeach
-                            </select>
+                        <!-- Search Input -->
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-black text-[#9a4c4c] uppercase tracking-widest mb-1">Search Faculty</label>
+                            <div class="relative">
+                                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9a4c4c]">search</span>
+                                <input wire:model.live.debounce.300ms="adviserSearch" type="text" placeholder="Search by name or Employee ID..." class="w-full pl-12 pr-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border border-[#e7cfcf] dark:border-[#422020] rounded-xl text-sm focus:ring-primary focus:border-primary text-gray-800 dark:text-white" />
+                            </div>
+                        </div>
+
+                        <!-- Results List (Max 5) -->
+                        <div class="space-y-2">
+                            <label class="block text-[10px] font-black text-[#9a4c4c] uppercase tracking-widest">Faculty Members</label>
+                            <div class="space-y-2 max-h-[250px] overflow-y-auto pr-1">
+                                @forelse($this->facultySearchResults as $faculty)
+                                    @php
+                                        $isSelected = $selectedAdviserId == $faculty->user_id;
+                                        $parts = explode(' ', $faculty->user->name);
+                                        $initials = strtoupper(substr($parts[0], 0, 1) . (isset($parts[1]) ? substr($parts[1], 0, 1) : ''));
+                                    @endphp
+                                    <div wire:click="$set('selectedAdviserId', {{ $isSelected ? 'null' : $faculty->user_id }})"
+                                         class="flex items-center justify-between p-3.5 rounded-xl border cursor-pointer transition-all hover:scale-[1.01] {{ $isSelected ? 'bg-primary/10 border-primary text-primary shadow-sm' : 'bg-[#fdfafb] dark:bg-[#3d2424] border-[#e7cfcf] dark:border-[#422020] hover:bg-gray-50' }}">
+                                        <div class="flex items-center gap-3">
+                                            <div class="size-8 rounded-full flex items-center justify-center font-bold text-xs uppercase {{ $isSelected ? 'bg-primary text-white' : 'bg-primary/10 text-primary' }}">
+                                                {{ $initials }}
+                                            </div>
+                                            <div class="flex flex-col text-left">
+                                                <span class="text-sm font-bold truncate leading-tight">{{ $faculty->user->name }}</span>
+                                                <span class="text-[10px] text-[#9a4c4c] dark:text-white/40 mt-0.5 uppercase tracking-tighter">ID: {{ $faculty->faculty_id }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center">
+                                            @if($isSelected)
+                                                <span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+                                            @else
+                                                <span class="material-symbols-outlined text-gray-300 text-xl">radio_button_unchecked</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="text-center py-6 text-xs text-gray-400 italic">
+                                        No faculty members found matching "{{ $adviserSearch }}"
+                                    </div>
+                                @endforelse
+                            </div>
                             @error('selectedAdviserId') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
-                        <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-black text-base shadow-xl shadow-primary/30 hover:scale-[1.02] transition-transform flex items-center justify-center gap-2">
-                            <span wire:loading wire:target="assignAdviser" class="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                            Save Assignment
-                        </button>
+                        <!-- Modal Footer -->
+                        <div class="pt-4 border-t border-[#e7cfcf] dark:border-[#422020] flex justify-end gap-3">
+                            <button type="button" wire:click="$set('showAdviserModal', false)" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Cancel</button>
+                            <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
+                                <span class="material-symbols-outlined text-sm">save</span>
+                                Save Assignment
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -221,9 +221,40 @@
                             </td>
                             <!-- Plantilla Item # -->
                             <td class="px-6 py-4">
-                                <span class="text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-2 py-1 rounded">
-                                    {{ $faculty->plantillaPosition?->plantilla_number ?: 'N/A' }}
-                                </span>
+                                @if($faculty->plantillaPosition?->plantilla_number)
+                                    <div x-data="{ copied: false, timeout: null }" class="relative inline-block">
+                                        <span @click="
+                                                navigator.clipboard.writeText('{{ $faculty->plantillaPosition->plantilla_number }}');
+                                                copied = true;
+                                                if (timeout) clearTimeout(timeout);
+                                                timeout = setTimeout(() => copied = false, 2000);
+                                              "
+                                              class="text-xs font-mono text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-2 py-1 rounded cursor-pointer hover:bg-primary/10 hover:text-primary dark:hover:bg-primary/20 dark:hover:text-primary transition-all duration-200 select-none"
+                                              title="Click to copy Plantilla Number">
+                                            {{ $faculty->plantillaPosition->plantilla_number }}
+                                        </span>
+                                        
+                                        <!-- Tooltip -->
+                                        <div x-show="copied"
+                                             x-transition:enter="transition ease-out duration-200"
+                                             x-transition:enter-start="opacity-0 translate-y-1 scale-95"
+                                             x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                             x-transition:leave="transition ease-in duration-150"
+                                             x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                             x-transition:leave-end="opacity-0 translate-y-1 scale-95"
+                                             class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1 bg-gray-900 dark:bg-[#1b0d0d] text-white text-[10px] font-black uppercase tracking-wider rounded-lg shadow-lg z-30 flex items-center gap-1 border border-primary/20"
+                                             style="display: none;">
+                                            <span class="material-symbols-outlined text-[12px] text-green-400 font-bold">check</span>
+                                            <span>Copied!</span>
+                                            <!-- Tooltip Arrow -->
+                                            <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900 dark:border-t-[#1b0d0d]"></div>
+                                        </div>
+                                    </div>
+                                @else
+                                    <span class="text-xs font-mono text-gray-400 bg-gray-50 dark:bg-gray-900/30 px-2 py-1 rounded">
+                                        N/A
+                                    </span>
+                                @endif
                             </td>
                             <!-- Gender -->
                             <td class="px-6 py-4">

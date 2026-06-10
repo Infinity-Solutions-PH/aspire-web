@@ -14,7 +14,39 @@ class AdmissionDashboard extends Component
     public $status = 'pending_approval'; // Default to the new pending status
     public $type = '';
     public $category = '';
+    public $grade_level = '';
     public $source = 'new'; // 'new' for PreEnrollment, 'returning' for Enrollment (pending_approval)
+
+    public function updatedCategory($value)
+    {
+        $this->grade_level = '';
+        $this->resetPage();
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedStatus($value)
+    {
+        $this->category = '';
+        $this->grade_level = '';
+        $this->resetPage();
+    }
+
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        $this->category = '';
+        $this->grade_level = '';
+        $this->resetPage();
+    }
+
+    public function updatedGradeLevel()
+    {
+        $this->resetPage();
+    }
 
     public function render()
     {
@@ -22,6 +54,7 @@ class AdmissionDashboard extends Component
         if ($this->status === 'pending_approval' || $this->status === '') {
             $enrollments = PreEnrollment::where('status', 'pending_approval')
                 ->when($this->category, fn($q) => $q->where('form_data->school_category', $this->category))
+                ->when($this->grade_level, fn($q) => $q->where('form_data->grade_level', $this->grade_level))
                 ->when($this->search, function($q) {
                     $q->where('lrn', 'like', "%{$this->search}%")
                       ->orWhere('form_data->first_name', 'like', "%{$this->search}%")
@@ -32,18 +65,13 @@ class AdmissionDashboard extends Component
         } else {
             // Show Drafts from Enrollment table
             $enrollments = PreEnrollment::where('status', 'draft')
-                ->when($this->type, fn($q) => $q->where('type', $this->type))
-                ->when($this->category, function($q) {
-                    if ($this->category === 'HS') {
-                        $q->whereIn('grade_level', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']);
-                    } elseif ($this->category === 'SHS') {
-                        $q->whereIn('grade_level', ['Grade 11', 'Grade 12']);
-                    }
-                })
+                ->when($this->type, fn($q) => $q->where('form_data->enrollment_type', $this->type))
+                ->when($this->category, fn($q) => $q->where('form_data->school_category', $this->category))
+                ->when($this->grade_level, fn($q) => $q->where('form_data->grade_level', $this->grade_level))
                 ->when($this->search, function($q) {
-                    $q->where('first_name', 'like', "%{$this->search}%")
-                      ->orWhere('last_name', 'like', "%{$this->search}%")
-                      ->orWhere('lrn', 'like', "%{$this->search}%");
+                    $q->where('lrn', 'like', "%{$this->search}%")
+                      ->orWhere('form_data->first_name', 'like', "%{$this->search}%")
+                      ->orWhere('form_data->last_name', 'like', "%{$this->search}%");
                 })
                 ->latest()
                 ->paginate(10);

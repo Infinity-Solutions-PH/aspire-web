@@ -48,18 +48,18 @@
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#9a4c4c]">search</span>
                 <input wire:model.live.debounce.300ms="search" class="w-full pl-12 pr-4 py-3.5 bg-background-light dark:bg-[#2a1515] border-[#e7cfcf] dark:border-[#422020] rounded-xl focus:ring-primary focus:border-primary text-sm transition-all placeholder:text-gray-400" placeholder="Search by student name, LRN, or track..." type="text"/>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="flex items-center bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020]">
-                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Category</span>
-                    <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <div class="flex items-center justify-between sm:justify-start bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020] w-full sm:w-auto">
+                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider whitespace-nowrap">Category</span>
+                    <select wire:model.live="category" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200 w-full sm:w-auto text-right sm:text-left">
                         <option value="">All Categories</option>
                         <option value="HS">High School</option>
                         <option value="SHS">Senior High</option>
                     </select>
                 </div>
-                <div class="flex items-center bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020]">
-                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Grade Level</span>
-                    <select wire:model.live="grade_level" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
+                <div class="flex items-center justify-between sm:justify-start bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020] w-full sm:w-auto">
+                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider whitespace-nowrap">Grade Level</span>
+                    <select wire:model.live="grade_level" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200 w-full sm:w-auto text-right sm:text-left">
                         <option value="All Levels">All Levels</option>
                         <option value="Grade 7">Grade 7</option>
                         <option value="Grade 8">Grade 8</option>
@@ -69,9 +69,9 @@
                         <option value="Grade 12">Grade 12</option>
                     </select>
                 </div>
-                <div class="flex items-center bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020]">
-                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider">Status</span>
-                    <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200">
+                <div class="flex items-center justify-between sm:justify-start bg-background-light dark:bg-[#361a1a] rounded-xl px-4 py-1.5 border border-[#e7cfcf] dark:border-[#422020] w-full sm:w-auto">
+                    <span class="text-[10px] font-bold text-[#9a4c4c] uppercase mr-3 tracking-wider whitespace-nowrap">Status</span>
+                    <select wire:model.live="status" class="bg-transparent border-none focus:ring-0 text-sm font-bold py-1 pl-0 pr-8 text-gray-700 dark:text-gray-200 w-full sm:w-auto text-right sm:text-left">
                         <option value="All Status">All Status</option>
                         <option value="Approved">Approved</option>
                         <option value="Enrolled">Enrolled</option>
@@ -82,13 +82,18 @@
                 </div>
             </div>
         </div>
-        <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">
-            <button wire:click="$set('status', 'Enrolled')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Enrolled' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Enrolled</button>
-            <button wire:click="$set('status', 'Approved')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Approved' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Approved</button>
-            <div class="w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2 self-center"></div>
-            <button wire:click="$set('category', 'HS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'HS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">High School</button>
-            <button wire:click="$set('category', 'SHS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'SHS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Senior High</button>
-            <button wire:click="$set('category', '')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === '' ? 'text-primary' : 'text-gray-400 hover:text-primary' }}">Clear Category</button>
+        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-4 border-t border-[#f3e7e7] dark:border-[#361a1a]">
+            <div class="flex flex-wrap items-center gap-2">
+                <button wire:click="$set('status', 'Enrolled')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Enrolled' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Enrolled</button>
+                <button wire:click="$set('status', 'Approved')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $status === 'Approved' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Approved</button>
+                <div class="hidden sm:block w-px h-4 bg-gray-200 dark:bg-gray-700 mx-2 self-center"></div>
+                <button wire:click="$set('category', 'HS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'HS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">High School</button>
+                <button wire:click="$set('category', 'SHS')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === 'SHS' ? 'bg-[#1b0d0d] text-white' : 'bg-[#f3e7e7] dark:bg-[#361a1a] text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-primary/20' }}">Senior High</button>
+                <button wire:click="$set('category', '')" class="px-3 py-1 rounded-full text-xs font-medium transition-all {{ $category === '' ? 'text-primary' : 'text-gray-400 hover:text-primary' }}">Clear Category</button>
+            </div>
+            <div class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-wider">
+                Total Filtered: <span class="text-sm font-black text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $students->total() }}</span> students
+            </div>
         </div>
     </div>
 

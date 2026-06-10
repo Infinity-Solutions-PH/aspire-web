@@ -40,6 +40,7 @@ class SectionManagement extends Component
     public $selectedSectionId = null;
     public $selectedAdviserId = null;
     public $currentSectionName = '';
+    public $adviserSearch = '';
     // Auto Sectioning Modal state
     public $showAutoSectionModal = false;
     public $activeAutoTab = 'jhs'; // jhs, tvl, shs
@@ -163,13 +164,14 @@ class SectionManagement extends Component
         $section = Section::find($sectionId);
         $this->currentSectionName = $section->name;
         $this->selectedAdviserId = $section->adviser_id;
+        $this->adviserSearch = '';
         $this->showAdviserModal = true;
     }
  
     public function assignAdviser()
     {
         $this->validate([
-            'selectedAdviserId' => 'required',
+            'selectedAdviserId' => 'nullable|exists:users,id',
         ]);
  
         $section = Section::find($this->selectedSectionId);
@@ -178,8 +180,28 @@ class SectionManagement extends Component
         ]);
  
         $this->showAdviserModal = false;
-        $this->reset(['selectedSectionId', 'selectedAdviserId', 'currentSectionName']);
+        $this->reset(['selectedSectionId', 'selectedAdviserId', 'currentSectionName', 'adviserSearch']);
         session()->flash('message', 'Adviser assigned successfully!');
+    }
+
+    public function getFacultySearchResultsProperty()
+    {
+        $search = trim($this->adviserSearch);
+        return Faculty::where('status', 'Active')
+            ->whereHas('user', function ($query) {
+                $query->where('role', 'teacher');
+            })
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('faculty_id', 'like', "%{$search}%")
+                      ->orWhereHas('user', function ($uq) use ($search) {
+                          $uq->where('name', 'like', "%{$search}%");
+                      });
+                });
+            })
+            ->with('user')
+            ->limit(5)
+            ->get();
     }
 
     public function getUnsectionedStatsProperty()
@@ -260,6 +282,25 @@ class SectionManagement extends Component
             session()->flash('error', $e->getMessage());
         }
     }
+
+    public function deleteSection($sectionId)
+    {
+        $section = Section::findOrFail($sectionId);
+
+        // Check if there are active enrollments in the section
+        $hasEnrollments = $section->enrollments()->exists() || $section->techVocEnrollments()->exists();
+
+        if ($hasEnrollments) {
+            session()->flash('error', 'Cannot delete section because it has students assigned to it.');
+            return;
+        }
+
+        // Delete associated schedules first
+        $section->schedules()->delete();
+
+        $section->delete();
+        session()->flash('message', 'Section deleted successfully.');
+    }
  
     public function render()
     {
@@ -290,13 +331,6 @@ class SectionManagement extends Component
  
         return view('pages.Admin.section-management', [
             'sections' => $query->get(),
-            'teachers' => Faculty::where('status', 'Active')
-                ->whereHas('user', function ($q) {
-                    $q->where('role', 'teacher');
-                })
-                ->with('user')
-                ->get()
-                ->map(fn($f) => $f->user),
         ])->layout('layouts.app'); // Or pipeline if that's the base
     }
 }
