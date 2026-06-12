@@ -48,4 +48,29 @@ class User extends Authenticatable
     {
         return $this->hasOne(Faculty::class);
     }
+
+    /**
+     * Get the student's violations.
+     */
+    public function violations()
+    {
+        return $this->hasMany(Violation::class, 'user_id');
+    }
+
+    /**
+     * Get the violations recorded by this user.
+     */
+    public function recordedViolations()
+    {
+        return $this->hasMany(Violation::class, 'recorded_by');
+    }
+
+    /**
+     * Get the student's enrollment record.
+     */
+    public function enrollment()
+    {
+        return $this->hasOne(Enrollment::class, 'user_id');
+    }
 }
+
