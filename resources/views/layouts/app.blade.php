@@ -65,7 +65,7 @@
                 </div>
                 
                 <nav class="flex flex-col gap-1.5">
-                    @if(auth()->user()->role !== 'guidance')
+                    @if(auth()->user()->role !== 'guidance' && auth()->user()->role !== 'ovpd')
                     <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.dashboard') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.dashboard') }}">
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.dashboard') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.dashboard') ? "font-variation-settings: 'FILL' 1" : '' }}">dashboard</span>
                         <span class="text-sm font-bold">Dashboard</span>
@@ -77,6 +77,7 @@
                     </a>
                     @endif
 
+                    @if(auth()->user()->role !== 'ovpd')
                     <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.students.masterlist') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.students.masterlist') }}">
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.students.masterlist') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.students.masterlist') ? "font-variation-settings: 'FILL' 1" : '' }}">group</span>
                         <span class="text-sm font-bold">Student Masterlist</span>
@@ -96,7 +97,14 @@
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.sections') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.sections') ? "font-variation-settings: 'FILL' 1" : '' }}">meeting_room</span>
                         <span class="text-sm font-bold tracking-wide">Sections</span>
                     </a>
-                    @if(auth()->user()->role !== 'guidance')
+                    @endif
+
+                    <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.violations') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.violations') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('admin.violations') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.violations') ? "font-variation-settings: 'FILL' 1" : '' }}">gavel</span>
+                        <span class="text-sm font-bold">Violations</span>
+                    </a>
+
+                    @if(auth()->user()->role !== 'guidance' && auth()->user()->role !== 'ovpd')
                     <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 {{ request()->routeIs('admin.school-years') ? 'bg-primary/10 text-primary shadow-sm shadow-primary/5' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a]' }}" href="{{ route('admin.school-years') }}">
                         <span class="material-symbols-outlined {{ request()->routeIs('admin.school-years') ? 'fill-1' : '' }}" style="{{ request()->routeIs('admin.school-years') ? "font-variation-settings: 'FILL' 1" : '' }}">calendar_month</span>
                         <span class="text-sm font-bold tracking-wide">School Years</span>
@@ -121,7 +129,15 @@
                     @endif
                     <div class="overflow-hidden">
                         <p class="text-xs font-bold truncate leading-none">{{ auth()->user()->name }}</p>
-                        <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-tighter mt-1">Admin Access</p>
+                        <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-tighter mt-1">
+                            @if(auth()->user()->role === 'ovpd')
+                                OVPD Access
+                            @elseif(auth()->user()->role === 'guidance')
+                                Guidance Access
+                            @else
+                                Admin Access
+                            @endif
+                        </p>
                     </div>
                 </div>
 
@@ -169,8 +185,24 @@
                     
                     <div class="flex items-center gap-3">
                         <div class="text-right hidden sm:block">
-                            <p class="text-xs font-bold leading-none text-gray-900 dark:text-white">{{ auth()->user()->role === 'guidance' ? 'Guidance Portal' : 'Admin Portal' }}</p>
-                            <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-wider mt-1">{{ auth()->user()->role === 'guidance' ? 'Counselor Session' : 'Active Session' }}</p>
+                            <p class="text-xs font-bold leading-none text-gray-900 dark:text-white">
+                                @if(auth()->user()->role === 'ovpd')
+                                    OVPD Portal
+                                @elseif(auth()->user()->role === 'guidance')
+                                    Guidance Portal
+                                @else
+                                    Admin Portal
+                                @endif
+                            </p>
+                            <p class="text-[9px] text-[#9a4c4c] uppercase font-bold tracking-wider mt-1">
+                                @if(auth()->user()->role === 'ovpd')
+                                    Discipline Office
+                                @elseif(auth()->user()->role === 'guidance')
+                                    Counselor Session
+                                @else
+                                    Active Session
+                                @endif
+                            </p>
                         </div>
                         <div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
                             <span class="material-symbols-outlined">shield_person</span>

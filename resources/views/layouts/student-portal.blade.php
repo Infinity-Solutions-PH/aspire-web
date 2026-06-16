@@ -88,6 +88,10 @@
                         <span class="material-symbols-outlined">person</span>
                         <span class="text-sm">Profile</span>
                     </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.violations') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.violations') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('student.violations') ? 'fill-1' : '' }}" style="{{ request()->routeIs('student.violations') ? "font-variation-settings: 'FILL' 1" : '' }}">gavel</span>
+                        <span class="text-sm">Violations</span>
+                    </a>
                     {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
                         <span class="material-symbols-outlined">history_edu</span>
                         <span class="text-sm">Academic Records</span>
