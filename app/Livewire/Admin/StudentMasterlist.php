@@ -242,12 +242,27 @@ class StudentMasterlist extends Component
                 ->get();
         }
 
+        // Calculate summary counts
+        $gradeStats = [];
+        $gradesList = ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'];
+        foreach ($gradesList as $grade) {
+            $gradeStats[$grade] = [
+                'enrolled' => Enrollment::where('grade_level', $grade)->where('status', 'Enrolled')->count(),
+                'total' => Enrollment::where('grade_level', $grade)->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated'])->count(),
+            ];
+        }
+        $totalEnrolled = Enrollment::where('status', 'Enrolled')->count();
+        $totalAll = Enrollment::whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated'])->count();
+
         return view('livewire.admin.student-masterlist', [
             'students' => $students,
             'availableSections' => $availableSections,
             'availableTechVocSections' => $availableTechVocSections,
             'selectedStudentForSection' => $selectedStudentForSection,
             'exportSections' => $exportSections,
+            'gradeStats' => $gradeStats,
+            'totalEnrolled' => $totalEnrolled,
+            'totalAll' => $totalAll,
         ]);
     }
 
