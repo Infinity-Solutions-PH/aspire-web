@@ -78,11 +78,11 @@
                     </div>
                 </div>
 
-                <!-- TVL Track -->
+                <!-- TECHPRO Track -->
                 <div class="space-y-6">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-primary">engineering</span>
-                        <h3 class="text-xl font-black uppercase tracking-widest text-primary-container">TVL Track</h3>
+                        <h3 class="text-xl font-black uppercase tracking-widest text-primary-container">TECHPRO Track</h3>
                     </div>
                     <div class="grid gap-4">
                         @php

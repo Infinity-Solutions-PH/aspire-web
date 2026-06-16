@@ -14,7 +14,7 @@
         <span class="material-symbols-outlined text-5xl text-primary/50 group-hover:text-primary transition-colors">account_tree</span>
         <div class="text-center">
             <h3 class="text-lg font-bold">Senior High School</h3>
-            <p class="text-xs text-stone-500">Academic & TVL Strands</p>
+            <p class="text-xs text-stone-500">ACADEMIC & TECHPRO Strands</p>
         </div>
     </button>
 </div>

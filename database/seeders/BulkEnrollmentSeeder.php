@@ -21,12 +21,13 @@ class BulkEnrollmentSeeder extends Seeder
         $sexes = ['Male', 'Female'];
         $tvlChoices = ['ICT', 'CSS', 'Food Industry', 'Automotive', 'Drafting', 'SMAW', 'HE'];
         $shsStrands = [
-            'STEM' => 'Academic',
-            'ABM' => 'Academic',
-            'HUMSS' => 'Academic',
-            'ICT' => 'TVL',
-            'HE' => 'TVL',
-            'Industrial Arts' => 'TVL'
+            'STEM' => 'ACADEMIC',
+            'ABM' => 'ACADEMIC',
+            'HUMSS' => 'ACADEMIC',
+            'GAS' => 'ACADEMIC',
+            'ICT' => 'TECHPRO',
+            'HE' => 'TECHPRO',
+            'Industrial Arts' => 'TECHPRO'
         ];
 
         $this->command->info('Creating 100 approved enrollment records...');
@@ -35,7 +36,7 @@ class BulkEnrollmentSeeder extends Seeder
             $grade = $faker->randomElement($grades);
             $sex = $faker->randomElement($sexes);
             $lrn = $faker->numerify('############'); // 12 digits
-            
+
             // Create user first
             $user = User::create([
                 'name' => $faker->name($sex === 'Male' ? 'male' : 'female'),

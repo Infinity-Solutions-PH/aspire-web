@@ -169,7 +169,7 @@ class AdmissionReview extends Component
             'isStarQualified' => $sectioningService->checkStarQualification($enrollment),
             'availableSections' => $sectioningService->getAvailableSectionsForEnrollment($enrollment),
             'availableTechVocSections' => Section::where('grade_level', $enrollment->grade_level)
-                ->where('track', 'TVL')
+                ->where('track', 'TECHPRO')
                 ->withCount('techVocEnrollments')
                 ->get()
                 ->filter(fn($s) => $s->tech_voc_enrollments_count < $s->capacity)

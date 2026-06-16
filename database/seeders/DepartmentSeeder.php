@@ -14,7 +14,7 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         $departments = [
-            'SHS' => ['Techpro', 'Academic'],
+            'SHS' => ['TECHPRO', 'ACADEMIC'],
             'JHS' => [
                 'English', 'Science', 'Mathematics', 'Filipino', 
                 'Araling Panlipunan', 'Edukasyon sa Pagpapakatao', 

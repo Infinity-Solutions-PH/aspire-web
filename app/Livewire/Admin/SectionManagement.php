@@ -47,6 +47,15 @@ class SectionManagement extends Component
     public $autoGrade = '';
     public $autoCourseStrand = '';
 
+    protected $validationAttributes = [
+        'newSection.name' => 'section name',
+        'newSection.grade_level' => 'grade level',
+        'newSection.capacity' => 'capacity',
+        'newSection.track' => 'track',
+        'newSection.strand' => 'strand',
+        'newSection.specialization' => 'specialization',
+    ];
+
     public function mount()
     {
         $this->newSection['capacity'] = Setting::get('global_default_capacity', 40);
@@ -126,22 +135,34 @@ class SectionManagement extends Component
 
     public function createSection()
     {
-        $this->validate([
+        $rules = [
             'newSection.type' => 'required|in:normal,tvl',
             'newSection.name' => 'required|string|max:255',
             'newSection.grade_level' => 'required',
             'newSection.capacity' => 'required|integer|min:1',
-        ]);
+        ];
+
+        if ($this->newSection['type'] === 'tvl') {
+            $rules['newSection.specialization'] = 'required';
+        }
+
+        if ($this->newSection['type'] === 'normal' && in_array($this->newSection['grade_level'], ['Grade 11', 'Grade 12'])) {
+            $rules['newSection.track'] = 'required|in:ACADEMIC,TECHPRO';
+            $rules['newSection.strand'] = 'required';
+        }
+
+        $this->validate($rules);
  
         $data = $this->newSection;
         
         if ($data['type'] === 'tvl') {
-            $data['track'] = 'TVL';
+            $data['track'] = null;
+            $data['strand'] = null;
             $data['is_star_section'] = false;
-            $data['strand'] = null; // Not using strand for TVL here
         } else {
             // Normal section
             if (!in_array($data['grade_level'], ['Grade 11', 'Grade 12'])) {
+                $data['track'] = null;
                 $data['strand'] = null;
             }
             $data['specialization'] = null; // Normal sections don't have TVL specialization
