@@ -222,15 +222,13 @@ class StudentMasterlist extends Component
                 if ($selectedStudentForSection->strand) {
                     $sectionQuery->where('strand', $selectedStudentForSection->strand);
                 } else {
-                    $sectionQuery->where(function ($q) {
-                        $q->whereNull('track')->orWhere('track', '!=', 'TECHPRO');
-                    });
+                    $sectionQuery->whereNull('specialization');
                 }
                 $availableSections = $sectionQuery->withCount('enrollments')->get();
 
                 if (in_array($selectedStudentForSection->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
                     $availableTechVocSections = Section::where('grade_level', $selectedStudentForSection->grade_level)
-                        ->where('track', 'TECHPRO')
+                        ->whereNotNull('specialization')
                         ->withCount('techVocEnrollments')
                         ->get();
                 }
