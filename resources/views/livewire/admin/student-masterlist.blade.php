@@ -277,6 +277,49 @@
                 <!-- Modal Body -->
                 <form wire:submit.prevent="saveStudent" class="p-8 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Profile Photo Upload -->
+                        <div class="md:col-span-2 flex flex-col md:flex-row items-center gap-6 p-4 bg-[#fdfafb] dark:bg-[#2a1515] border border-[#e7cfcf] dark:border-[#422020] rounded-2xl">
+                            <div class="size-20 rounded-2xl overflow-hidden border-2 border-primary/20 bg-primary/5 flex items-center justify-center shrink-0">
+                                @if ($edit_profile_picture_upload)
+                                    <img src="{{ $edit_profile_picture_upload->temporaryUrl() }}" class="size-full object-cover">
+                                @elseif ($edit_profile_picture)
+                                    <img src="{{ asset('storage/' . $edit_profile_picture) }}" class="size-full object-cover">
+                                @else
+                                    <div class="size-full flex items-center justify-center text-primary/40">
+                                        <span class="material-symbols-outlined text-4xl">person</span>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex-1 space-y-2 text-center md:text-left w-full">
+                                <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c] block">Update Profile Photo</label>
+                                <div class="relative">
+                                    <input type="file" wire:model="edit_profile_picture_upload" class="hidden" id="edit_photo_input" accept="image/*">
+                                    <div class="flex flex-col sm:flex-row items-center gap-3 justify-center md:justify-start">
+                                        <button type="button" onclick="document.getElementById('edit_photo_input').click()" class="px-4 py-2 border border-[#e7cfcf] dark:border-[#422020] hover:bg-primary/5 text-gray-700 dark:text-gray-200 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                                            <span class="material-symbols-outlined text-sm">cloud_upload</span>
+                                            Choose Image
+                                        </button>
+                                        @if ($edit_profile_picture_upload)
+                                            <button type="button" wire:click="$set('edit_profile_picture_upload', null)" class="px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl text-xs font-bold transition-all">
+                                                Remove Selected
+                                            </button>
+                                        @elseif ($edit_profile_picture)
+                                            <button type="button" wire:click="removeCurrentPhoto" class="px-3 py-2 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl text-xs font-bold transition-all">
+                                                Remove Photo
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                                <p class="text-[9px] text-gray-400">Supported formats: JPG, JPEG, PNG. Max: 5MB.</p>
+                                <div wire:loading wire:target="edit_profile_picture_upload" class="text-xs text-primary font-bold">
+                                    Uploading picture...
+                                </div>
+                                @error('edit_profile_picture_upload') 
+                                    <span class="text-[10px] text-red-500 font-bold block mt-1">{{ $message }}</span> 
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- First Name -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">First Name</label>

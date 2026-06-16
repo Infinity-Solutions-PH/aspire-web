@@ -69,8 +69,13 @@ class AdmissionReview extends Component
                     'email' => $username . '@tnts.edu.ph',
                     'password' => Hash::make($passwordStr),
                     'role' => 'student',
+                    'avatar' => $data['profile_picture'] ?? null,
                 ]
             );
+
+            if ($user->wasRecentlyCreated === false && empty($user->avatar) && !empty($data['profile_picture'])) {
+                $user->update(['avatar' => $data['profile_picture']]);
+            }
 
             // 2. Promote PreEnrollment to Enrollment
             $enrollment = Enrollment::create(array_merge($data, [
