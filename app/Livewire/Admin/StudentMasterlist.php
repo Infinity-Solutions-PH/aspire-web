@@ -7,10 +7,12 @@ use Livewire\Component;
 use App\Models\Enrollment;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class StudentMasterlist extends Component
 {
-    use WithPagination;
+    use WithPagination, WithFileUploads;
 
     #[Url]
     public $search = '';
@@ -63,6 +65,12 @@ class StudentMasterlist extends Component
 
     public $edit_grade_level = '';
 
+    public $edit_profile_picture_upload;
+
+    public $edit_profile_picture = '';
+
+    public $delete_current_photo = false;
+
     // Section assignment fields
     public $selected_section_id = '';
 
@@ -98,8 +106,18 @@ class StudentMasterlist extends Component
         $this->edit_contact_no = $student->contact_no;
         $this->edit_status = $student->status;
         $this->edit_grade_level = $student->grade_level;
+        $this->edit_profile_picture = $student->profile_picture;
+        $this->edit_profile_picture_upload = null;
+        $this->delete_current_photo = false;
 
         $this->showEditModal = true;
+    }
+
+    public function removeCurrentPhoto()
+    {
+        $this->edit_profile_picture = null;
+        $this->delete_current_photo = true;
+        $this->edit_profile_picture_upload = null;
     }
 
     public function saveStudent()
@@ -116,12 +134,13 @@ class StudentMasterlist extends Component
             'edit_contact_no' => 'required|string|max:20',
             'edit_status' => 'required|string',
             'edit_grade_level' => 'required|string',
+            'edit_profile_picture_upload' => 'nullable|image|max:5120',
         ]);
 
         $student = Enrollment::findOrFail($this->selectedStudentId);
         $oldGrade = $student->grade_level;
 
-        $student->update([
+        $updateData = [
             'first_name' => $this->edit_first_name,
             'last_name' => $this->edit_last_name,
             'middle_name' => $this->edit_middle_name,
@@ -133,7 +152,35 @@ class StudentMasterlist extends Component
             'contact_no' => $this->edit_contact_no,
             'status' => $this->edit_status,
             'grade_level' => $this->edit_grade_level,
-        ]);
+        ];
+
+        if ($this->edit_profile_picture_upload) {
+            // Delete old photo file if exists
+            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
+                Storage::disk('public')->delete($student->profile_picture);
+            }
+
+            $path = $this->edit_profile_picture_upload->store('enrollments/photos', 'public');
+            $updateData['profile_picture'] = $path;
+
+            // Also update corresponding user's avatar if they have a user account
+            if ($student->user) {
+                $student->user->update(['avatar' => $path]);
+            }
+        } elseif ($this->delete_current_photo) {
+            // Delete old photo file if exists
+            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
+                Storage::disk('public')->delete($student->profile_picture);
+            }
+            $updateData['profile_picture'] = null;
+
+            // Also clear corresponding user's avatar if they have a user account
+            if ($student->user) {
+                $student->user->update(['avatar' => null]);
+            }
+        }
+
+        $student->update($updateData);
 
         if ($oldGrade !== $this->edit_grade_level) {
             $student->update([
@@ -409,8 +456,8 @@ class StudentMasterlist extends Component
         // Add profile pictures / images to zip
         $addedFiles = [];
         foreach ($students as $student) {
-            if ($student->profile_picture && \Storage::disk('public')->exists($student->profile_picture)) {
-                $imageContent = \Storage::disk('public')->get($student->profile_picture);
+            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
+                $imageContent = Storage::disk('public')->get($student->profile_picture);
                 $ext = pathinfo($student->profile_picture, PATHINFO_EXTENSION) ?: 'jpg';
 
                 $middleInitial = $student->middle_name ? ' ' . strtoupper(substr($student->middle_name, 0, 1)) : '';
