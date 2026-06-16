@@ -19,6 +19,53 @@
         </div>
     </div>
 
+    <!-- Summary Statistics Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 mb-8">
+        <!-- Main Stats Card: Enrolled Students -->
+        <div class="lg:col-span-1 bg-white dark:bg-[#1a0c0c] rounded-2xl border border-[#e7cfcf] dark:border-[#422020] p-4 flex flex-col justify-between shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow">
+            <div class="absolute -right-4 -top-4 size-16 bg-primary/5 rounded-full flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                <span class="material-symbols-outlined text-2xl">school</span>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-wider">Total Enrolled</p>
+                <h4 class="text-3xl font-black text-gray-900 dark:text-white mt-1 leading-none">{{ $totalEnrolled }}</h4>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-3 font-semibold uppercase">Out of {{ $totalAll }} Applicants</p>
+        </div>
+
+        <!-- Grade Level Stats -->
+        @foreach(['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12'] as $grade)
+            @php
+                $gStats = $gradeStats[$grade] ?? ['enrolled' => 0, 'total' => 0];
+            @endphp
+            <div class="bg-white dark:bg-[#1a0c0c] rounded-2xl border border-[#e7cfcf] dark:border-[#422020] p-4 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
+                <div>
+                    <div class="flex justify-between items-start">
+                        <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider">{{ $grade }}</p>
+                        <span class="text-[10px] font-black text-primary bg-primary/10 px-1.5 py-0.5 rounded leading-none">
+                            {{ $gStats['enrolled'] }}
+                        </span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5 mt-2">
+                        <span class="text-xl font-extrabold text-gray-900 dark:text-white leading-none">
+                            {{ $gStats['enrolled'] }}
+                        </span>
+                        <span class="text-xs text-gray-400 font-bold">/ {{ $gStats['total'] }}</span>
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <div class="w-full bg-[#f3e7e7] dark:bg-[#2a1515] h-1.5 rounded-full overflow-hidden">
+                        @php
+                            $percent = $gStats['total'] > 0 ? min(100, ($gStats['enrolled'] / $gStats['total']) * 100) : 0;
+                        @endphp
+                        <div class="bg-primary h-full rounded-full" style="width: {{ $percent }}%;"></div>
+                    </div>
+                    <p class="text-[8px] text-gray-400 font-bold uppercase tracking-wide mt-1">Officially Enrolled</p>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
     <!-- Flash Messages -->
     @if (session()->has('message'))
         <div x-data="{ show: true }"
