@@ -1,4 +1,4 @@
-<x-layouts::student-portal :title="__('My Violations')">
+<div>
     <!-- Page Heading -->
     <div class="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -12,7 +12,7 @@
         <span class="material-symbols-outlined text-primary shrink-0">info</span>
         <div>
             <span class="font-bold text-gray-800 dark:text-white">Note on Disciplinary Actions:</span>
-            All logged violations represent official school record entries. For questions regarding full reports or penalty details, please contact the **Office of Violation and Penalties for Discipline (OVPD)**.
+            All logged violations represent official school record entries. For questions regarding full reports or penalty details, please contact the **Learner's Formation Office (LFO)**.
         </div>
     </div>
 
@@ -59,4 +59,4 @@
             </table>
         </div>
     </div>
-</x-layouts::student-portal>
+</div>
