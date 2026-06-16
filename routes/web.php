@@ -15,21 +15,21 @@ Route::get('/auth/google', [SocialiteController::class, 'redirectToGoogle'])->na
 Route::get('/auth/google/callback', [SocialiteController::class, 'handleGoogleCallback'])->name('google.callback');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
     // Legacy/Generic Dashboard Redirect
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
 
-Route::get('/demo-reset', function() {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
-            '--seed' => true,
-            '--force' => true,
-        ]);
-        return "Database has been refreshed and seeded successfully for demo purposes.";
-    } catch (\Exception $e) {
-        return "Reset failed: " . $e->getMessage();
-    }
-});
+// Route::get('/demo-reset', function() {
+//     try {
+//         \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+//             '--seed' => true,
+//             '--force' => true,
+//         ]);
+//         return "Database has been refreshed and seeded successfully for demo purposes.";
+//     } catch (\Exception $e) {
+//         return "Reset failed: " . $e->getMessage();
+//     }
+// });
 
 require __DIR__.'/settings.php';
