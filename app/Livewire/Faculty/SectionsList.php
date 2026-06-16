@@ -33,7 +33,7 @@ class SectionsList extends Component
             // Student count logic based on track (normal vs TVL)
             $count = Enrollment::where('status', 'Enrolled')
                 ->where(function ($q) use ($section) {
-                    if ($section->track === 'TECHPRO') {
+                    if (!empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
                         $q->where('tech_voc_section_id', $section->id);
                     } else {
                         $q->where('section_id', $section->id);

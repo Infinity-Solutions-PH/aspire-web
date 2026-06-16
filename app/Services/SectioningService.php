@@ -118,7 +118,7 @@ class SectioningService
         }
 
         // Fetch all TVL sections for this grade
-        $sections = Section::where('grade_level', $gradeLevel)->where('track', 'TECHPRO')->get();
+        $sections = Section::where('grade_level', $gradeLevel)->whereNotNull('specialization')->get();
 
         if ($sections->isEmpty()) {
             throw new Exception("No Tech Voc sections found for {$gradeLevel}. Please create sections first.");

@@ -28,8 +28,12 @@ class Dashboard extends Component
 
         // 3. Advisees count (enrolled in sections where this teacher is adviser)
         $adviserSections = Section::where('adviser_id', $userId)->get();
-        $adviserNormalSectionIds = $adviserSections->where('track', '!=', 'TECHPRO')->pluck('id');
-        $adviserTvlSectionIds = $adviserSections->where('track', 'TECHPRO')->pluck('id');
+        $adviserTvlSectionIds = $adviserSections->filter(function($section) {
+            return !empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']);
+        })->pluck('id');
+        $adviserNormalSectionIds = $adviserSections->reject(function($section) {
+            return !empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']);
+        })->pluck('id');
         
         $adviseesCount = 0;
         if ($adviserNormalSectionIds->isNotEmpty() || $adviserTvlSectionIds->isNotEmpty()) {
@@ -44,8 +48,12 @@ class Dashboard extends Component
         // 4. Total students teaching count
         $taughtSectionIds = Schedule::where('teacher_id', $userId)->pluck('section_id')->unique();
         $taughtSections = Section::whereIn('id', $taughtSectionIds)->get();
-        $taughtNormalSectionIds = $taughtSections->where('track', '!=', 'TECHPRO')->pluck('id');
-        $taughtTvlSectionIds = $taughtSections->where('track', 'TECHPRO')->pluck('id');
+        $taughtTvlSectionIds = $taughtSections->filter(function($section) {
+            return !empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']);
+        })->pluck('id');
+        $taughtNormalSectionIds = $taughtSections->reject(function($section) {
+            return !empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']);
+        })->pluck('id');
         
         $totalStudentsCount = 0;
         if ($taughtNormalSectionIds->isNotEmpty() || $taughtTvlSectionIds->isNotEmpty()) {

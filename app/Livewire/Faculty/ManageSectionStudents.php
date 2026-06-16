@@ -45,7 +45,9 @@ class ManageSectionStudents extends Component
 
     public function render()
     {
-        $sectionColumn = $this->section->track === 'TECHPRO' ? 'tech_voc_section_id' : 'section_id';
+        $sectionColumn = (!empty($this->section->specialization) && in_array($this->section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10']))
+            ? 'tech_voc_section_id'
+            : 'section_id';
 
         $baseQuery = Enrollment::with('techVocSection')
             ->where('status', 'Enrolled')

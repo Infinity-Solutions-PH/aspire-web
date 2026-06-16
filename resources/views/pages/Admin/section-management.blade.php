@@ -91,7 +91,7 @@
                     </div>
                     <!-- Delete Section Button (only if no students assigned) -->
                     @php
-                        $hasStudents = $section->track === 'TVL' ? $section->tech_voc_enrollments_count > 0 : $section->enrollments_count > 0;
+                        $hasStudents = (!empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) ? $section->tech_voc_enrollments_count > 0 : $section->enrollments_count > 0;
                     @endphp
                     @if(!$hasStudents)
                         <button wire:click="deleteSection({{ $section->id }})" wire:confirm="Are you sure you want to delete the section '{{ $section->name }}'?" class="absolute top-4 right-4 text-primary hover:text-red-700 transition-colors bg-white/80 hover:bg-white dark:bg-black/40 dark:hover:bg-black/60 size-8 rounded-lg flex items-center justify-center shadow-sm z-10" title="Delete Section">
@@ -120,7 +120,7 @@
                         <div class="flex justify-between items-center text-xs">
                             <span class="font-medium text-[#9a4c4c]">Enrollment Capacity</span>
                             @php
-                                $currentCount = $section->track === 'TVL' ? $section->tech_voc_enrollments_count : $section->enrollments_count;
+                                $currentCount = (!empty($section->specialization) && in_array($section->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) ? $section->tech_voc_enrollments_count : $section->enrollments_count;
                             @endphp
                             <span class="font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $currentCount }}/{{ $section->capacity }}</span>
                         </div>
