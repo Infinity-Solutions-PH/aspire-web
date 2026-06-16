@@ -28,6 +28,10 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
 
         Gate::define('access-admin', function (User $user) {
+            return in_array($user->role, ['admin', 'registrar', 'dept_head', 'guidance', 'ovpd']);
+        });
+
+        Gate::define('access-admin-standard', function (User $user) {
             return in_array($user->role, ['admin', 'registrar', 'dept_head', 'guidance']);
         });
 

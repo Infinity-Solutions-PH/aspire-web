@@ -15,6 +15,10 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+        if (auth()->user()->role === 'ovpd') {
+            return redirect()->route('admin.violations');
+        }
+
         if (auth()->user()->can('access-admin')) {
             return redirect()->route('admin.dashboard');
         }

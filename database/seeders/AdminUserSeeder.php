@@ -32,5 +32,10 @@ class AdminUserSeeder extends Seeder
             ['email' => 'depthead@tnts.edu.ph'],
             ['name' => 'Department Head', 'password' => Hash::make('password123'), 'role' => 'dept_head']
         );
+
+        User::updateOrCreate(
+            ['email' => 'ovpd@tnts.edu.ph'],
+            ['name' => 'OVPD Office', 'password' => Hash::make('password123'), 'role' => 'ovpd']
+        );
     }
 }
