@@ -5,7 +5,7 @@
         <div class="flex flex-col gap-3">
             <div class="flex gap-6 justify-between items-center">
                 <p class="text-[#1b0d0d] dark:text-[#fcf8f8] text-lg font-bold leading-normal">
-                    Step {{ $current_step }} of 6: 
+                    Step {{ $current_step }} of 6:
                     @if($current_step == 1) Enrollment Intent
                     @elseif($current_step == 2) Student Information
                     @elseif($current_step == 3) Address Information
@@ -322,8 +322,8 @@
                             <span class="text-xs font-bold text-primary uppercase">SHS Track</span>
                             <select wire:model.lazy="shs_track" class="form-select rounded-xl border-gray-200 bg-white text-sm focus:ring-primary focus:border-primary">
                                 <option value="">Select Track</option>
-                                <option value="Academic">Academic</option>
-                                <option value="TVL">TVL (Technical-Vocational-Livelihood)</option>
+                                <option value="ACADEMIC">ACADEMIC</option>
+                                <option value="TECHPRO">TECHPRO (Technical-Vocational-Livelihood)</option>
                             </select>
                         </label>
 
@@ -331,15 +331,16 @@
                             <span class="text-xs font-bold text-primary uppercase">Strand</span>
                             <select wire:model.defer="strand" class="form-select rounded-xl border-gray-200 bg-white text-sm focus:ring-primary focus:border-primary">
                                 <option value="">Select Strand</option>
-                                <template x-if="track === 'Academic'">
+                                <template x-if="track === 'ACADEMIC'">
                                     <optgroup label="Academic Strands">
-                                        <option value="STEM">STEM (Science, Tech, Engineering, Math)</option>
-                                        <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
+                                        <option value="ABS">ABS (Academic Business Strand)</option>
                                         <option value="GAS">GAS (General Academic Strand)</option>
+                                        <option value="HUMSS">HUMSS (Humanities and Social Sciences)</option>
+                                        <option value="STEM">STEM (Science, Tech, Engineering, Math)</option>
                                     </optgroup>
                                 </template>
-                                <template x-if="track === 'TVL'">
-                                    <optgroup label="TVL Strands">
+                                <template x-if="track === 'TECHPRO'">
+                                    <optgroup label="TECHPRO Strands">
                                         <option value="ICT">ICT (Information and Communications Technology)</option>
                                         <option value="HE">HE (Home Economics)</option>
                                         <option value="IA">IA (Industrial Arts)</option>
@@ -397,7 +398,7 @@
                     </div>
                     @error('psa_file') <span class="text-red-500 text-xs mt-1">{{ $message }}</span> @enderror
                 </div>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Form 138 -->
                     <div class="flex flex-col gap-2">

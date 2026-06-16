@@ -79,7 +79,7 @@ class ManageStudents extends Component
 
     public function render()
     {
-        $sectionColumn = $this->section->track === 'TVL' ? 'tech_voc_section_id' : 'section_id';
+        $sectionColumn = $this->section->track === 'TECHPRO' ? 'tech_voc_section_id' : 'section_id';
 
         $baseQuery = Enrollment::with('techVocSection')->where($sectionColumn, $this->section->id)
             ->when($this->search, function($query) {
@@ -113,14 +113,14 @@ class ManageStudents extends Component
                     $sectionQuery->where('strand', $selectedStudentForTransfer->strand);
                 } else {
                     $sectionQuery->where(function($q) {
-                        $q->whereNull('track')->orWhere('track', '!=', 'TVL');
+                        $q->whereNull('track')->orWhere('track', '!=', 'TECHPRO');
                     });
                 }
                 $availableSections = $sectionQuery->withCount('enrollments')->get();
 
                 if (in_array($selectedStudentForTransfer->grade_level, ['Grade 8', 'Grade 9', 'Grade 10'])) {
                     $availableTechVocSections = Section::where('grade_level', $selectedStudentForTransfer->grade_level)
-                        ->where('track', 'TVL')
+                        ->where('track', 'TECHPRO')
                         ->withCount('techVocEnrollments')
                         ->get();
                 }

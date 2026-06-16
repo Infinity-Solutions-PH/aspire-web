@@ -32,9 +32,9 @@ class SchoolManagementSeeder extends Seeder
 
         // 2. Sections
         $sections = [
-            ['name' => '11-CSS-A', 'grade_level' => '11', 'track' => 'TVL', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing', 'capacity' => 20],
-            ['name' => '12-PROG-B', 'grade_level' => '12', 'track' => 'TVL', 'strand' => 'ICT', 'specialization' => 'Programming', 'capacity' => 20],
-            ['name' => '11-SMAW-A', 'grade_level' => '11', 'track' => 'TVL', 'strand' => 'Industrial Arts', 'specialization' => 'SMAW Welding', 'capacity' => 15],
+            ['name' => '11-CSS-A', 'grade_level' => '11', 'track' => 'TECHPRO', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing', 'capacity' => 20],
+            ['name' => '12-PROG-B', 'grade_level' => '12', 'track' => 'TECHPRO', 'strand' => 'ICT', 'specialization' => 'Programming', 'capacity' => 20],
+            ['name' => '11-SMAW-A', 'grade_level' => '11', 'track' => 'TECHPRO', 'strand' => 'Industrial Arts', 'specialization' => 'SMAW Welding', 'capacity' => 15],
         ];
 
         foreach ($sections as $section) {
@@ -43,10 +43,10 @@ class SchoolManagementSeeder extends Seeder
 
         // 3. Subjects
         $subjects = [
-            ['name' => 'Web Development 01', 'grade_level' => '12', 'track' => 'TVL', 'strand' => 'ICT', 'specialization' => 'Programming'],
-            ['name' => 'Comp Servicing II', 'grade_level' => '11', 'track' => 'TVL', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing'],
-            ['name' => 'Arc Welding Practical', 'grade_level' => '11', 'track' => 'TVL', 'strand' => 'Industrial Arts', 'specialization' => 'SMAW Welding'],
-            ['name' => 'Empowerment Tech', 'grade_level' => '11', 'track' => 'TVL', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing'],
+            ['name' => 'Web Development 01', 'grade_level' => '12', 'track' => 'TECHPRO', 'strand' => 'ICT', 'specialization' => 'Programming'],
+            ['name' => 'Comp Servicing II', 'grade_level' => '11', 'track' => 'TECHPRO', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing'],
+            ['name' => 'Arc Welding Practical', 'grade_level' => '11', 'track' => 'TECHPRO', 'strand' => 'Industrial Arts', 'specialization' => 'SMAW Welding'],
+            ['name' => 'Empowerment Tech', 'grade_level' => '11', 'track' => 'TECHPRO', 'strand' => 'ICT', 'specialization' => 'Computer Systems Servicing'],
         ];
 
         foreach ($subjects as $subject) {
@@ -57,8 +57,8 @@ class SchoolManagementSeeder extends Seeder
         $fees = [
             ['name' => 'Registration Fee', 'amount' => 500.00, 'track' => null],
             ['name' => 'Library Fee', 'amount' => 200.00, 'track' => null],
-            ['name' => 'Shop Lab Consumables', 'amount' => 1500.00, 'track' => 'TVL'],
-            ['name' => 'Digital Tools Subscription', 'amount' => 800.00, 'track' => 'TVL', 'strand' => 'ICT'],
+            ['name' => 'Shop Lab Consumables', 'amount' => 1500.00, 'track' => 'TECHPRO'],
+            ['name' => 'Digital Tools Subscription', 'amount' => 800.00, 'track' => 'TECHPRO', 'strand' => 'ICT'],
         ];
 
         foreach ($fees as $fee) {

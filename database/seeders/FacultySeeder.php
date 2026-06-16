@@ -114,7 +114,7 @@ class FacultySeeder extends Seeder
 
         $deptMap = [
             'TVE' => 'Industrial Arts',
-            'Academic' => 'Academic',
+            'Academic' => 'ACADEMIC',
             'MAPEH' => 'MAPEH',
             'Science' => 'Science',
         ];

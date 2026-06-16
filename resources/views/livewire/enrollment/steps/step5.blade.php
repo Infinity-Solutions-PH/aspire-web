@@ -5,7 +5,7 @@
     <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
         <label wire:key="f-last-grade" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Last Grade Level Completed</span>
-            <select wire:model.live="formData.last_grade_level" 
+            <select wire:model.live="formData.last_grade_level"
                     disabled
                     class="form-select rounded-lg border-[#e7cfcf] dark:border-white/20 bg-zinc-100 dark:bg-zinc-800 opacity-75 cursor-not-allowed focus:border-primary focus:ring-primary h-12 text-sm @error('formData.last_grade_level') border-red-500 ring-red-500 @enderror">
                 <option value="">Select Level</option>
@@ -18,7 +18,7 @@
         </label>
         <label wire:key="f-last-school" class="flex flex-col gap-2">
             <span class="text-[#1b0d0d] dark:text-[#fcf8f8] text-sm font-semibold">Last School Attended</span>
-            <input wire:model.live.debounce.500ms="formData.last_school_attended" 
+            <input wire:model.live.debounce.500ms="formData.last_school_attended"
                    @if($enrollment_type === 'Old Student') readonly @endif
                    class="form-input rounded-lg border-[#e7cfcf] dark:border-white/20 focus:border-primary focus:ring-primary h-12 text-sm @if($enrollment_type === 'Old Student') bg-zinc-100 dark:bg-zinc-800 opacity-75 cursor-not-allowed @else bg-white/50 dark:bg-black/20 @endif @error('formData.last_school_attended') border-red-500 ring-red-500 @enderror" type="text"/>
             @error('formData.last_school_attended') <span class="text-xs text-red-500 mt-1">{{ $message }}</span> @enderror
@@ -71,19 +71,21 @@
                     <span class="text-xs font-bold text-primary uppercase">Track</span>
                     <select wire:model.live="formData.shs_track" class="form-select rounded-lg border-[#e7cfcf] text-sm">
                         <option value="">Select Track</option>
-                        <option value="Academic">Academic</option>
-                        <option value="TVL">TVL</option>
+                        <option value="ACADEMIC">ACADEMIC</option>
+                        <option value="TECHPRO">TECHPRO</option>
                     </select>
                 </label>
                 <label class="flex flex-col gap-2">
                     <span class="text-xs font-bold text-primary uppercase">Strand</span>
                     <select wire:model.defer="formData.strand" class="form-select rounded-lg border-[#e7cfcf] text-sm">
                         <option value="">Select Strand</option>
-                        @if($formData['shs_track'] == 'Academic')
-                            <option value="STEM">STEM</option>
-                            <option value="HUMSS">HUMSS</option>
+                        @if($formData['shs_track'] == 'ACADEMIC')
+                            <option value="ABM">ABM</option>
+                            <option value="ABS">ABS</option>
                             <option value="GAS">GAS</option>
-                        @elseif($formData['shs_track'] == 'TVL')
+                            <option value="HUMSS">HUMSS</option>
+                            <option value="STEM">STEM</option>
+                        @elseif($formData['shs_track'] == 'TECHPRO')
                             <option value="ICT">ICT</option>
                             <option value="HE">HE</option>
                         @endif

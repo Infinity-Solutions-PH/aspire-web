@@ -298,6 +298,7 @@
                             @else
                                 <input wire:model.defer="newSection.name" type="text" placeholder="e.g. Sampaguita, Newton" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary focus:border-primary px-4 py-3 text-sm" />
                             @endif
+                            @error('newSection.name') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -315,22 +316,43 @@
                                         @endforeach
                                     @endif
                                 </select>
+                                @error('newSection.grade_level') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Capacity</label>
                                 <input wire:model.defer="newSection.capacity" type="number" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm px-4" />
+                                @error('newSection.capacity') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
                         @if($newSection['type'] === 'normal' && in_array($newSection['grade_level'], ['Grade 11', 'Grade 12']))
                             <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Track</label>
+                                <select wire:model.live="newSection.track" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm">
+                                    <option value="">Select Track...</option>
+                                    <option value="ACADEMIC">ACADEMIC</option>
+                                    <option value="TECHPRO">TECHPRO</option>
+                                </select>
+                                @error('newSection.track') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            </div>
+
+                            <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Strand</label>
                                 <select wire:model.live="newSection.strand" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary h-12 text-sm">
                                     <option value="">Select Strand...</option>
-                                    @foreach(['STEM', 'ICT', 'HUMSS', 'ABM', 'HE', 'Industrial Arts'] as $strand)
-                                        <option value="{{ $strand }}">{{ $strand }}</option>
-                                    @endforeach
+                                    @if($newSection['track'] === 'ACADEMIC')
+                                        <option value="ABM">ABM</option>
+                                        <option value="ABS">ABS</option>
+                                        <option value="GAS">GAS</option>
+                                        <option value="HUMSS">HUMSS</option>
+                                        <option value="STEM">STEM</option>
+                                    @elseif($newSection['track'] === 'TECHPRO')
+                                        <option value="ICT">ICT</option>
+                                        <option value="HE">HE</option>
+                                        <option value="Industrial Arts">Industrial Arts</option>
+                                    @endif
                                 </select>
+                                @error('newSection.strand') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         @endif
 
@@ -343,15 +365,16 @@
                                         <option value="{{ $course }}">{{ $course }}</option>
                                     @endforeach
                                 </select>
+                                @error('newSection.specialization') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
                             </div>
                         @endif
 
-                        @if($newSection['type'] === 'normal' && !in_array($newSection['grade_level'], ['Grade 11', 'Grade 12']))
+                        {{-- @if($newSection['type'] === 'normal' && !in_array($newSection['grade_level'], ['Grade 11', 'Grade 12']))
                         <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-xl border border-gray-100">
                             <input type="checkbox" wire:model.defer="newSection.is_star_section" id="star_section" class="size-5 rounded text-primary focus:ring-primary" />
                             <label for="star_section" class="text-sm font-bold text-gray-700">Set as Star Section (Academically Selective)</label>
                         </div>
-                        @endif
+                        @endif --}}
 
                         <button type="submit" class="w-full bg-primary text-white py-4 rounded-2xl font-black text-lg shadow-xl shadow-primary/30 hover:opacity-90 transition-all mt-4">
                             Confirm Creation
