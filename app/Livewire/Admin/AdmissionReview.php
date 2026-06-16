@@ -46,6 +46,16 @@ class AdmissionReview extends Component
     public function approve()
     {
         if ($this->isPre) {
+            // Check for duplicate LRN in enrollment
+            $exists = Enrollment::where('lrn', $this->record->lrn)
+                ->whereIn('status', ['Approved', 'Enrolled', 'pending_approval'])
+                ->exists();
+
+            if ($exists) {
+                session()->flash('error', 'An active enrollment record with this LRN already exists.');
+                return;
+            }
+
             $data = $this->record->form_data;
             
             // 1. Create Student Portal Account
@@ -169,7 +179,7 @@ class AdmissionReview extends Component
             'isStarQualified' => $sectioningService->checkStarQualification($enrollment),
             'availableSections' => $sectioningService->getAvailableSectionsForEnrollment($enrollment),
             'availableTechVocSections' => Section::where('grade_level', $enrollment->grade_level)
-                ->where('track', 'TECHPRO')
+                ->whereNotNull('specialization')
                 ->withCount('techVocEnrollments')
                 ->get()
                 ->filter(fn($s) => $s->tech_voc_enrollments_count < $s->capacity)

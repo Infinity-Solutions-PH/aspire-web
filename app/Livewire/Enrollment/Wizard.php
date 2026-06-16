@@ -232,10 +232,9 @@ class Wizard extends Component
             'birthdate' => 'required|date',
         ]);
 
-        // Scenario C: Already Enrolled
+        // Scenario C: Already Enrolled / Active Application Exists
         $alreadyEnrolled = Enrollment::where('lrn', $this->lrn)
-            ->where('status', 'Enrolled')
-            ->whereYear('finalized_at', now()->year)
+            ->whereIn('status', ['Enrolled', 'Approved', 'pending_approval', 'Submitted'])
             ->exists();
 
         if ($alreadyEnrolled) {
@@ -344,6 +343,15 @@ class Wizard extends Component
 
     public function startForm()
     {
+        // Check if already enrolled / active application exists
+        $alreadyEnrolled = Enrollment::where('lrn', $this->lrn)
+            ->whereIn('status', ['Enrolled', 'Approved', 'pending_approval', 'Submitted'])
+            ->exists();
+
+        if ($alreadyEnrolled) {
+            $this->showAlreadyEnrolledModal = true;
+            return;
+        }
         
         // Finalize draft creation if brand new
         $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();

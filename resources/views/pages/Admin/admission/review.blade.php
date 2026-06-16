@@ -45,6 +45,13 @@
         </div>
     @endif
 
+    @if (session()->has('error'))
+        <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-8 flex items-center gap-3">
+            <span class="material-symbols-outlined text-red-600">error</span>
+            <span class="font-bold">{{ session('error') }}</span>
+        </div>
+    @endif
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <!-- Left Column: Student Details -->
         <div class="lg:col-span-7 space-y-10">

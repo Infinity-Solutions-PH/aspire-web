@@ -19,6 +19,14 @@ class EnrollmentController extends Controller
 
     public function start()
     {
+        $exists = Enrollment::where('user_id', Auth::id())
+            ->whereIn('status', ['Draft', 'pending_approval', 'Approved', 'Enrolled'])
+            ->exists();
+
+        if ($exists) {
+            return redirect()->route('enrollment.index')->with('error', 'You already have an active enrollment application.');
+        }
+
         Enrollment::create([
             'user_id' => Auth::id(),
             'status' => 'Draft',

@@ -1,5 +1,12 @@
 <x-layouts::student-portal :title="__('Enrollment')">
     <div class="max-w-7xl mx-auto py-4">
+        @if (session()->has('error'))
+            <div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl mb-6 flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-600">error</span>
+                <span class="font-bold">{{ session('error') }}</span>
+            </div>
+        @endif
+
         @if(!$enrollment)
             <div class="max-w-[960px] mx-auto py-12 px-4">
                 <div class="group relative overflow-hidden rounded-3xl border-2 border-dashed border-primary/20 bg-white dark:bg-zinc-900 hover:bg-primary/5 hover:border-primary/40 transition-all p-16 flex flex-col items-center justify-center text-center gap-8 shadow-2xl shadow-primary/5">
