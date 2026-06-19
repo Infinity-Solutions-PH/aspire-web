@@ -457,7 +457,7 @@ class StudentMasterlist extends Component
         $addedFiles = [];
         foreach ($students as $student) {
             if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
-                $imageContent = Storage::disk('public')->get($student->profile_picture);
+                $filePath = Storage::disk('public')->path($student->profile_picture);
                 $ext = pathinfo($student->profile_picture, PATHINFO_EXTENSION) ?: 'jpg';
 
                 $middleInitial = $student->middle_name ? ' ' . strtoupper(substr($student->middle_name, 0, 1)) : '';
@@ -471,7 +471,7 @@ class StudentMasterlist extends Component
                 }
 
                 $addedFiles[$imageFileName] = true;
-                $zip->addFromString($imageFileName, $imageContent);
+                $zip->addFile($filePath, $imageFileName);
             }
         }
 
