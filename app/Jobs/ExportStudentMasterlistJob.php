@@ -104,10 +104,9 @@ class ExportStudentMasterlistJob implements ShouldQueue
             $zip = new ZipArchive;
             $fileName = 'Student_Masterlist_Export_'.date('Ymd_His').'.zip';
             
-            if (!file_exists(storage_path('app/exports'))) {
-                mkdir(storage_path('app/exports'), 0755, true);
-            }
-            $zipPath = storage_path('app/exports/'.$fileName);
+            // Use system temp directory for the zip building to prevent permission issues
+            $tempFile = tempnam(sys_get_temp_dir(), 'export_');
+            $zipPath = $tempFile . '.zip';
 
             if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
                 throw new Exception('Failed to create zip file.');
@@ -123,6 +122,9 @@ class ExportStudentMasterlistJob implements ShouldQueue
 
                     $middleInitial = $student->middle_name ? ' ' . strtoupper(substr($student->middle_name, 0, 1)) : '';
                     $baseName = strtoupper($student->last_name).', '.strtoupper($student->first_name).$middleInitial;
+                    
+                    // Sanitize file name to prevent ZipArchive close errors on invalid characters
+                    $baseName = preg_replace('/[^A-Za-z0-9 \-\,\.\(\)]/', '_', $baseName);
 
                     $imageFileName = $baseName.'.'.$ext;
 
@@ -135,7 +137,21 @@ class ExportStudentMasterlistJob implements ShouldQueue
                 }
             }
 
-            $zip->close();
+            if (!$zip->close()) {
+                 throw new Exception('Failed to save zip file. Check file permissions or temp directory.');
+            }
+
+            // Move completed zip to the exports directory
+            if (!file_exists(storage_path('app/exports'))) {
+                mkdir(storage_path('app/exports'), 0777, true);
+            }
+            
+            $finalPath = storage_path('app/exports/'.$fileName);
+            copy($zipPath, $finalPath);
+            
+            // Clean up temporary files
+            @unlink($zipPath);
+            @unlink($tempFile);
 
             Cache::put('export_status_' . $this->userId, [
                 'status' => 'completed', 
