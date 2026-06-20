@@ -441,7 +441,12 @@ class StudentMasterlist extends Component
 
         // 4. Create ZIP Archive
         $zip = new \ZipArchive;
-        $zipPath = tempnam(sys_get_temp_dir(), 'student_export_').'.zip';
+        $fileName = 'Student_Masterlist_Export_'.date('Ymd_His').'.zip';
+        
+        if (!file_exists(storage_path('app/exports'))) {
+            mkdir(storage_path('app/exports'), 0755, true);
+        }
+        $zipPath = storage_path('app/exports/'.$fileName);
 
         if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
             session()->flash('message', 'Failed to create zip file.');
@@ -478,10 +483,8 @@ class StudentMasterlist extends Component
         $zip->close();
 
         // 5. Trigger download and delete temporary zip file
-        $fileName = 'Student_Masterlist_Export_'.date('Ymd_His').'.zip';
-
         $this->showExportModal = false;
 
-        return response()->download($zipPath, $fileName)->deleteFileAfterSend(true);
+        $this->js('window.location.href = "' . route('admin.export.download', ['file' => $fileName]) . '";');
     }
 }

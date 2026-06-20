@@ -569,9 +569,11 @@
                     <!-- Modal Footer -->
                     <div class="pt-6 border-t border-[#e7cfcf] dark:border-[#422020] flex justify-end gap-3">
                         <button type="button" @click="showExportModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Cancel</button>
-                        <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">download</span>
-                            Export
+                        <button type="submit" wire:loading.attr="disabled" wire:target="exportMasterlist" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] disabled:hover:scale-100 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center gap-2">
+                            <span wire:loading.remove wire:target="exportMasterlist" class="material-symbols-outlined text-sm">download</span>
+                            <span wire:loading wire:target="exportMasterlist" class="material-symbols-outlined text-sm animate-spin">sync</span>
+                            <span wire:loading.remove wire:target="exportMasterlist">Export</span>
+                            <span wire:loading wire:target="exportMasterlist">Processing...</span>
                         </button>
                     </div>
                 </form>
