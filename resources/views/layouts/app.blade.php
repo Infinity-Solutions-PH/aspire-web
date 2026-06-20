@@ -224,5 +224,6 @@
     </div>
 
     @livewireScripts
+    <livewire:admin.global-export-monitor />
 </body>
 </html>

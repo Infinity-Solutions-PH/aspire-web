@@ -388,36 +388,8 @@ class StudentMasterlist extends Component
         ExportStudentMasterlistJob::dispatch(auth()->id(), $filters);
 
         $this->showExportModal = false;
-        $this->isExporting = true;
         
+        $this->dispatch('export-started');
         session()->flash('message', 'Export is processing in the background. You can continue using the system.');
-    }
-
-    public function checkExportStatus()
-    {
-        if (!$this->isExporting) {
-            return;
-        }
-
-        $statusData = Cache::get('export_status_' . auth()->id());
-
-        if (!$statusData) {
-            return;
-        }
-
-        if ($statusData['status'] === 'completed') {
-            $this->isExporting = false;
-            Cache::forget('export_status_' . auth()->id());
-            
-            session()->flash('message', 'Export completed successfully! Downloading...');
-            
-            $this->js('window.location.href = "' . route('admin.export.download', ['file' => $statusData['file']]) . '";');
-        } elseif ($statusData['status'] === 'failed') {
-            $this->isExporting = false;
-            Cache::forget('export_status_' . auth()->id());
-            
-            $errorMessage = $statusData['message'] ?? 'An error occurred during export.';
-            session()->flash('error', 'Export failed: ' . $errorMessage);
-        }
     }
 }

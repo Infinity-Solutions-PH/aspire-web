@@ -109,20 +109,6 @@
         </div>
     @endif
 
-    @if($isExporting)
-        <div wire:poll.2s="checkExportStatus" class="hidden"></div>
-        
-        <div class="fixed bottom-6 right-6 z-50 p-5 bg-white dark:bg-[#1a0c0c] border border-primary/30 rounded-2xl flex items-center gap-4 shadow-2xl shadow-primary/10">
-            <div class="size-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-                <span class="material-symbols-outlined animate-spin">sync</span>
-            </div>
-            <div>
-                <h4 class="text-sm font-bold text-gray-900 dark:text-white">Export Processing</h4>
-                <p class="text-xs text-gray-500 dark:text-gray-400">Please wait while the ZIP file is generated...</p>
-            </div>
-        </div>
-    @endif
-
     <!-- Filters & Search -->
     <div class="bg-white dark:bg-[#1a0c0c] rounded-2xl border border-[#e7cfcf] dark:border-[#422020] p-5 mb-6 shadow-sm">
         <div class="flex flex-wrap items-center gap-4">
