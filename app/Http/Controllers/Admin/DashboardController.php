@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $file = $request->query('file');
         
         // Check that the file has an export_ prefix to prevent downloading arbitrary temp files
-        if (!$file || !preg_match('/^export_[a-zA-Z0-9_-]+\.tmp\.zip$/', $file)) {
+        if (!$file || !preg_match('/^export_[a-zA-Z0-9_-]+\.zip$/', $file)) {
             abort(404);
         }
 
