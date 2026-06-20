@@ -8,7 +8,9 @@ use App\Models\Enrollment;
 use Livewire\Attributes\Url;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\ExportStudentMasterlistJob;
 
 class StudentMasterlist extends Component
 {
@@ -383,7 +385,7 @@ class StudentMasterlist extends Component
             'export_section_id' => $this->export_section_id,
         ];
 
-        \App\Jobs\ExportStudentMasterlistJob::dispatch(auth()->id(), $filters);
+        ExportStudentMasterlistJob::dispatch(auth()->id(), $filters);
 
         $this->showExportModal = false;
         $this->isExporting = true;
@@ -397,7 +399,7 @@ class StudentMasterlist extends Component
             return;
         }
 
-        $statusData = \Illuminate\Support\Facades\Cache::get('export_status_' . auth()->id());
+        $statusData = Cache::get('export_status_' . auth()->id());
 
         if (!$statusData) {
             return;
@@ -405,14 +407,14 @@ class StudentMasterlist extends Component
 
         if ($statusData['status'] === 'completed') {
             $this->isExporting = false;
-            \Illuminate\Support\Facades\Cache::forget('export_status_' . auth()->id());
+            Cache::forget('export_status_' . auth()->id());
             
             session()->flash('message', 'Export completed successfully! Downloading...');
             
             $this->js('window.location.href = "' . route('admin.export.download', ['file' => $statusData['file']]) . '";');
         } elseif ($statusData['status'] === 'failed') {
             $this->isExporting = false;
-            \Illuminate\Support\Facades\Cache::forget('export_status_' . auth()->id());
+            Cache::forget('export_status_' . auth()->id());
             
             $errorMessage = $statusData['message'] ?? 'An error occurred during export.';
             session()->flash('error', 'Export failed: ' . $errorMessage);

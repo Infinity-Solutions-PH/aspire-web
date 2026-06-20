@@ -12,4 +12,22 @@ class DashboardController extends Controller
     {
         return view('pages.Admin.dashboard');
     }
+
+    public function downloadExport(Request $request)
+    {
+        $file = $request->query('file');
+        
+        // Basic security check
+        if (!$file || !preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $file)) {
+            abort(404);
+        }
+
+        $path = storage_path('app/exports/' . $file);
+        
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        return response()->download($path)->deleteFileAfterSend(true);
+    }
 }
