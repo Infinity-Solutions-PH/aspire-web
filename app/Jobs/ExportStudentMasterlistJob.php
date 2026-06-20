@@ -2,16 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Models\Enrollment;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
 use Exception;
 use ZipArchive;
+use App\Models\Enrollment;
+use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 
 class ExportStudentMasterlistJob implements ShouldQueue
 {
@@ -141,21 +141,12 @@ class ExportStudentMasterlistJob implements ShouldQueue
                  throw new Exception('Failed to save zip file. Check file permissions or temp directory.');
             }
 
-            // Move completed zip to the exports directory
-            if (!file_exists(storage_path('app/exports'))) {
-                mkdir(storage_path('app/exports'), 0777, true);
-            }
-            
-            $finalPath = storage_path('app/exports/'.$fileName);
-            copy($zipPath, $finalPath);
-            
-            // Clean up temporary files
-            @unlink($zipPath);
+            // Remove the initial empty temp file, keeping only the actual .zip we created
             @unlink($tempFile);
 
             Cache::put('export_status_' . $this->userId, [
                 'status' => 'completed', 
-                'file' => $fileName
+                'file' => basename($zipPath)
             ], now()->addHours(1));
 
         } catch (Exception $e) {
