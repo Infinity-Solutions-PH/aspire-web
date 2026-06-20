@@ -44,6 +44,7 @@ Route::middleware(['auth', 'verified', 'can:access-admin'])->group(function () {
         Route::get('/sections/{section}', ManageStudents::class)->name('admin.sections.students');
         Route::get('/sections/{section}/export/pdf', [ExportSectionMasterlistController::class, 'exportPdf'])->name('admin.sections.export.pdf');
         Route::get('/sections/{section}/export/csv', [ExportSectionMasterlistController::class, 'exportCsv'])->name('admin.sections.export.csv');
+        Route::get('/exports/download', [AdminDashboardController::class, 'downloadExport'])->name('admin.export.download');
 
         Route::get('/schedules', ScheduleManager::class)->name('admin.schedules');
         Route::get('/faculty', FacultyManagement::class)->name('admin.faculty');
