@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
@@ -17,17 +16,18 @@ class DashboardController extends Controller
     {
         $file = $request->query('file');
         
-        // Basic security check
-        if (!$file || !preg_match('/^[a-zA-Z0-9_-]+\.zip$/', $file)) {
+        // Check that the file has an export_ prefix to prevent downloading arbitrary temp files
+        if (!$file || !preg_match('/^export_[a-zA-Z0-9_-]+\.zip$/', $file)) {
             abort(404);
         }
 
-        $path = storage_path('app/exports/' . $file);
+        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $file;
         
         if (!file_exists($path)) {
             abort(404);
         }
 
-        return response()->download($path)->deleteFileAfterSend(true);
+        $downloadName = 'Student_Masterlist_Export_' . date('Ymd_His') . '.zip';
+        return response()->download($path, $downloadName)->deleteFileAfterSend(true);
     }
 }
