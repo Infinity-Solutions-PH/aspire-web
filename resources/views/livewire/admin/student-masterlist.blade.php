@@ -88,6 +88,41 @@
         </div>
     @endif
 
+    @if (session()->has('error'))
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 5000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-y-[-10px]"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 translate-y-[-10px]"
+             class="mb-6 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/30 rounded-2xl flex items-center justify-between text-red-800 dark:text-red-400 shadow-sm shadow-red-100/10">
+            <div class="flex items-center gap-3">
+                <span class="material-symbols-outlined text-red-600 dark:text-red-400">error</span>
+                <span class="text-sm font-semibold">{{ session('error') }}</span>
+            </div>
+            <button @click="show = false" class="text-red-500 hover:text-red-700 dark:hover:text-red-300 transition-colors">
+                <span class="material-symbols-outlined text-lg">close</span>
+            </button>
+        </div>
+    @endif
+
+    @if($isExporting)
+        <div wire:poll.2s="checkExportStatus" class="hidden"></div>
+        
+        <div class="fixed bottom-6 right-6 z-50 p-5 bg-white dark:bg-[#1a0c0c] border border-primary/30 rounded-2xl flex items-center gap-4 shadow-2xl shadow-primary/10">
+            <div class="size-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined animate-spin">sync</span>
+            </div>
+            <div>
+                <h4 class="text-sm font-bold text-gray-900 dark:text-white">Export Processing</h4>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Please wait while the ZIP file is generated...</p>
+            </div>
+        </div>
+    @endif
+
     <!-- Filters & Search -->
     <div class="bg-white dark:bg-[#1a0c0c] rounded-2xl border border-[#e7cfcf] dark:border-[#422020] p-5 mb-6 shadow-sm">
         <div class="flex flex-wrap items-center gap-4">
@@ -569,9 +604,11 @@
                     <!-- Modal Footer -->
                     <div class="pt-6 border-t border-[#e7cfcf] dark:border-[#422020] flex justify-end gap-3">
                         <button type="button" @click="showExportModal = false" class="px-6 py-3 rounded-xl text-sm font-bold text-[#9a4c4c] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">Cancel</button>
-                        <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all flex items-center gap-2">
-                            <span class="material-symbols-outlined text-sm">download</span>
-                            Export
+                        <button type="submit" wire:loading.attr="disabled" class="px-8 py-3 bg-primary text-white rounded-xl text-sm font-black shadow-lg shadow-primary/20 hover:scale-[1.02] disabled:hover:scale-100 disabled:opacity-70 disabled:cursor-not-allowed transition-all flex items-center gap-2">
+                            <span wire:loading.remove wire:target="exportMasterlist" class="material-symbols-outlined text-sm">download</span>
+                            <span wire:loading wire:target="exportMasterlist" class="material-symbols-outlined text-sm animate-spin">sync</span>
+                            <span wire:loading.remove wire:target="exportMasterlist">Start Export</span>
+                            <span wire:loading wire:target="exportMasterlist">Starting...</span>
                         </button>
                     </div>
                 </form>

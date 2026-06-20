@@ -42,6 +42,8 @@ class StudentMasterlist extends Component
 
     public $export_section_id = 'All';
 
+    public $isExporting = false;
+
     // Edit fields
     public $edit_first_name = '';
 
@@ -374,114 +376,46 @@ class StudentMasterlist extends Component
 
     public function exportMasterlist()
     {
-        // 1. Fetch filtered students
-        $query = Enrollment::query()
-            ->with(['section.adviser', 'techVocSection.adviser'])
-            ->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated']);
+        $filters = [
+            'status' => $this->status,
+            'export_school_level' => $this->export_school_level,
+            'export_grade_level' => $this->export_grade_level,
+            'export_section_id' => $this->export_section_id,
+        ];
 
-        if ($this->status && $this->status !== 'All Status') {
-            $query->where('status', $this->status);
-        }
-
-        if ($this->export_school_level === 'JHS') {
-            $query->whereIn('grade_level', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']);
-        } elseif ($this->export_school_level === 'SHS') {
-            $query->whereIn('grade_level', ['Grade 11', 'Grade 12']);
-        }
-
-        if ($this->export_school_level !== 'All' && $this->export_grade_level !== 'All') {
-            $query->where('grade_level', $this->export_grade_level);
-        }
-
-        if ($this->export_school_level !== 'All' && $this->export_grade_level !== 'All' && $this->export_section_id !== 'All') {
-            $query->where(function ($q) {
-                $q->where('section_id', $this->export_section_id)
-                    ->orWhere('tech_voc_section_id', $this->export_section_id);
-            });
-        }
-
-        $students = $query->get();
-
-        if ($students->isEmpty()) {
-            session()->flash('message', 'No student records found matching the export criteria.');
-            $this->showExportModal = false;
-
-            return;
-        }
-
-        // 2. Separate male and female students
-        $males = $students->where('sex', 'Male')->sortBy('last_name')->sortBy('first_name');
-        $females = $students->where('sex', 'Female')->sortBy('last_name')->sortBy('first_name');
-
-        // 3. Generate CSV content
-        $csvHeaders = ['LRN', 'NAME', 'BIRTHDATE', 'GUARDIAN NAME', 'CURRENT ADDRESS', 'CONTACT NUMBER', 'GRADE LEVEL', 'SECTION', 'ADVISER'];
-
-        $tempCsv = fopen('php://temp', 'r+');
-
-        // Write Male section
-        fputcsv($tempCsv, ['Male Students']);
-        fputcsv($tempCsv, $csvHeaders);
-        foreach ($males as $student) {
-            fputcsv($tempCsv, $this->formatStudentRow($student));
-        }
-
-        // Space
-        fputcsv($tempCsv, []);
-
-        // Write Female section
-        fputcsv($tempCsv, ['Female Students']);
-        fputcsv($tempCsv, $csvHeaders);
-        foreach ($females as $student) {
-            fputcsv($tempCsv, $this->formatStudentRow($student));
-        }
-
-        rewind($tempCsv);
-        $csvContent = stream_get_contents($tempCsv);
-        fclose($tempCsv);
-
-        // 4. Create ZIP Archive
-        $zip = new \ZipArchive;
-        $zipPath = tempnam(sys_get_temp_dir(), 'student_export_').'.zip';
-
-        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) !== true) {
-            session()->flash('message', 'Failed to create zip file.');
-            $this->showExportModal = false;
-
-            return;
-        }
-
-        // Add CSV file to zip
-        $zip->addFromString('Student_Masterlist.csv', $csvContent);
-
-        // Add profile pictures / images to zip
-        $addedFiles = [];
-        foreach ($students as $student) {
-            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
-                $filePath = Storage::disk('public')->path($student->profile_picture);
-                $ext = pathinfo($student->profile_picture, PATHINFO_EXTENSION) ?: 'jpg';
-
-                $middleInitial = $student->middle_name ? ' ' . strtoupper(substr($student->middle_name, 0, 1)) : '';
-                $baseName = strtoupper($student->last_name).', '.strtoupper($student->first_name).$middleInitial;
-
-                $imageFileName = $baseName.'.'.$ext;
-
-                // Handle name collision
-                if (isset($addedFiles[$imageFileName])) {
-                    $imageFileName = $baseName.' ('.$student->lrn.').'.$ext;
-                }
-
-                $addedFiles[$imageFileName] = true;
-                $zip->addFile($filePath, $imageFileName);
-            }
-        }
-
-        $zip->close();
-
-        // 5. Trigger download and delete temporary zip file
-        $fileName = 'Student_Masterlist_Export_'.date('Ymd_His').'.zip';
+        \App\Jobs\ExportStudentMasterlistJob::dispatch(auth()->id(), $filters);
 
         $this->showExportModal = false;
+        $this->isExporting = true;
+        
+        session()->flash('message', 'Export is processing in the background. You can continue using the system.');
+    }
 
-        return response()->download($zipPath, $fileName)->deleteFileAfterSend(true);
+    public function checkExportStatus()
+    {
+        if (!$this->isExporting) {
+            return;
+        }
+
+        $statusData = \Illuminate\Support\Facades\Cache::get('export_status_' . auth()->id());
+
+        if (!$statusData) {
+            return;
+        }
+
+        if ($statusData['status'] === 'completed') {
+            $this->isExporting = false;
+            \Illuminate\Support\Facades\Cache::forget('export_status_' . auth()->id());
+            
+            session()->flash('message', 'Export completed successfully! Downloading...');
+            
+            $this->js('window.location.href = "' . route('admin.export.download', ['file' => $statusData['file']]) . '";');
+        } elseif ($statusData['status'] === 'failed') {
+            $this->isExporting = false;
+            \Illuminate\Support\Facades\Cache::forget('export_status_' . auth()->id());
+            
+            $errorMessage = $statusData['message'] ?? 'An error occurred during export.';
+            session()->flash('error', 'Export failed: ' . $errorMessage);
+        }
     }
 }
