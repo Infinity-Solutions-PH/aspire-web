@@ -30,7 +30,8 @@ class ClearTemporaryExports extends Command
         // Gather both the main tracking placeholders and the zip archives
         $patterns = [
             sys_get_temp_dir() . '/student_export_*',
-            sys_get_temp_dir() . '/csv_export_*'
+            sys_get_temp_dir() . '/csv_export_*',
+            sys_get_temp_dir() . '/export_*'
         ];
 
         $files = [];
@@ -61,7 +62,7 @@ class ClearTemporaryExports extends Command
         $freedMb = round($freedBytes / 1024 / 1024, 2);
 
         $this->info("Success! Cleared {$count} files and reclaimed {$freedMb} MB of disk space.");
-        
+
         return Command::SUCCESS;
     }
 }
