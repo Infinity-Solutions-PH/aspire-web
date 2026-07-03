@@ -66,11 +66,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the student's enrollment record.
+     * Get the student record for this user.
      */
-    public function enrollment()
+    public function student()
     {
-        return $this->hasOne(Enrollment::class, 'user_id');
+        return $this->hasOne(Student::class);
+    }
+
+    /**
+     * Get the student's enrollments through the student record.
+     */
+    public function enrollments()
+    {
+        return $this->hasManyThrough(Enrollment::class, Student::class);
     }
 }
 

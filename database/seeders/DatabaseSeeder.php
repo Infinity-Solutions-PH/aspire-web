@@ -13,11 +13,11 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminUserSeeder::class,
-            SchoolManagementSeeder::class,
-            JhsSectionSeeder::class,
             PositionSeeder::class,
-            BranchSeeder::class,
             DepartmentSeeder::class,
+            // SchoolManagementSeeder::class,
+            // JhsSectionSeeder::class,
+            // BranchSeeder::class,
             // PlantillaPositionSeeder::class,
             // FacultySeeder::class,
             // BulkEnrollmentSeeder::class,

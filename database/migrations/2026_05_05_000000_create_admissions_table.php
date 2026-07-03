@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pre_enrollments', function (Blueprint $table) {
+        Schema::create('admissions', function (Blueprint $table) {
             $table->id();
+            $table->string('transaction_number')->unique()->nullable();
             $table->string('lrn')->unique();
             $table->date('birthdate');
             $table->integer('current_step')->default(0);
-            $table->enum('status', ['draft', 'pending_approval'])->default('draft');
+            $table->enum('status', ['draft', 'pending_approval', 'approved', 'rejected'])->default('draft');
             $table->json('form_data')->nullable();
             $table->timestamps();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pre_enrollments');
+        Schema::dropIfExists('admissions');
     }
 };
