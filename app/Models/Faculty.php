@@ -16,9 +16,9 @@ class Faculty extends Model
         'faculty_id',
         'department_id',
         'status',
-        'branch_id',
         'level',
         'plantilla_position_id',
+        'position_id',
         'gender',
         'inactive_reason',
         'effective_date',
@@ -62,11 +62,15 @@ class Faculty extends Model
         );
     }
 
-    public function branch(): BelongsTo
+    public function directPosition(): BelongsTo
     {
-        return $this->belongsTo(Branch::class);
+        return $this->belongsTo(Position::class, 'position_id');
     }
 
+    public function getEffectivePositionAttribute()
+    {
+        return $this->plantillaPosition ? $this->plantillaPosition->position : $this->directPosition;
+    }
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class, 'teacher_id', 'user_id');

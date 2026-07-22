@@ -57,7 +57,7 @@ class SocialiteController extends Controller
         }
 
         // Check if faculty role and active
-        if ($user->role === 'teacher') {
+        if ($user->hasRole('faculty')) {
             if (!$user->faculty) {
                 return redirect()->route('admin.login')->withErrors(['email' => __('Faculty profile not found.')]);
             }

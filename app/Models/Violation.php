@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['user_id', 'title', 'severity', 'details', 'recorded_by', 'violation_date'])]
+#[Fillable(['student_id', 'title', 'severity', 'details', 'recorded_by', 'violation_date'])]
 class Violation extends Model
 {
     use HasFactory;
@@ -29,7 +29,7 @@ class Violation extends Model
      */
     public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 
     /**

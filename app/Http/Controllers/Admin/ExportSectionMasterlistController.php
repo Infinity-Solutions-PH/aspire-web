@@ -17,11 +17,14 @@ class ExportSectionMasterlistController extends Controller
             ? 'tech_voc_section_id'
             : 'section_id';
 
-        return Enrollment::where($sectionColumn, $section->id)
-            ->orderBy('sex', 'desc') // Male before Female
-            ->orderBy('last_name', 'asc')
-            ->orderBy('first_name', 'asc')
-            ->get();
+        return Enrollment::with('student')
+            ->where($sectionColumn, $section->id)
+            ->get()
+            ->sortBy([
+                ['sex', 'desc'],
+                ['last_name', 'asc'],
+                ['first_name', 'asc']
+            ])->values();
     }
 
     public function exportPdf(Section $section)

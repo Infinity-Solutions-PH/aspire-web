@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Admission extends Model
 {
-    use \Illuminate\Database\Eloquent\Attributes\Fillable;
+    // use \Illuminate\Database\Eloquent\Attributes\HasAttributes;
 
     protected $fillable = [
         'transaction_number',

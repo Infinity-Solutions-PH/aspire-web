@@ -46,8 +46,9 @@ return new class extends Migration
             $table->text('admin_remarks')->nullable();
             $table->foreignId('verified_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('finalized_at')->nullable();
-
             $table->timestamps();
+
+            $table->unique(['student_id', 'school_year_id'], 'enrollments_student_term_unique');
         });
     }
 

@@ -23,7 +23,7 @@ class Profile extends Component
 
     // Read only fields
     public $faculty_id;
-    public $branch_name;
+
     public $level;
     public $department_name;
     public $position_name;
@@ -41,7 +41,6 @@ class Profile extends Component
         if ($faculty) {
             $this->faculty_id = $faculty->faculty_id;
             $this->gender = $faculty->gender;
-            $this->branch_name = $faculty->branch ? $faculty->branch->name : 'N/A';
             $this->level = $faculty->level === 'JHS' ? 'Junior High School (JHS)' : ($faculty->level === 'SHS' ? 'Senior High School (SHS)' : 'N/A');
             $this->department_name = $faculty->department ? $faculty->department->name : 'N/A';
             $this->position_name = $faculty->plantillaPosition && $faculty->plantillaPosition->position ? $faculty->plantillaPosition->position->name : 'N/A';

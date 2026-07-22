@@ -10,7 +10,7 @@ class EnrollmentController extends Controller
 {
     public function index()
     {
-        $enrollment = Enrollment::where('user_id', Auth::id())->latest()->first();
+        $enrollment = Auth::user()->enrollments()->latest()->first();
 
         return view('pages.StudentPortal.enrollment.index', [
             'enrollment' => $enrollment,
@@ -19,7 +19,7 @@ class EnrollmentController extends Controller
 
     public function start()
     {
-        $exists = Enrollment::where('user_id', Auth::id())
+        $exists = Auth::user()->enrollments()
             ->whereIn('status', ['Draft', 'pending_approval', 'Approved', 'Enrolled'])
             ->exists();
 
@@ -28,7 +28,7 @@ class EnrollmentController extends Controller
         }
 
         Enrollment::create([
-            'user_id' => Auth::id(),
+            'student_id' => Auth::user()->student->id,
             'status' => 'Draft',
             'current_step' => 1,
         ]);

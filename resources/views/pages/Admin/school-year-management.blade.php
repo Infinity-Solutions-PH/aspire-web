@@ -1,7 +1,7 @@
 @section('page-title', 'School Year Management')
 
-<main class="flex-1 overflow-y-auto px-4 py-8 lg:px-12 bg-background-light dark:bg-background-dark">
-<div class="max-w-6xl mx-auto space-y-8">
+<div>
+    <div class="space-y-8">
     
     @if(session()->has('message'))
         <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
@@ -9,16 +9,23 @@
         </div>
     @endif
 
-    <!-- PageHeading -->
-    <div class="flex flex-wrap items-center justify-between gap-6">
-        <div class="flex min-w-72 flex-col gap-1">
-            <p class="text-[#1b0d0d] dark:text-white text-4xl font-black leading-tight tracking-tight">School Year Management</p>
-            <p class="text-[#9a4c4c] dark:text-gray-400 text-base font-normal">Create and manage academic calendars for Tanza National Trade School.</p>
+    <!-- Page Heading -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">calendar_month</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">School Year Management</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Create and manage academic calendars for Tanza National Trade School.</p>
+            </div>
         </div>
-        <button wire:click="openModal" class="flex min-w-[120px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-sm font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">
-            <span class="material-symbols-outlined text-lg">add_circle</span>
-            <span class="truncate">Create New School Year</span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button wire:click="openModal" class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined text-lg">add_circle</span>
+                <span>Create New School Year</span>
+            </button>
+        </div>
     </div>
 
     <!-- Stats -->
@@ -129,62 +136,73 @@
         </div>
     </div>
 
+    </div>
+
     <!-- Modal for Create/Edit -->
     @if($showModal)
-    <div class="fixed inset-0 lg:left-64 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div class="bg-white dark:bg-[#2a1515] rounded-3xl w-full max-w-xl overflow-hidden shadow-2xl">
-            <div class="p-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex justify-between items-center bg-[#fdfafb] dark:bg-[#3d2424]">
-                <h3 class="text-xl font-black text-[#1b0d0d] dark:text-white uppercase tracking-tight">
-                    {{ $isEdit ? 'Edit School Year' : 'Create School Year' }}
-                </h3>
-                <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+    <div class="fixed inset-0 lg:left-64 z-40 overflow-y-auto">
+        <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="absolute inset-0 -z-10 transition-opacity bg-black/60 backdrop-blur-sm" wire:click="$set('showModal', false)"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+            <div class="inline-block w-full max-w-2xl overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl relative z-10">
+                <!-- Modal Header -->
+                <div class="px-8 py-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-primary/5">
+                    <div>
+                        <h3 class="text-xl font-black text-primary uppercase tracking-tight">{{ $isEdit ? 'Edit School Year' : 'Create School Year' }}</h3>
+                        <p class="text-xs text-[#9a4c4c] dark:text-white/60">{{ $isEdit ? 'Update academic calendar details.' : 'Create a new academic calendar.' }}</p>
+                    </div>
+                    <button wire:click="$set('showModal', false)" class="text-gray-400 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                
+                <form wire:submit.prevent="save" class="p-8 space-y-6">
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Year Name</label>
+                        <input type="text" wire:model="form.name" placeholder="e.g. 2024-2025" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary mt-1">
+                        @error('form.name') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Status</label>
+                        <select wire:model="form.status" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary mt-1">
+                            <option value="Upcoming">Upcoming</option>
+                            <option value="Active">Active</option>
+                            <option value="Closed">Closed</option>
+                        </select>
+                        @error('form.status') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Enrollment Start</label>
+                            <input type="date" wire:model="form.enrollment_start" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary mt-1">
+                            @error('form.enrollment_start') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Enrollment End</label>
+                            <input type="date" wire:model="form.enrollment_end" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary mt-1">
+                            @error('form.enrollment_end') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Classes Start Date</label>
+                        <input type="date" wire:model="form.classes_start" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary mt-1">
+                        @error('form.classes_start') <span class="text-[10px] text-red-500 font-bold uppercase mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 pt-6 mt-6 border-t border-[#f3e7e7] dark:border-[#3a1f1f]">
+                        <button type="button" wire:click="$set('showModal', false)" class="px-6 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">Cancel</button>
+                        <button type="submit" class="px-6 py-2.5 text-sm font-bold text-white bg-primary hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/30 transition-all">
+                            Save School Year
+                        </button>
+                    </div>
+                </form>
             </div>
-            
-            <form wire:submit.prevent="save" class="p-6 space-y-5">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">School Year Name</label>
-                    <input type="text" wire:model="form.name" placeholder="e.g. 2024-2025" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary text-sm h-12">
-                    @error('form.name') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Status</label>
-                    <select wire:model="form.status" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary text-sm h-12">
-                        <option value="Upcoming">Upcoming</option>
-                        <option value="Active">Active</option>
-                        <option value="Closed">Closed</option>
-                    </select>
-                    @error('form.status') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Enrollment Start</label>
-                        <input type="date" wire:model="form.enrollment_start" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary text-sm h-12">
-                        @error('form.enrollment_start') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Enrollment End</label>
-                        <input type="date" wire:model="form.enrollment_end" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary text-sm h-12">
-                        @error('form.enrollment_end') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Classes Start Date</label>
-                    <input type="date" wire:model="form.classes_start" class="w-full rounded-xl border-[#f3e7e7] focus:ring-primary text-sm h-12">
-                    @error('form.classes_start') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                </div>
-
-                <div class="pt-4 flex justify-end gap-3 border-t border-[#f3e7e7] dark:border-[#3a1f1f]">
-                    <button type="button" wire:click="$set('showModal', false)" class="px-5 py-2.5 rounded-xl text-gray-600 font-bold hover:bg-gray-100 transition-colors text-sm">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-primary text-white font-bold hover:bg-primary/90 transition-colors shadow-lg shadow-primary/30 text-sm">Save School Year</button>
-                </div>
-            </form>
         </div>
     </div>
     @endif
 </div>
-</main>

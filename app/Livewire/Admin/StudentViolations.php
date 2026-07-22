@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use App\Models\User;
+use App\Models\Student;
 use App\Models\Violation;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -40,7 +40,7 @@ class StudentViolations extends Component
     public $viewingViolation = null;
 
     protected $rules = [
-        'selectedStudentId' => 'required|exists:users,id',
+        'selectedStudentId' => 'required|exists:students,id',
         'title' => 'required|string|max:255',
         'severity' => 'required|in:Low,Medium,High',
         'details' => 'required|string',
@@ -80,14 +80,16 @@ class StudentViolations extends Component
             return;
         }
 
-        $this->studentSearchResults = User::where('role', 'student')
-            ->where(function ($query) {
-                $query->where('name', 'like', '%' . $this->studentSearch . '%')
-                    ->orWhere('student_id', 'like', '%' . $this->studentSearch . '%');
-            })
-            ->with('enrollment')
+        $this->studentSearchResults = Student::where('first_name', 'like', '%' . $this->studentSearch . '%')
+            ->orWhere('last_name', 'like', '%' . $this->studentSearch . '%')
+            ->orWhere('lrn', 'like', '%' . $this->studentSearch . '%')
+            ->with('enrollments')
             ->take(5)
             ->get()
+            ->map(function ($student) {
+                $student->name = $student->first_name . ' ' . $student->last_name;
+                return $student;
+            })
             ->toArray();
     }
 
@@ -118,7 +120,7 @@ class StudentViolations extends Component
         $this->validate();
 
         Violation::create([
-            'user_id' => $this->selectedStudentId,
+            'student_id' => $this->selectedStudentId,
             'title' => $this->title,
             'severity' => $this->severity,
             'details' => $this->details,
@@ -138,8 +140,8 @@ class StudentViolations extends Component
 
         $violation = Violation::findOrFail($id);
         $this->selectedViolationId = $id;
-        $this->selectedStudentId = $violation->user_id;
-        $this->selectedStudentName = $violation->student->name;
+        $this->selectedStudentId = $violation->student_id;
+        $this->selectedStudentName = $violation->student->first_name . ' ' . $violation->student->last_name;
         $this->title = $violation->title;
         $this->severity = $violation->severity;
         $this->details = $violation->details;
@@ -154,7 +156,7 @@ class StudentViolations extends Component
 
         $violation = Violation::findOrFail($this->selectedViolationId);
         $violation->update([
-            'user_id' => $this->selectedStudentId,
+            'student_id' => $this->selectedStudentId,
             'title' => $this->title,
             'severity' => $this->severity,
             'details' => $this->details,
@@ -168,7 +170,7 @@ class StudentViolations extends Component
 
     public function openViewModal($id)
     {
-        $this->viewingViolation = Violation::with(['student.enrollment', 'recorder'])->findOrFail($id);
+        $this->viewingViolation = Violation::with(['student.enrollments', 'recorder'])->findOrFail($id);
         $this->showViewModal = true;
     }
 
@@ -195,18 +197,19 @@ class StudentViolations extends Component
     public function render()
     {
         $violations = Violation::query()
-            ->with(['student.enrollment', 'recorder'])
+            ->with(['student.enrollments', 'recorder'])
             ->when($this->search, function ($query) {
                 $query->whereHas('student', function ($q) {
-                    $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('student_id', 'like', '%' . $this->search . '%');
+                    $q->where('first_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('last_name', 'like', '%' . $this->search . '%')
+                        ->orWhere('lrn', 'like', '%' . $this->search . '%');
                 })->orWhere('title', 'like', '%' . $this->search . '%');
             })
             ->when($this->severityFilter, function ($query) {
                 $query->where('severity', $this->severityFilter);
             })
             ->when($this->schoolLevelFilter, function ($query) {
-                $query->whereHas('student.enrollment', function ($q) {
+                $query->whereHas('student.enrollments', function ($q) {
                     if ($this->schoolLevelFilter === 'JHS') {
                         $q->whereIn('grade_level', ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10']);
                     } elseif ($this->schoolLevelFilter === 'SHS') {
@@ -215,7 +218,7 @@ class StudentViolations extends Component
                 });
             })
             ->when($this->gradeLevelFilter, function ($query) {
-                $query->whereHas('student.enrollment', function ($q) {
+                $query->whereHas('student.enrollments', function ($q) {
                     $q->where('grade_level', $this->gradeLevelFilter);
                 });
             })

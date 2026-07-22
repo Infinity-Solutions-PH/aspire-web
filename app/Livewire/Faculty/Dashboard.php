@@ -62,8 +62,8 @@ class Dashboard extends Component
                     $q->whereIn('section_id', $taughtNormalSectionIds)
                       ->orWhereIn('tech_voc_section_id', $taughtTvlSectionIds);
                 })
-                ->distinct('user_id')
-                ->count('user_id');
+                ->distinct('student_id')
+                ->count('student_id');
         }
 
         // 5. Schedules for display

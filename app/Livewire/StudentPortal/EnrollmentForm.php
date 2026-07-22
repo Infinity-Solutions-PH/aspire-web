@@ -111,11 +111,11 @@ class EnrollmentForm extends Component
         $user = Auth::user();
         
         // Conditional Auto-Progression Detection (Phase 2 Recommendation)
-        if ($user->role === 'student' || $user->role === 'student') {
+        if ($user->hasRole('student')) {
             $this->enrollment_type = 'Promoted';
             
             // Fetch the most recent finalized enrollment to pre-fill
-            $latest = Enrollment::where('user_id', $user->id)
+            $latest = Auth::user()->enrollments()
                 ->where('status', 'Enrolled')
                 ->latest()
                 ->first();
@@ -136,7 +136,7 @@ class EnrollmentForm extends Component
             }
         }
 
-        $existing = Enrollment::where('user_id', Auth::id())->where('status', 'Draft')->first();
+        $existing = Auth::user()->enrollments()->where('status', 'Draft')->first();
 
         if ($existing) {
             $this->fill($existing->toArray());
@@ -178,7 +178,7 @@ class EnrollmentForm extends Component
     public function saveDraft()
     {
         $data = $this->all();
-        $data['user_id'] = Auth::id();
+        $data['student_id'] = Auth::user()->student->id;
         $data['status'] = 'Draft';
         $data['type'] = $this->enrollment_type;
         
@@ -187,7 +187,7 @@ class EnrollmentForm extends Component
         }
 
         Enrollment::updateOrCreate(
-            ['user_id' => Auth::id(), 'status' => 'Draft'],
+            ['student_id' => Auth::user()->student->id, 'status' => 'Draft'],
             $data
         );
     }
@@ -204,11 +204,11 @@ class EnrollmentForm extends Component
 
         $this->saveDraft();
 
-        $enrollment = Enrollment::where('user_id', Auth::id())->where('status', 'Draft')->first();
+        $enrollment = Auth::user()->enrollments()->where('status', 'Draft')->first();
 
         if (!$enrollment) {
             // Fallback if somehow draft was already submitted or lost
-            $enrollment = Enrollment::where('user_id', Auth::id())->latest()->first();
+            $enrollment = Auth::user()->enrollments()->latest()->first();
         }
 
         if ($this->psa_file) {

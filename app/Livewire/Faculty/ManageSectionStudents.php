@@ -50,25 +50,27 @@ class ManageSectionStudents extends Component
             : 'section_id';
 
         $baseQuery = Enrollment::with('techVocSection')
-            ->where('status', 'Enrolled')
-            ->where($sectionColumn, $this->section->id)
+            ->join('students', 'enrollments.student_id', '=', 'students.id')
+            ->select('enrollments.*')
+            ->where('enrollments.status', 'Enrolled')
+            ->where('enrollments.' . $sectionColumn, $this->section->id)
             ->when($this->search, function($query) {
                 $query->where(function($q) {
-                    $q->where('first_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('last_name', 'like', '%' . $this->search . '%')
-                      ->orWhere('lrn', 'like', '%' . $this->search . '%');
+                    $q->where('students.first_name', 'like', '%' . $this->search . '%')
+                      ->orWhere('students.last_name', 'like', '%' . $this->search . '%')
+                      ->orWhere('students.lrn', 'like', '%' . $this->search . '%');
                 });
             });
 
-        $totalMales = (clone $baseQuery)->where('sex', 'Male')->count();
-        $totalFemales = (clone $baseQuery)->where('sex', 'Female')->count();
+        $totalMales = (clone $baseQuery)->where('students.sex', 'Male')->count();
+        $totalFemales = (clone $baseQuery)->where('students.sex', 'Female')->count();
 
         $students = $baseQuery->when($this->activeSex !== 'All', function($query) {
-                $query->where('sex', $this->activeSex);
+                $query->where('students.sex', $this->activeSex);
             })
-            ->orderBy('sex', 'desc') // 'Male' before 'Female'
-            ->orderBy('last_name', 'asc')
-            ->orderBy('first_name', 'asc')
+            ->orderBy('students.sex', 'desc') // 'Male' before 'Female'
+            ->orderBy('students.last_name', 'asc')
+            ->orderBy('students.first_name', 'asc')
             ->paginate(10);
 
         return view('livewire.faculty.manage-section-students', [

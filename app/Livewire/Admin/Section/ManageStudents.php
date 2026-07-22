@@ -3,8 +3,9 @@
 namespace App\Livewire\Admin\Section;
 
 use App\Models\Section;
-use App\Models\Enrollment;
+use App\Models\Student;
 use Livewire\Component;
+use App\Models\Enrollment;
 use Livewire\WithPagination;
 
 class ManageStudents extends Component
@@ -83,20 +84,26 @@ class ManageStudents extends Component
             ? 'tech_voc_section_id'
             : 'section_id';
 
-        $baseQuery = Enrollment::with('techVocSection')->where($sectionColumn, $this->section->id)
+        $baseQuery = Enrollment::query()
+            ->select('enrollments.*')
+            ->addSelect(['last_name' => Student::select('last_name')->whereColumn('id', 'enrollments.student_id')->limit(1)])
+            ->addSelect(['first_name' => Student::select('first_name')->whereColumn('id', 'enrollments.student_id')->limit(1)])
+            ->addSelect(['sex' => Student::select('sex')->whereColumn('id', 'enrollments.student_id')->limit(1)])
+            ->with(['techVocSection', 'student'])
+            ->where('enrollments.'.$sectionColumn, $this->section->id)
             ->when($this->search, function($query) {
-                $query->where(function($q) {
+                $query->whereHas('student', function($q) {
                     $q->where('first_name', 'like', '%' . $this->search . '%')
                       ->orWhere('last_name', 'like', '%' . $this->search . '%')
                       ->orWhere('lrn', 'like', '%' . $this->search . '%');
                 });
             });
 
-        $totalMales = (clone $baseQuery)->where('sex', 'Male')->count();
-        $totalFemales = (clone $baseQuery)->where('sex', 'Female')->count();
+        $totalMales = (clone $baseQuery)->whereHas('student', function($q){ $q->where('sex', 'Male'); })->count();
+        $totalFemales = (clone $baseQuery)->whereHas('student', function($q){ $q->where('sex', 'Female'); })->count();
 
         $students = $baseQuery->when($this->activeSex !== 'All', function($query) {
-                $query->where('sex', $this->activeSex);
+                $query->having('sex', $this->activeSex);
             })
             ->orderBy('sex', 'desc') // 'Male' before 'Female'
             ->orderBy('last_name', 'asc')

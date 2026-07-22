@@ -30,6 +30,42 @@ class Enrollment extends Model
         ];
     }
 
+    // Proxy accessors to the related Student model for seamless property access
+    public function getFirstNameAttribute() { return $this->student->first_name ?? null; }
+    public function getLastNameAttribute() { return $this->student->last_name ?? null; }
+    public function getMiddleNameAttribute() { return $this->student->middle_name ?? null; }
+    public function getExtensionNameAttribute() { return $this->student->extension_name ?? null; }
+    public function getLrnAttribute() { return $this->student->lrn ?? null; }
+    public function getBirthdateAttribute() { return $this->student->birthdate ?? null; }
+    public function getSexAttribute() { return $this->student->sex ?? null; }
+    public function getContactNoAttribute() { return $this->student->contact_no ?? null; }
+    public function getGuardianNameAttribute() { return $this->student->guardian_name ?? null; }
+    public function getCurrentHouseNoAttribute() { return $this->student->current_house_no ?? null; }
+    public function getCurrentStreetAttribute() { return $this->student->current_street ?? null; }
+    public function getCurrentBarangayAttribute() { return $this->student->current_barangay ?? null; }
+    public function getCurrentMunicipalityAttribute() { return $this->student->current_municipality ?? null; }
+    public function getCurrentProvinceAttribute() { return $this->student->current_province ?? null; }
+    public function getCurrentZipAttribute() { return $this->student->current_zip ?? null; }
+    public function getIsSameAddressAttribute() { return $this->student->is_same_address ?? false; }
+    public function getPermanentHouseNoAttribute() { return $this->student->permanent_house_no ?? null; }
+    public function getPermanentStreetAttribute() { return $this->student->permanent_street ?? null; }
+    public function getPermanentBarangayAttribute() { return $this->student->permanent_barangay ?? null; }
+    public function getPermanentMunicipalityAttribute() { return $this->student->permanent_municipality ?? null; }
+    public function getPermanentProvinceAttribute() { return $this->student->permanent_province ?? null; }
+    public function getPermanentZipAttribute() { return $this->student->permanent_zip ?? null; }
+    
+    public function getPsaNoAttribute() { return $this->student->psa_no ?? null; }
+    public function getMotherTongueAttribute() { return $this->student->mother_tongue ?? null; }
+    public function getIsIpAttribute() { return $this->student->is_ip ?? false; }
+    public function getIpCommunityAttribute() { return $this->student->ip_community ?? null; }
+    public function getIs4psAttribute() { return $this->student->is_4ps ?? false; }
+    public function getHouseholdIdAttribute() { return $this->student->household_id ?? null; }
+    public function getFatherNameAttribute() { return $this->student->father_name ?? null; }
+    public function getMotherMaidenNameAttribute() { return $this->student->mother_maiden_name ?? null; }
+
+
+    public function getProfilePictureAttribute() { return $this->student->user->avatar ?? null; }
+
     /**
      * Get the student that owns the enrollment.
      */

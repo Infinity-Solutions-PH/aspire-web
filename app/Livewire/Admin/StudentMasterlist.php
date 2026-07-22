@@ -141,10 +141,11 @@ class StudentMasterlist extends Component
             'edit_profile_picture_upload' => 'nullable|image|max:5120',
         ]);
 
-        $student = Enrollment::findOrFail($this->selectedStudentId);
-        $oldGrade = $student->grade_level;
+        $enrollment = Enrollment::findOrFail($this->selectedStudentId);
+        $student = $enrollment->student;
+        $oldGrade = $enrollment->grade_level;
 
-        $updateData = [
+        $studentData = [
             'first_name' => $this->edit_first_name,
             'last_name' => $this->edit_last_name,
             'middle_name' => $this->edit_middle_name,
@@ -152,20 +153,23 @@ class StudentMasterlist extends Component
             'lrn' => $this->edit_lrn,
             'birthdate' => $this->edit_birthdate,
             'sex' => $this->edit_sex,
-            'gwa' => $this->edit_gwa,
             'contact_no' => $this->edit_contact_no,
+        ];
+        $student->update($studentData);
+
+        $enrollmentData = [
+            'gwa' => $this->edit_gwa,
             'status' => $this->edit_status,
             'grade_level' => $this->edit_grade_level,
         ];
 
         if ($this->edit_profile_picture_upload) {
             // Delete old photo file if exists
-            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
-                Storage::disk('public')->delete($student->profile_picture);
+            if ($student->user && $student->user->avatar && Storage::disk('public')->exists($student->user->avatar)) {
+                Storage::disk('public')->delete($student->user->avatar);
             }
 
             $path = $this->edit_profile_picture_upload->store('enrollments/photos', 'public');
-            $updateData['profile_picture'] = $path;
 
             // Also update corresponding user's avatar if they have a user account
             if ($student->user) {
@@ -173,10 +177,9 @@ class StudentMasterlist extends Component
             }
         } elseif ($this->delete_current_photo) {
             // Delete old photo file if exists
-            if ($student->profile_picture && Storage::disk('public')->exists($student->profile_picture)) {
-                Storage::disk('public')->delete($student->profile_picture);
+            if ($student->user && $student->user->avatar && Storage::disk('public')->exists($student->user->avatar)) {
+                Storage::disk('public')->delete($student->user->avatar);
             }
-            $updateData['profile_picture'] = null;
 
             // Also clear corresponding user's avatar if they have a user account
             if ($student->user) {
@@ -184,10 +187,10 @@ class StudentMasterlist extends Component
             }
         }
 
-        $student->update($updateData);
+        $enrollment->update($enrollmentData);
 
         if ($oldGrade !== $this->edit_grade_level) {
-            $student->update([
+            $enrollment->update([
                 'section_id' => null,
                 'tech_voc_section_id' => null,
             ]);
@@ -241,10 +244,15 @@ class StudentMasterlist extends Component
     public function render()
     {
         $students = Enrollment::query()
-            ->with(['section', 'techVocSection'])
+            ->select('enrollments.*')
+            ->addSelect(['last_name' => \App\Models\Student::select('last_name')
+                ->whereColumn('id', 'enrollments.student_id')
+                ->limit(1)
+            ])
+            ->with(['section', 'techVocSection', 'student'])
             ->whereIn('status', ['Enrolled', 'Approved', 'Rejected', 'Submitted', 'Dropped', 'Graduated'])
             ->when($this->search, function ($query) {
-                $query->where(function ($q) {
+                $query->whereHas('student', function ($q) {
                     $q->where('first_name', 'like', '%'.$this->search.'%')
                         ->orWhere('last_name', 'like', '%'.$this->search.'%')
                         ->orWhere('lrn', 'like', '%'.$this->search.'%');

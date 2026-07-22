@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('faculty_id')->unique();
-            $table->string('department');
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
             $table->string('status')->default('Active'); // Active, On Leave, Retired, Deceased, Vacant
             
             // Relational fields replacing raw text
             $table->foreignId('plantilla_position_id')->nullable()->constrained('plantilla_positions')->nullOnDelete();
-            $table->foreignId('branch_id')->nullable()->constrained('branches')->nullOnDelete();
-            
+            $table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
             // Secondary levels JHS / SHS
             $table->string('level')->default('JHS'); // JHS, SHS
             

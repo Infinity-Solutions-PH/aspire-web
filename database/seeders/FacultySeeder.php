@@ -16,8 +16,6 @@ class FacultySeeder extends Seeder
      */
     public function run(): void
     {
-        $main = Branch::where('name', 'Main')->first()->id;
-        $annex = Branch::where('name', 'Annex')->first()->id;
 
         $plantillas = PlantillaPosition::all()->keyBy('plantilla_number');
         if ($plantillas->isEmpty()) {
@@ -33,7 +31,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Male',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH1-310001-2021']->id ?? null,
-                'branch_id' => $main,
+
                 'level' => 'JHS',
                 'inactive_reason' => null,
                 'effective_date' => null,
@@ -47,7 +45,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Female',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH3-310006-2021']->id ?? null,
-                'branch_id' => $main,
+
                 'level' => 'SHS',
                 'inactive_reason' => null,
                 'effective_date' => null,
@@ -61,7 +59,7 @@ class FacultySeeder extends Seeder
                 'status' => 'On Leave',
                 'gender' => 'Male',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH2-310004-2021']->id ?? null,
-                'branch_id' => $annex,
+
                 'level' => 'JHS',
                 'inactive_reason' => null,
                 'effective_date' => null,
@@ -75,7 +73,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Active',
                 'gender' => 'Female',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-MTCH1-310007-2021']->id ?? null,
-                'branch_id' => $main,
+
                 'level' => 'SHS',
                 'inactive_reason' => null,
                 'effective_date' => null,
@@ -89,7 +87,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Inactive',
                 'gender' => 'Male',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-TCH2-310005-2021']->id ?? null,
-                'branch_id' => $annex,
+
                 'level' => 'JHS',
                 'inactive_reason' => 'Retired',
                 'effective_date' => '2020-01-01',
@@ -103,7 +101,7 @@ class FacultySeeder extends Seeder
                 'status' => 'Inactive', // Replaced Deceased with Inactive
                 'gender' => 'Female',
                 'plantilla_position_id' => $plantillas['OSEC-DECSB-HTCH1-310008-2021']->id ?? null,
-                'branch_id' => $main,
+
                 'level' => 'SHS',
                 'inactive_reason' => 'Retired',
                 'effective_date' => '2021-01-01',
@@ -146,7 +144,7 @@ class FacultySeeder extends Seeder
                         'status' => $f['status'],
                         'gender' => $f['gender'],
                         'plantilla_position_id' => $f['plantilla_position_id'],
-                        'branch_id' => $f['branch_id'],
+
                         'level' => $f['level'],
                         'inactive_reason' => $f['inactive_reason'],
                         'effective_date' => $f['effective_date'],

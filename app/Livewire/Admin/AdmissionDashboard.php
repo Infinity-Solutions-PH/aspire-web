@@ -3,8 +3,8 @@
 namespace App\Livewire\Admin;
 
 use Livewire\Component;
+use App\Models\Admission;
 use Livewire\WithPagination;
-use App\Models\PreEnrollment;
 
 class AdmissionDashboard extends Component
 {
@@ -15,7 +15,7 @@ class AdmissionDashboard extends Component
     public $type = '';
     public $category = '';
     public $grade_level = '';
-    public $source = 'new'; // 'new' for PreEnrollment, 'returning' for Enrollment (pending_approval)
+    public $source = 'new'; // 'new' for Admission, 'returning' for Enrollment (pending_approval)
 
     public function updatedCategory($value)
     {
@@ -52,7 +52,7 @@ class AdmissionDashboard extends Component
     {
         // On admission there are 2 status only: Pending approval and drafts
         if ($this->status === 'pending_approval' || $this->status === '') {
-            $enrollments = PreEnrollment::where('status', 'pending_approval')
+            $enrollments = Admission::where('status', 'pending_approval')
                 ->when($this->category, fn($q) => $q->where('form_data->school_category', $this->category))
                 ->when($this->grade_level, fn($q) => $q->where('form_data->grade_level', $this->grade_level))
                 ->when($this->search, function($q) {
@@ -64,7 +64,7 @@ class AdmissionDashboard extends Component
                 ->paginate(10);
         } else {
             // Show Drafts from Enrollment table
-            $enrollments = PreEnrollment::where('status', 'draft')
+            $enrollments = Admission::where('status', 'draft')
                 ->when($this->type, fn($q) => $q->where('form_data->enrollment_type', $this->type))
                 ->when($this->category, fn($q) => $q->where('form_data->school_category', $this->category))
                 ->when($this->grade_level, fn($q) => $q->where('form_data->grade_level', $this->grade_level))
@@ -76,6 +76,16 @@ class AdmissionDashboard extends Component
                 ->latest()
                 ->paginate(10);
         }
+
+        $enrollments->getCollection()->transform(function ($enrollment) {
+            $data = $enrollment->form_data ?? [];
+            $enrollment->first_name = $data['first_name'] ?? 'N/A';
+            $enrollment->last_name = $data['last_name'] ?? 'N/A';
+            $enrollment->type = $data['enrollment_type'] ?? 'N/A';
+            $enrollment->grade_level = $data['grade_level'] ?? 'N/A';
+            $enrollment->initials = strtoupper(substr($enrollment->first_name, 0, 1) . substr($enrollment->last_name, 0, 1));
+            return $enrollment;
+        });
 
         return view('pages.Admin.admission.dashboard', [
             'enrollments' => $enrollments

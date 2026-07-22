@@ -41,8 +41,6 @@ class SectioningService
         }
 
         $sections = $sectionQuery->get();
-        $starSections = $sections->where('is_star_section', true)->values();
-        $regularSections = $sections->where('is_star_section', false)->values();
 
         if ($sections->isEmpty()) {
             throw new Exception("No sections found for {$gradeLevel}. Please create sections first.");
@@ -51,35 +49,13 @@ class SectioningService
         $assignedCount = 0;
         $remainingStudents = collect($unassignedStudents);
 
-        // Step 1: Star Section Allocation (GWA >= 90)
-        if ($starSections->isNotEmpty()) {
-            $starCandidates = $remainingStudents->filter(function($student) {
-                $gwa = (float) ($student->gwa ?? ($student->last_gwa ?? 0));
-                return $gwa >= 90;
-            });
-
-            foreach ($starSections as $starSection) {
-                $availableCapacity = $starSection->capacity - $starSection->enrollments()->count();
-                if ($availableCapacity > 0) {
-                    $toAssign = $starCandidates->take($availableCapacity);
-                    foreach ($toAssign as $student) {
-                        $student->update(['section_id' => $starSection->id]);
-                        $assignedCount++;
-                        // Remove from pools
-                        $starCandidates = $starCandidates->reject(fn($s) => $s->id === $student->id);
-                        $remainingStudents = $remainingStudents->reject(fn($s) => $s->id === $student->id);
-                    }
-                }
-            }
-        }
-
-        // Step 2: Gender-Balanced Distribution for Regular Sections
-        if ($regularSections->isNotEmpty() && $remainingStudents->isNotEmpty()) {
+        // Gender-Balanced Distribution for All Sections
+        if ($sections->isNotEmpty() && $remainingStudents->isNotEmpty()) {
             $females = $remainingStudents->where('sex', 'Female')->values();
             $males = $remainingStudents->where('sex', 'Male')->values();
 
-            $assignedCount += $this->serpentineDistribute($females, $regularSections);
-            $assignedCount += $this->serpentineDistribute($males, $regularSections);
+            $assignedCount += $this->serpentineDistribute($females, $sections);
+            $assignedCount += $this->serpentineDistribute($males, $sections);
         }
 
         $totalRemaining = Enrollment::where('grade_level', $gradeLevel)
@@ -235,30 +211,6 @@ class SectioningService
         }
 
         return $assigned;
-    }
-
-    /**
-     * Get the average GWA of the Star Section for comparison.
-     */
-    public function getStarSectionAverage(string $gradeLevel): float
-    {
-        $starSection = Section::where('grade_level', $gradeLevel)
-            ->where('is_star_section', true)
-            ->first();
-
-        if (!$starSection) return 0;
-
-        return (float) $starSection->enrollments()->avg('gwa') ?: 0;
-    }
-
-    /**
-     * Check if a student qualifies for the Star Section.
-     */
-    public function checkStarQualification($enrollment): bool
-    {
-        $avg = $this->getStarSectionAverage($enrollment->grade_level);
-        $gwa = (float) ($enrollment->gwa ?? ($enrollment->last_gwa ?? 0));
-        return $gwa >= $avg && $avg > 0;
     }
 
     /**

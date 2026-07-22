@@ -10,27 +10,26 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('pages.Admin.dashboard');
+        $activeSchoolYear = \App\Models\SchoolYear::where('status', 'Active')->first();
+        $totalCapacity = \App\Models\Section::sum('capacity') ?: 0;
+        
+        $enrolledCount = 0;
+        $capacityPercentage = 0;
+
+        if ($activeSchoolYear) {
+            $enrolledCount = \App\Models\Enrollment::where('school_year_id', $activeSchoolYear->id)->count();
+            if ($totalCapacity > 0) {
+                $capacityPercentage = round(($enrolledCount / $totalCapacity) * 100);
+            }
+        }
+
+        return view('pages.Admin.dashboard', compact(
+            'activeSchoolYear',
+            'totalCapacity',
+            'enrolledCount',
+            'capacityPercentage'
+        ));
     }
-
-//     public function downloadExport(Request $request)
-//     {
-//         $file = $request->query('file');
-        
-//         // Check that the file has an export_ prefix to prevent downloading arbitrary temp files
-//         if (!$file || !preg_match('/^export_[a-zA-Z0-9_-]+\.zip$/', $file)) {
-//             abort(404);
-//         }
-
-//         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $file;
-        
-//         if (!file_exists($path)) {
-//             abort(404);
-//         }
-
-//         $downloadName = 'Student_Masterlist_Export_' . date('Ymd_His') . '.zip';
-//         return response()->download($path, $downloadName)->deleteFileAfterSend(true);
-//     }
 
     public function downloadExport(Request $request)
     {

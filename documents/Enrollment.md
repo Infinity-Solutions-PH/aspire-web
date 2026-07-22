@@ -45,5 +45,5 @@ Deficiency Handling: If a document is blurred or missing, the registrar changes 
 
 ### Phase 4: Sectioning and Finalization
 Section Assignment: Once verified, the student is pooled into a list of eligible enrollees. The system can either auto-assign them to a section based on balancing algorithms (gender, grades) or allow the registrar to manually slot them into a specific section.
-Official Enrollment: The system generates a digital Certificate of Enrollment or an assessment form for any miscellaneous fees.
+Official Enrollment: The system generates a digital Certificate of Enrollment or an assessment form.
 Confirmation: The student's status changes to "Officially Enrolled." ASPIRE automatically dispatches a welcome email with their section, adviser's name, and class schedule.

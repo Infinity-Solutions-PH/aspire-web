@@ -19,7 +19,7 @@ class SectionsList extends Component
         $taughtSectionIds = Schedule::where('teacher_id', $userId)->pluck('section_id')->unique();
 
         // Fetch sections where they either teach OR are the adviser
-        $sections = Section::with('adviser')
+        $sections = Section::with(['adviser', 'room'])
             ->where(function ($q) use ($userId, $taughtSectionIds) {
                 $q->where('adviser_id', $userId)
                   ->orWhereIn('id', $taughtSectionIds);
@@ -48,7 +48,7 @@ class SectionsList extends Component
                 'track' => $section->track,
                 'strand' => $section->strand,
                 'specialization' => $section->specialization,
-                'room' => $section->room,
+                'room' => $section->room ? $section->room->name : 'N/A',
                 'role' => $isAdviser ? 'Adviser' : 'Subject Teacher',
                 'student_count' => $count,
                 'adviser_name' => $section->adviser ? $section->adviser->name : 'N/A',

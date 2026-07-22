@@ -1,16 +1,23 @@
 @section('page-title', 'Faculty Management')
 
-<main class="flex-1 px-10 py-4 max-w-[1400px] mx-auto w-full" x-data="{ showModal: @entangle('showModal'), showDevModal: false, showPasswordModal: @entangle('showPasswordModal') }">
+<div x-data="{ showModal: @entangle('showModal'), showDevModal: false, showPasswordModal: @entangle('showPasswordModal') }">
     <!-- Page Heading -->
-    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
-        <div class="flex flex-col gap-1">
-            <h1 class="text-[#d41111] dark:text-primary text-4xl font-black leading-tight tracking-[-0.033em]">Faculty Directory</h1>
-            <p class="text-[#9a4c4c] dark:text-white/60 text-base font-normal leading-normal">Manage Tanza National Trade School faculty records, departments, and teaching loads.</p>
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">badge</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Faculty Management</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage Tanza National Trade School faculty records, departments, and teaching loads.</p>
+            </div>
         </div>
-        <button wire:click="create" class="flex min-w-[180px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-lg h-12 px-6 bg-primary text-white text-base font-bold leading-normal shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
-            <span class="material-symbols-outlined">person_add</span>
-            <span class="truncate">Register New Faculty</span>
-        </button>
+        <div class="flex items-center gap-3">
+            <button wire:click="create" class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined text-lg">person_add</span>
+                <span>Register New Faculty</span>
+            </button>
+        </div>
     </div>
 
     <!-- Flash Messages -->
@@ -127,13 +134,7 @@
             <input wire:model.live="search" type="text" placeholder="Search by name, Faculty ID or Plantilla..." class="w-full pl-10 pr-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary focus:border-primary transition-all">
         </div>
 
-        <!-- School Branch Filter -->
-        <select wire:model.live="branch_id" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
-            <option value="">All Branches</option>
-            @foreach($branches as $b)
-                <option value="{{ $b->id }}">{{ $b->name }}</option>
-            @endforeach
-        </select>
+
 
         <!-- Level Filter -->
         <select wire:model.live="level" class="px-4 py-2 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-lg text-sm focus:ring-primary">
@@ -192,7 +193,7 @@
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item #</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Gender</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Dept / Position</th>
-                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Branch / Level</th>
+                        <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Level</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Status</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Dates</th>
                         <th class="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-[#9a4c4c] text-center">Actions</th>
@@ -275,13 +276,12 @@
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
                                     <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->department?->name ?: 'Unassigned' }}</span>
-                                    <span class="text-[10px] text-primary font-bold">{{ $faculty->plantillaPosition?->position?->name ?: 'Unassigned' }}</span>
+                                    <span class="text-[10px] text-primary font-bold">{{ $faculty->effective_position?->name ?: 'Unassigned' }}</span>
                                 </div>
                             </td>
-                            <!-- Branch & Level -->
+                            <!-- Level -->
                             <td class="px-6 py-4">
                                 <div class="flex flex-col">
-                                    <span class="text-xs font-semibold text-[#1b0d0d] dark:text-white">{{ $faculty->branch?->name ?: 'Unassigned' }}</span>
                                     <span class="text-[10px] text-gray-500 font-bold uppercase">{{ $faculty->level }}</span>
                                 </div>
                             </td>
@@ -351,11 +351,11 @@
     <!-- Registration / Edit Modal -->
     <div x-show="showModal" class="fixed inset-0 lg:left-64 z-40 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
+            <div class="absolute inset-0 -z-10 transition-opacity bg-black/60 backdrop-blur-sm" @click="showModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-            <div class="inline-block w-full max-w-2xl overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl">
+            <div class="inline-block w-full max-w-2xl overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl relative z-10">
                 <!-- Modal Header -->
                 <div class="px-8 py-6 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-primary/5">
                     <div>
@@ -416,8 +416,9 @@
 
                         <!-- Plantilla Item Number -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item Number</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item Number <span class="text-gray-400 lowercase normal-case ml-1">(Optional)</span></label>
                             <input wire:model.live.debounce.250ms="plantilla_item_number" type="text" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary focus:border-primary" placeholder="e.g. OSEC-DECSB-TCH1-310001-2021">
+                            <span class="text-[10px] text-gray-500 mt-1 block">If plantilla item number is not known, leave it blank.</span>
                             @error('plantilla_item_number') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
@@ -435,18 +436,6 @@
                                 @endforeach
                             </select>
                             @error('form_position_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
-                        </div>
-
-                        <!-- Branch Select -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Branch</label>
-                            <select wire:model.live="form_branch_id" class="w-full px-4 py-3 bg-[#fdfafb] dark:bg-[#3d2424] border-[#f3e7e7] dark:border-[#4d3232] rounded-xl text-sm focus:ring-primary">
-                                <option value="" selected disabled>Choose School Branch</option>
-                                @foreach($branches as $b)
-                                    <option value="{{ $b->id }}">{{ $b->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('form_branch_id') <span class="text-[10px] text-red-500 font-bold">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Level Select -->
@@ -525,11 +514,11 @@
     <!-- Confirm Password Modal -->
     <div x-show="showPasswordModal" class="fixed inset-0 lg:left-64 z-50 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
-            <div class="absolute inset-0 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
+            <div class="absolute inset-0 -z-10 transition-opacity bg-black/60 backdrop-blur-sm" @click="showPasswordModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl">
+            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl relative z-10">
                 <!-- Header -->
                 <div class="px-6 py-5 border-b border-[#f3e7e7] dark:border-[#3a1f1f] flex items-center justify-between bg-red-500/5">
                     <div class="flex items-center gap-2 text-[#d41111]">
@@ -569,11 +558,11 @@
     <div x-show="showDevModal" class="fixed inset-0 lg:left-64 z-50 overflow-y-auto" x-cloak>
         <div class="flex items-end justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <!-- Glassmorphism backdrop -->
-            <div class="absolute inset-0 transition-opacity bg-[#1b0d0d]/40 backdrop-blur-md" @click="showDevModal = false"></div>
+            <div class="absolute inset-0 -z-10 transition-opacity bg-[#1b0d0d]/40 backdrop-blur-md" @click="showDevModal = false"></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border border-[#f3e7e7] dark:border-[#3a1f1f]">
+            <div class="inline-block w-full max-w-md overflow-hidden text-left align-middle transition-all transform bg-white dark:bg-[#2a1515] rounded-3xl shadow-2xl border border-[#f3e7e7] dark:border-[#3a1f1f] relative z-10">
                 <!-- Construction Visual Icon -->
                 <div class="p-8 text-center bg-gradient-to-b from-amber-500/10 to-transparent flex flex-col items-center justify-center gap-3">
                     <div class="size-16 rounded-full bg-amber-100 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center animate-pulse">
@@ -594,4 +583,4 @@
             </div>
         </div>
     </div>
-</main>
+</div>

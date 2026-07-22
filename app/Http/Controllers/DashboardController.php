@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Enrollment;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -15,16 +14,23 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->user()->role === 'ovpd') {
-            return redirect()->route('admin.violations');
-        }
+        $user = auth()->user();
 
-        if (auth()->user()->can('access-admin')) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        if (auth()->user()->can('access-faculty')) {
+        if ($user->hasRole('faculty')) {
             return redirect()->route('faculty.dashboard');
+        }
+
+        if ($user->hasAnyRole(['superadmin', 'admin'])) {
+
+            if ($user->name === 'Registrar') {
+                return redirect()->route('admin.admissions');
+            }
+
+            if ($user->name === 'OVPD Office') {
+                return redirect()->route('admin.violations');
+            }
+
+            return redirect()->route('admin.dashboard');
         }
 
         return redirect()->route('student.dashboard');

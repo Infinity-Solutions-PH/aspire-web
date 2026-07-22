@@ -3,21 +3,22 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Str;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Str;
-use Laravel\Fortify\TwoFactorAuthenticatable;
 
-#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'role', 'student_id'])]
+#[Fillable(['name', 'email', 'password', 'google_id', 'avatar', 'student_id'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * Get the attributes that should be cast.
@@ -50,11 +51,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the student's violations.
+     * Get the student's violations through the student record.
      */
     public function violations()
     {
-        return $this->hasMany(Violation::class, 'user_id');
+        return $this->hasManyThrough(
+            Violation::class,
+            Student::class,
+            'user_id', // Foreign key on students table...
+            'student_id', // Foreign key on violations table...
+            'id', // Local key on users table...
+            'id' // Local key on students table...
+        );
     }
 
     /**
@@ -78,7 +86,14 @@ class User extends Authenticatable
      */
     public function enrollments()
     {
-        return $this->hasManyThrough(Enrollment::class, Student::class);
+        return $this->hasManyThrough(
+            Enrollment::class,
+            Student::class,
+            'user_id', // Foreign key on students table...
+            'student_id', // Foreign key on enrollments table...
+            'id', // Local key on users table...
+            'id' // Local key on students table...
+        );
     }
 }
 

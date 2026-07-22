@@ -1,15 +1,15 @@
 <?php
 
 use App\Models\User;
-use App\Models\Enrollment;
-use App\Models\PreEnrollment;
 use Livewire\Livewire;
-use App\Livewire\Admin\AdmissionDashboard;
+use App\Models\Admission;
+use App\Models\Enrollment;
 use App\Livewire\Admin\StudentMasterlist;
+use App\Livewire\Admin\AdmissionDashboard;
 
 test('admissions dashboard displays the correct total filtered count', function () {
-    // 1. Create 3 PreEnrollments with birthdate
-    PreEnrollment::create([
+    // 1. Create 3 Admissions with birthdate
+    Admission::create([
         'lrn' => '100000000001',
         'birthdate' => '2010-01-01',
         'transaction_number' => 'TXN-001',
@@ -22,7 +22,7 @@ test('admissions dashboard displays the correct total filtered count', function 
         ],
     ]);
 
-    PreEnrollment::create([
+    Admission::create([
         'lrn' => '100000000002',
         'birthdate' => '2010-01-01',
         'transaction_number' => 'TXN-002',
@@ -35,7 +35,7 @@ test('admissions dashboard displays the correct total filtered count', function 
         ],
     ]);
 
-    PreEnrollment::create([
+    Admission::create([
         'lrn' => '100000000003',
         'birthdate' => '2010-01-01',
         'transaction_number' => 'TXN-003',

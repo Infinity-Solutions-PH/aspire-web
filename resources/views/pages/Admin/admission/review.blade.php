@@ -2,7 +2,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 pb-8 border-b border-gray-100 dark:border-white/10">
         <div>
             <div class="flex items-center gap-2 mb-2">
-                @if($isPre)
+                @if($isAdmission)
                     <a href="{{ route('admin.admissions') }}" class="text-xs font-bold text-primary hover:underline uppercase tracking-widest flex items-center gap-1">
                         <span class="material-symbols-outlined text-sm">arrow_back</span>
                         Back to Admissions
@@ -82,12 +82,12 @@
                         <p class="text-[10px] font-bold text-gray-400 uppercase">GWA</p>
                         <div class="flex items-center gap-2">
                             <p class="text-sm font-bold text-primary">{{ $enrollment->gwa ?: 'N/A' }}</p>
-                            @if($isStarQualified)
+                            {{-- @if($isStarQualified)
                                 <span class="bg-yellow-100 text-yellow-700 text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1">
                                     <span class="material-symbols-outlined text-[12px]">star</span>
                                     STAR QUALIFIED
                                 </span>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>

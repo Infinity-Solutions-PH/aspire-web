@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('positions', function (Blueprint $table) {
-            $table->string('type')->default('Teaching')->after('name');
+        Schema::create('schedule_templates', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('grade_level');
+            $table->string('type')->default('Normal'); // Normal, TechVoc
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('positions', function (Blueprint $table) {
-            $table->dropColumn('type');
-        });
+        Schema::dropIfExists('schedule_templates');
     }
 };
