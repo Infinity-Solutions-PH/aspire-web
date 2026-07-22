@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             // PlantillaPositionSeeder::class,
             // FacultySeeder::class,
             // BulkEnrollmentSeeder::class,
+            SubjectSeeder::class
         ]);
     }
 }
