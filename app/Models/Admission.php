@@ -4,11 +4,19 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-
-#[Fillable(['lrn', 'birthdate', 'transaction_number', 'current_step', 'status', 'form_data'])]
-class PreEnrollment extends Model
+class Admission extends Model
 {
+    // use \Illuminate\Database\Eloquent\Attributes\HasAttributes;
+
+    protected $fillable = [
+        'transaction_number',
+        'lrn',
+        'birthdate',
+        'current_step',
+        'status',
+        'form_data'
+    ];
+
     /**
      * Get the attributes that should be cast.
      *

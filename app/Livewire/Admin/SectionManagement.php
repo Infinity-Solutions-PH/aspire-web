@@ -2,13 +2,13 @@
  
 namespace App\Livewire\Admin;
  
-use App\Models\User;
-use App\Models\Section;
-use App\Models\Setting;
+use App\Models\Room;
 use App\Models\Faculty;
+use App\Models\Section;
 use Livewire\Component;
 use App\Models\Enrollment;
 use Livewire\WithPagination;
+use App\Models\SectionSetting;
 use App\Services\SectioningService;
  
 class SectionManagement extends Component
@@ -30,8 +30,7 @@ class SectionManagement extends Component
         'strand' => '',
         'specialization' => '',
         'capacity' => 40,
-        'is_star_section' => false,
-        'room' => '',
+        'room_id' => null,
         'adviser_id' => null,
     ];
 
@@ -41,6 +40,11 @@ class SectionManagement extends Component
     public $selectedAdviserId = null;
     public $currentSectionName = '';
     public $adviserSearch = '';
+
+    // Room Modal state
+    public $showRoomModal = false;
+    public $selectedRoomId = null;
+    public $roomSearch = '';
     // Auto Sectioning Modal state
     public $showAutoSectionModal = false;
     public $activeAutoTab = 'jhs'; // jhs, tvl, shs
@@ -58,7 +62,7 @@ class SectionManagement extends Component
 
     public function mount()
     {
-        $this->newSection['capacity'] = Setting::get('global_default_capacity', 40);
+        $this->newSection['capacity'] = SectionSetting::get('global_default_capacity', 40);
         $this->newSection['type'] = 'normal';
         $this->autoGrade = 'Grade 7'; // Default
     }
@@ -158,7 +162,6 @@ class SectionManagement extends Component
         if ($data['type'] === 'tvl') {
             $data['track'] = null;
             $data['strand'] = null;
-            $data['is_star_section'] = false;
         } else {
             // Normal section
             if (!in_array($data['grade_level'], ['Grade 11', 'Grade 12'])) {
@@ -174,7 +177,7 @@ class SectionManagement extends Component
         
         $this->showCreateModal = false;
         $this->reset('newSection');
-        $this->newSection['capacity'] = Setting::get('global_default_capacity', 40);
+        $this->newSection['capacity'] = SectionSetting::get('global_default_capacity', 40);
         $this->newSection['type'] = 'normal';
         session()->flash('message', 'Section created successfully!');
     }
@@ -210,7 +213,7 @@ class SectionManagement extends Component
         $search = trim($this->adviserSearch);
         return Faculty::where('status', 'Active')
             ->whereHas('user', function ($query) {
-                $query->where('role', 'teacher');
+                $query->role('faculty');
             })
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -221,6 +224,46 @@ class SectionManagement extends Component
                 });
             })
             ->with('user')
+            ->limit(5)
+            ->get();
+    }
+
+    public function openRoomModal($sectionId)
+    {
+        $this->selectedSectionId = $sectionId;
+        $section = Section::find($sectionId);
+        $this->currentSectionName = $section->name;
+        $this->selectedRoomId = $section->room_id;
+        $this->roomSearch = '';
+        $this->showRoomModal = true;
+    }
+
+    public function assignRoom()
+    {
+        $this->validate([
+            'selectedRoomId' => 'nullable|exists:rooms,id',
+        ]);
+ 
+        $section = Section::find($this->selectedSectionId);
+        $section->update([
+            'room_id' => $this->selectedRoomId,
+        ]);
+ 
+        $this->showRoomModal = false;
+        $this->reset(['selectedSectionId', 'selectedRoomId', 'currentSectionName', 'roomSearch']);
+        session()->flash('message', 'Room assigned successfully!');
+    }
+
+    public function getRoomSearchResultsProperty()
+    {
+        $search = trim($this->roomSearch);
+        return Room::with('building')
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhereHas('building', function ($q) use ($search) {
+                          $q->where('name', 'like', "%{$search}%");
+                      });
+            })
             ->limit(5)
             ->get();
     }
@@ -325,9 +368,8 @@ class SectionManagement extends Component
  
     public function render()
     {
-        $query = Section::with(['adviser', 'enrollments', 'techVocEnrollments'])
+        $query = Section::with(['adviser', 'room', 'enrollments', 'techVocEnrollments'])
             ->withCount(['enrollments', 'techVocEnrollments'])
-            ->orderBy('is_star_section', 'desc')
             ->orderBy('name', 'asc');
  
         if ($this->search) {
@@ -348,10 +390,10 @@ class SectionManagement extends Component
                   ->orWhere('strand', $this->activeCourse);
             });
         }
-
  
         return view('pages.Admin.section-management', [
             'sections' => $query->get(),
+            'totalSectionsCount' => Section::count(),
         ])->layout('layouts.app'); // Or pipeline if that's the base
     }
 }

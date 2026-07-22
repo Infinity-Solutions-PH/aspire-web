@@ -79,12 +79,6 @@
                         <p class="text-sm font-bold text-[#1b0d0d] dark:text-white mt-1 text-primary">{{ $position_name }}</p>
                     </div>
 
-                    <!-- School Branch -->
-                    <div class="p-4 bg-gray-50/50 dark:bg-black/10 rounded-2xl border border-gray-100 dark:border-white/5">
-                        <span class="text-[9px] font-black uppercase tracking-wider text-[#9a4c4c] dark:text-white/40">School Branch</span>
-                        <p class="text-sm font-bold text-[#1b0d0d] dark:text-white mt-1">{{ $branch_name }}</p>
-                    </div>
-
                     <!-- Plantilla Item Number -->
                     <div class="p-4 bg-gray-50/50 dark:bg-black/10 rounded-2xl border border-gray-100 dark:border-white/5 md:col-span-2">
                         <span class="text-[9px] font-black uppercase tracking-wider text-[#9a4c4c] dark:text-white/40">Plantilla Item Number</span>

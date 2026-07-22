@@ -3,8 +3,8 @@
 namespace App\Livewire\Enrollment;
 
 use Livewire\Component;
+use App\Models\Admission;
 use App\Models\Enrollment;
-use App\Models\PreEnrollment;
 use Livewire\WithFileUploads;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Livewire\Attributes\Layout;
@@ -233,7 +233,9 @@ class Wizard extends Component
         ]);
 
         // Scenario C: Already Enrolled / Active Application Exists
-        $alreadyEnrolled = Enrollment::where('lrn', $this->lrn)
+        $alreadyEnrolled = Enrollment::whereHas('student', function ($query) {
+            $query->where('lrn', $this->lrn);
+        })
             ->whereIn('status', ['Enrolled', 'Approved', 'pending_approval', 'Submitted'])
             ->exists();
 
@@ -242,23 +244,23 @@ class Wizard extends Component
             return;
         }
 
-        $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
+        $admission = Admission::where('lrn', $this->lrn)->first();
 
         // Scenario B: Resume Draft
-        if ($preEnrollment) {
-            if ($preEnrollment->birthdate->format('Y-m-d') !== $this->birthdate) {
+        if ($admission) {
+            if ($admission->birthdate->format('Y-m-d') !== $this->birthdate) {
                 $this->addError('birthdate', 'The birthdate does not match our records for this LRN.');
                 return;
             }
 
-            if ($preEnrollment->status === 'pending_approval') {
-                $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
-                $this->transaction_number = $preEnrollment->transaction_number;
+            if ($admission->status === 'pending_approval') {
+                $this->formData = array_merge($this->formData, $admission->form_data ?? []);
+                $this->transaction_number = $admission->transaction_number;
                 $this->submitted = true;
                 return;
             }
 
-            if ($preEnrollment->status === 'draft') {
+            if ($admission->status === 'draft') {
                 $this->showResumeModal = true;
                 return;
             }
@@ -270,12 +272,12 @@ class Wizard extends Component
 
     public function resumeDraft()
     {
-        $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
-        if (!$preEnrollment) return;
+        $admission = Admission::where('lrn', $this->lrn)->first();
+        if (!$admission) return;
 
         // Hydrate state
-        $this->formData = array_merge($this->formData, $preEnrollment->form_data ?? []);
-        $this->currentStep = $preEnrollment->current_step;
+        $this->formData = array_merge($this->formData, $admission->form_data ?? []);
+        $this->currentStep = $admission->current_step;
         $this->school_category = $this->formData['school_category'] ?? '';
         $this->enrollment_type = $this->formData['enrollment_type'] ?? '';
         $this->is_resumed = true;
@@ -303,7 +305,7 @@ class Wizard extends Component
 
     public function resetAndStartNew()
     {
-        PreEnrollment::where('lrn', $this->lrn)->delete();
+        Admission::where('lrn', $this->lrn)->delete();
         $this->showResumeModal = false;
         $this->initStep = 1;
     }
@@ -344,7 +346,9 @@ class Wizard extends Component
     public function startForm()
     {
         // Check if already enrolled / active application exists
-        $alreadyEnrolled = Enrollment::where('lrn', $this->lrn)
+        $alreadyEnrolled = Enrollment::whereHas('student', function ($query) {
+            $query->where('lrn', $this->lrn);
+        })
             ->whereIn('status', ['Enrolled', 'Approved', 'pending_approval', 'Submitted'])
             ->exists();
 
@@ -354,9 +358,9 @@ class Wizard extends Component
         }
         
         // Finalize draft creation if brand new
-        $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
-        if (!$preEnrollment) {
-            PreEnrollment::create([
+        $admission = Admission::where('lrn', $this->lrn)->first();
+        if (!$admission) {
+            Admission::create([
                 'lrn' => $this->lrn,
                 'birthdate' => $this->birthdate,
                 'current_step' => 1,
@@ -414,9 +418,9 @@ class Wizard extends Component
     public function saveProgress()
     {
         $this->formData['has_disability'] = !empty($this->formData['disability_types']);
-        $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
-        if ($preEnrollment) {
-            $preEnrollment->update([
+        $admission = Admission::where('lrn', $this->lrn)->first();
+        if ($admission) {
+            $admission->update([
                 'current_step' => $this->currentStep,
                 'form_data' => $this->formData,
             ]);
@@ -437,9 +441,9 @@ class Wizard extends Component
         }
 
         $this->formData['has_disability'] = !empty($this->formData['disability_types']);
-        $preEnrollment = PreEnrollment::where('lrn', $this->lrn)->first();
-        $this->transaction_number = $this->prefix . now()->format('Y') . '-' . str_pad($preEnrollment->id, 5, '0', STR_PAD_LEFT);
-        $preEnrollment->update([
+        $admission = Admission::where('lrn', $this->lrn)->first();
+        $this->transaction_number = $this->prefix . now()->format('Y') . '-' . str_pad($admission->id, 5, '0', STR_PAD_LEFT);
+        $admission->update([
             'status' => 'pending_approval',
             'current_step' => $this->currentStep,
             'transaction_number' => $this->transaction_number,

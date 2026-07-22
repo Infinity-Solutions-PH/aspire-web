@@ -3,11 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['key', 'value', 'group'])]
-class Setting extends Model
+class SectionSetting extends Model
 {
+    protected $fillable = ['key', 'value', 'group'];
+
     /**
      * Get a setting value by key.
      */

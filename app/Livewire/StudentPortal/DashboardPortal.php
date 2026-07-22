@@ -2,7 +2,6 @@
 
 namespace App\Livewire\StudentPortal;
 
-use App\Models\Fee;
 use Livewire\Component;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +13,7 @@ class DashboardPortal extends Component
 
     public function mount()
     {
-        $this->enrollment = Enrollment::where('user_id', Auth::id())
+        $this->enrollment = Auth::user()->enrollments()
             ->whereIn('status', ['Enrolled', 'Approved'])
             ->with(['section.schedules.subject', 'section.schedules.room', 'section.schedules.teacher'])
             ->latest()

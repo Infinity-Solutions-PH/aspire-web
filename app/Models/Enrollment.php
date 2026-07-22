@@ -3,20 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable([
-    'user_id', 'transaction_number', 'status', 'current_step', 'type', 'tech_voc_choices', 'profile_picture',
-    'grade_level', 'psa_no', 'lrn', 'last_name', 'first_name', 'middle_name', 'extension_name', 'gwa', 'birthdate', 'sex',
-    'is_ip', 'ip_community', 'is_4ps', 'household_id', 'has_disability', 'disability_types',
-    'current_house_no', 'current_street', 'current_barangay', 'current_municipality', 'current_province', 'current_zip',
-    'is_same_address', 'permanent_house_no', 'permanent_street', 'permanent_barangay', 'permanent_municipality', 'permanent_province', 'permanent_zip',
-    'father_name', 'mother_maiden_name', 'guardian_name', 'contact_no',
+    'student_id', 'school_year_id', 'transaction_number', 'status', 'current_step', 'type',
+    'grade_level', 'section_id', 'tech_voc_section_id',
     'last_grade_level', 'last_school_year', 'last_school_attended', 'last_school_id',
-    'semester', 'track', 'strand', 'shs_track', 'is_shs_aligned', 'specialization', 'modality',
-    'psa_path', 'sf9_path', 'good_moral_path', 'honorable_dismissal_path', 'admin_remarks', 'verified_by', 'finalized_at', 'section_id', 'tech_voc_section_id'
+    'semester', 'track', 'strand', 'shs_track', 'is_shs_aligned', 'specialization', 'tech_voc_choices', 'modality',
+    'gwa', 'admin_remarks', 'verified_by', 'finalized_at'
 ])]
 class Enrollment extends Model
 {
@@ -28,25 +23,63 @@ class Enrollment extends Model
     protected function casts(): array
     {
         return [
-            'birthdate' => 'date',
-            'is_ip' => 'boolean',
-            'is_4ps' => 'boolean',
-            'has_disability' => 'boolean',
-            'is_same_address' => 'boolean',
             'is_shs_aligned' => 'boolean',
-            'disability_types' => 'array',
             'tech_voc_choices' => 'array',
             'finalized_at' => 'datetime',
             'gwa' => 'decimal:2',
         ];
     }
 
+    // Proxy accessors to the related Student model for seamless property access
+    public function getFirstNameAttribute() { return $this->student->first_name ?? null; }
+    public function getLastNameAttribute() { return $this->student->last_name ?? null; }
+    public function getMiddleNameAttribute() { return $this->student->middle_name ?? null; }
+    public function getExtensionNameAttribute() { return $this->student->extension_name ?? null; }
+    public function getLrnAttribute() { return $this->student->lrn ?? null; }
+    public function getBirthdateAttribute() { return $this->student->birthdate ?? null; }
+    public function getSexAttribute() { return $this->student->sex ?? null; }
+    public function getContactNoAttribute() { return $this->student->contact_no ?? null; }
+    public function getGuardianNameAttribute() { return $this->student->guardian_name ?? null; }
+    public function getCurrentHouseNoAttribute() { return $this->student->current_house_no ?? null; }
+    public function getCurrentStreetAttribute() { return $this->student->current_street ?? null; }
+    public function getCurrentBarangayAttribute() { return $this->student->current_barangay ?? null; }
+    public function getCurrentMunicipalityAttribute() { return $this->student->current_municipality ?? null; }
+    public function getCurrentProvinceAttribute() { return $this->student->current_province ?? null; }
+    public function getCurrentZipAttribute() { return $this->student->current_zip ?? null; }
+    public function getIsSameAddressAttribute() { return $this->student->is_same_address ?? false; }
+    public function getPermanentHouseNoAttribute() { return $this->student->permanent_house_no ?? null; }
+    public function getPermanentStreetAttribute() { return $this->student->permanent_street ?? null; }
+    public function getPermanentBarangayAttribute() { return $this->student->permanent_barangay ?? null; }
+    public function getPermanentMunicipalityAttribute() { return $this->student->permanent_municipality ?? null; }
+    public function getPermanentProvinceAttribute() { return $this->student->permanent_province ?? null; }
+    public function getPermanentZipAttribute() { return $this->student->permanent_zip ?? null; }
+    
+    public function getPsaNoAttribute() { return $this->student->psa_no ?? null; }
+    public function getMotherTongueAttribute() { return $this->student->mother_tongue ?? null; }
+    public function getIsIpAttribute() { return $this->student->is_ip ?? false; }
+    public function getIpCommunityAttribute() { return $this->student->ip_community ?? null; }
+    public function getIs4psAttribute() { return $this->student->is_4ps ?? false; }
+    public function getHouseholdIdAttribute() { return $this->student->household_id ?? null; }
+    public function getFatherNameAttribute() { return $this->student->father_name ?? null; }
+    public function getMotherMaidenNameAttribute() { return $this->student->mother_maiden_name ?? null; }
+
+
+    public function getProfilePictureAttribute() { return $this->student->user->avatar ?? null; }
+
     /**
-     * Get the user that owns the enrollment.
+     * Get the student that owns the enrollment.
      */
-    public function user(): BelongsTo
+    public function student(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Student::class);
+    }
+
+    /**
+     * Get the school year of the enrollment.
+     */
+    public function schoolYear(): BelongsTo
+    {
+        return $this->belongsTo(SchoolYear::class);
     }
 
     /**

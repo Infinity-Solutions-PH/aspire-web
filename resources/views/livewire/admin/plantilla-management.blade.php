@@ -42,15 +42,15 @@
         </div>
     @endif
 
-    <!-- Header Section -->
-    <div class="mb-8">
-        <div class="flex items-center gap-3 mb-2">
-            <div class="size-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
-                <span class="material-symbols-outlined">receipt_long</span>
+    <!-- Page Heading -->
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">receipt_long</span>
             </div>
-            <div>
-                <h1 class="text-2xl font-black text-[#1b0d0d] dark:text-white tracking-tight">Plantilla Positions</h1>
-                <p class="text-sm text-[#9a4c4c] dark:text-white/60">Manage authorized DepEd positions and track vacancies</p>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Plantilla Positions</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage authorized DepEd positions and track vacancies</p>
             </div>
         </div>
     </div>

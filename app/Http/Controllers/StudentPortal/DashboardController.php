@@ -9,7 +9,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $enrollment = Enrollment::where('user_id', auth()->id())
+        $enrollment = auth()->user()->enrollments()
             ->with(['section.adviser'])
             ->latest()
             ->first();
@@ -21,12 +21,26 @@ class DashboardController extends Controller
 
     public function profile()
     {
-        $enrollment = Enrollment::where('user_id', auth()->id())
+        $enrollment = auth()->user()->enrollments()
             ->latest()
             ->first();
 
         return view('pages.StudentPortal.profile', [
             'enrollment' => $enrollment,
+        ]);
+    }
+
+    public function enrollmentHistory()
+    {
+        $enrollments = auth()->user()->enrollments()
+            ->with(['schoolYear', 'section.adviser', 'techVocSection.adviser'])
+            ->join('school_years', 'enrollments.school_year_id', '=', 'school_years.id')
+            ->orderBy('school_years.name', 'desc')
+            ->select('enrollments.*')
+            ->get();
+
+        return view('pages.StudentPortal.history', [
+            'enrollments' => $enrollments,
         ]);
     }
 }

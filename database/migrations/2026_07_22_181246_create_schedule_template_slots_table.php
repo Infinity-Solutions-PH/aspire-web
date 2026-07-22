@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pre_enrollments', function (Blueprint $table) {
+        Schema::create('schedule_template_slots', function (Blueprint $table) {
             $table->id();
-            $table->string('lrn')->unique();
-            $table->date('birthdate');
-            $table->integer('current_step')->default(0);
-            $table->enum('status', ['draft', 'pending_approval'])->default('draft');
-            $table->json('form_data')->nullable();
+            $table->foreignId('schedule_template_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->string('day');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pre_enrollments');
+        Schema::dropIfExists('schedule_template_slots');
     }
 };

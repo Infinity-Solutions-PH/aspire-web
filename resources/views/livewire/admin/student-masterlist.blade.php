@@ -2,10 +2,15 @@
 
 <div x-data="{ showEditModal: @entangle('showEditModal'), showSectionModal: @entangle('showSectionModal'), showExportModal: @entangle('showExportModal') }">
     <!-- Page Heading -->
-    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
-        <div class="flex flex-col gap-1">
-            <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Masterlist</h2>
-            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage and view all enrolled students for S.Y. 2026-2027.</p>
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">groups</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Masterlist</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Manage and view all enrolled students for S.Y. 2026-2027.</p>
+            </div>
         </div>
         <div class="flex items-center gap-3">
             <button wire:click="openExportModal" class="flex items-center gap-2 px-6 py-2.5 bg-white hover:bg-gray-50 dark:bg-[#1a0c0c] dark:hover:bg-[#2a1515] text-[#9a4c4c] border border-[#e7cfcf] dark:border-[#422020] rounded-lg font-bold text-sm transition-all shadow-sm">
@@ -258,7 +263,7 @@
                         </td>
                         <td class="px-6 py-4">
                             <div class="flex items-center justify-center gap-1">
-                                <a href="{{ route('admin.enrollment.review', $student->id) }}" class="p-2 text-[#9a4c4c] hover:bg-primary/10 hover:text-primary rounded-xl transition-all" title="View Profile">
+                                <a href="{{ route('admin.student.profile', $student->id) }}" class="p-2 text-[#9a4c4c] hover:bg-primary/10 hover:text-primary rounded-xl transition-all" title="View Profile">
                                     <span class="material-symbols-outlined text-lg">visibility</span>
                                 </a>
                                 <button wire:click="editStudent({{ $student->id }})" class="p-2 text-[#9a4c4c] hover:bg-primary/10 hover:text-primary rounded-xl transition-all" title="Edit Student">

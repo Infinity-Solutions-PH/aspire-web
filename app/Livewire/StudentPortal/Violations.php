@@ -12,7 +12,7 @@ class Violations extends Component
 {
     public function render()
     {
-        $violations = Violation::where('user_id', Auth::id())
+        $violations = Auth::user()->violations()
             ->orderBy('violation_date', 'desc')
             ->get();
 

@@ -13,29 +13,25 @@ class AdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::updateOrCreate(
-            ['email' => 'admin@tnts.edu.ph'],
-            ['name' => 'System Admin', 'password' => Hash::make('password123'), 'role' => 'admin']
-        );
+        $adminUsers = [
+            ['email' => 'admin@tnts.edu.ph', 'name' => 'System Admin', 'password' => Hash::make('password123'), 'role' => 'admin'],
+            ['email' => 'registrar@tnts.edu.ph', 'name' => 'Registrar', 'password' => Hash::make('password123'), 'role' => 'admin'],
+            ['email' => 'guidance@tnts.edu.ph', 'name' => 'Guidance Counselor', 'password' => Hash::make('password123'), 'role' => 'admin'],
+            ['email' => 'ovpd@tnts.edu.ph', 'name' => 'OVPD Office', 'password' => Hash::make('password123'), 'role' => 'admin'],
+        ];
 
-        User::updateOrCreate(
-            ['email' => 'registrar@tnts.edu.ph'],
-            ['name' => 'School Registrar', 'password' => Hash::make('password123'), 'role' => 'registrar']
-        );
+        foreach ($adminUsers as $userData) {
+            $role = $userData['role'];
+            unset($userData['role']);
+            
+            $user = User::updateOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
 
-        User::updateOrCreate(
-            ['email' => 'guidance@tnts.edu.ph'],
-            ['name' => 'Guidance Counselor', 'password' => Hash::make('password123'), 'role' => 'guidance']
-        );
-
-        User::updateOrCreate(
-            ['email' => 'depthead@tnts.edu.ph'],
-            ['name' => 'Department Head', 'password' => Hash::make('password123'), 'role' => 'dept_head']
-        );
-
-        User::updateOrCreate(
-            ['email' => 'ovpd@tnts.edu.ph'],
-            ['name' => 'OVPD Office', 'password' => Hash::make('password123'), 'role' => 'ovpd']
-        );
+            if (!$user->hasRole($role)) {
+                $user->assignRole($role);
+            }
+        }
     }
 }

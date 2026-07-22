@@ -12,7 +12,7 @@ class EnrollmentPost extends Component
 
     public function mount()
     {
-        $this->enrollment = Enrollment::where('user_id', Auth::id())->latest()->first();
+        $this->enrollment = Auth::user()->enrollments()->latest()->first();
 
         if (!$this->enrollment) {
             return redirect()->route('enrollment.index');

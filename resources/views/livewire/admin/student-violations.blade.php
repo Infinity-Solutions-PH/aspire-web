@@ -2,14 +2,19 @@
 
 <div x-data="{ showCreateModal: @entangle('showCreateModal'), showEditModal: @entangle('showEditModal'), showViewModal: @entangle('showViewModal') }">
     <!-- Page Heading -->
-    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
-        <div class="flex flex-col gap-1">
-            <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Violations</h2>
-            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Record, track, and manage student violation logs and disciplinary reports.</p>
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">gavel</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Student Violations</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Record, track, and manage student violation logs and disciplinary reports.</p>
+            </div>
         </div>
         <div class="flex items-center gap-3">
             <button wire:click="openCreateModal" class="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white rounded-lg font-bold text-sm transition-all shadow-lg shadow-primary/20 hover:scale-[1.02]">
-                <span class="material-symbols-outlined text-lg">gavel</span>
+                <span class="material-symbols-outlined text-lg">add</span>
                 <span>Record Violation</span>
             </button>
         </div>

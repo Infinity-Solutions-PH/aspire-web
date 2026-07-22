@@ -2,10 +2,15 @@
 
 <div class="flex flex-col gap-1">
     <!-- Page Heading -->
-    <div class="flex flex-wrap justify-between items-end gap-4 mb-8">
-        <div class="flex flex-col gap-1">
-            <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Admission Dashboard</h2>
-            <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base">Review and manage student admission applications.</p>
+    <div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+        <div class="flex items-center gap-4">
+            <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-3xl">how_to_reg</span>
+            </div>
+            <div class="flex flex-col gap-1">
+                <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Admission Dashboard</h2>
+                <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">Review and manage student admission applications.</p>
+            </div>
         </div>
     </div>
 
@@ -87,25 +92,16 @@
                 </thead>
                 <tbody class="divide-y divide-[#f3e7e7] dark:divide-[#361a1a]">
                     @forelse($enrollments as $enrollment)
-                        @php
-                            $isPre = $enrollment instanceof \App\Models\PreEnrollment;
-                            $data = $isPre ? $enrollment->form_data : $enrollment;
-                            $firstName = $isPre ? ($data['first_name'] ?? 'N/A') : $enrollment->first_name;
-                            $lastName = $isPre ? ($data['last_name'] ?? 'N/A') : $enrollment->last_name;
-                            $type = $isPre ? ($data['enrollment_type'] ?? 'N/A') : $enrollment->type;
-                            $gradeLevel = $isPre ? ($data['grade_level'] ?? 'N/A') : $enrollment->grade_level;
-                            $initials = strtoupper(substr($firstName, 0, 1) . substr($lastName, 0, 1));
-                        @endphp
                         <tr class="hover:bg-background-light/50 dark:hover:bg-[#2a1515]/30 transition-colors group">
                             <td class="px-6 py-4 text-sm font-bold text-primary">{{ $enrollment->lrn }}</td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="size-8 rounded-full bg-[#f3e7e7] dark:bg-[#361a1a] flex items-center justify-center font-bold text-xs text-primary group-hover:scale-110 transition-transform">{{ $initials }}</div>
-                                    <span class="text-sm font-medium">{{ $lastName }}, {{ $firstName }}</span>
+                                    <div class="size-8 rounded-full bg-[#f3e7e7] dark:bg-[#361a1a] flex items-center justify-center font-bold text-xs text-primary group-hover:scale-110 transition-transform">{{ $enrollment->initials }}</div>
+                                    <span class="text-sm font-medium">{{ $enrollment->last_name }}, {{ $enrollment->first_name }}</span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 text-sm">{{ $type }}</td>
-                            <td class="px-6 py-4 text-sm">{{ $gradeLevel }}</td>
+                            <td class="px-6 py-4 text-sm">{{ $enrollment->type }}</td>
+                            <td class="px-6 py-4 text-sm">{{ $enrollment->grade_level }}</td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase {{ 
                                     $enrollment->status == 'pending_approval' ? 'bg-amber-100 text-amber-700' : 
@@ -117,10 +113,7 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
-                                    @php
-                                        $route = $isPre ? route('admin.pre_enrollment.review', ['preEnrollment' => $enrollment->id]) : route('admin.enrollment.review', ['enrollment' => $enrollment->id]);
-                                    @endphp
-                                    <a href="{{ $route }}" class="p-1.5 text-[#9a4c4c] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a] rounded transition-colors group/btn" title="Review Details">
+                                    <a href="{{ route('admin.admission.review', ['admission' => $enrollment->id]) }}" class="p-1.5 text-[#9a4c4c] hover:bg-[#f3e7e7] dark:hover:bg-[#361a1a] rounded transition-colors group/btn" title="Review Details">
                                         <span class="material-symbols-outlined text-lg group-hover/btn:scale-110 transition-transform">visibility</span>
                                     </a>
                                 </div>

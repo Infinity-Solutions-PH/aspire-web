@@ -150,19 +150,6 @@
                             @error('faculty_id') <span class="text-[10px] text-red-500 font-bold mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
-                        <!-- Branch Select -->
-                        <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">School Branch</label>
-                            <select wire:model.live="branch_id" 
-                                    class="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-[#e7cfcf] dark:border-white/20 rounded-xl text-sm focus:ring-primary focus:border-primary @error('branch_id') border-red-500 ring-red-500 @enderror">
-                                <option value="" selected disabled>Choose School Branch</option>
-                                @foreach($branches as $b)
-                                    <option value="{{ $b->id }}">{{ $b->name }}</option>
-                                @endforeach
-                            </select>
-                            @error('branch_id') <span class="text-[10px] text-red-500 font-bold mt-1 block">{{ $message }}</span> @enderror
-                        </div>
-
                         <!-- Level Select -->
                         <div class="space-y-1">
                             <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Secondary Level</label>
@@ -200,10 +187,11 @@
                     <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Plantilla Item Number -->
                         <div class="space-y-1">
-                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item Number</label>
+                            <label class="text-[10px] font-black uppercase tracking-widest text-[#9a4c4c]">Plantilla Item Number <span class="text-gray-400 lowercase normal-case ml-1">(Optional)</span></label>
                             <input wire:model.live.debounce.250ms="plantilla_item_number" type="text" 
                                    class="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-[#e7cfcf] dark:border-white/20 rounded-xl text-sm focus:ring-primary focus:border-primary @error('plantilla_item_number') border-red-500 ring-red-500 @enderror" 
                                    placeholder="e.g. OSEC-DECSB-TCH1-310009-2024">
+                            <span class="text-[10px] text-gray-500 mt-1 block">If plantilla item number is not known, leave it blank.</span>
                             @error('plantilla_item_number') <span class="text-[10px] text-red-500 font-bold mt-1 block">{{ $message }}</span> @enderror
                         </div>
 
@@ -253,12 +241,6 @@
                                 <p class="text-sm font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $faculty_id }}</p>
                             </div>
                             <div>
-                                <span class="text-[9px] font-black uppercase tracking-wider text-gray-400">School Branch</span>
-                                <p class="text-sm font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">
-                                    {{ \App\Models\Branch::find($branch_id)?->name ?? 'N/A' }}
-                                </p>
-                            </div>
-                            <div>
                                 <span class="text-[9px] font-black uppercase tracking-wider text-gray-400">Secondary Level</span>
                                 <p class="text-sm font-bold text-[#1b0d0d] dark:text-[#fcf8f8]">{{ $level }}</p>
                             </div>
@@ -277,7 +259,7 @@
                             <div class="md:col-span-2">
                                 <span class="text-[9px] font-black uppercase tracking-wider text-gray-400">Plantilla Item Number</span>
                                 <p class="text-sm font-bold font-mono text-[#1b0d0d] dark:text-[#fcf8f8] bg-black/5 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-black/5 dark:border-white/5 w-fit">
-                                    {{ $plantilla_item_number }}
+                                    {{ empty($plantilla_item_number) ? 'N/A' : $plantilla_item_number }}
                                 </p>
                             </div>
                         </div>

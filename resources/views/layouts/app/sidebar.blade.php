@@ -11,11 +11,17 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
-                </flux:sidebar.group>
+        <flux:sidebar.group :heading="__('Platform')" class="grid">
+            <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
+                {{ __('Dashboard') }}
+            </flux:sidebar.item>
+            
+            @role('superadmin')
+            <flux:sidebar.item icon="cog" href="#" wire:navigate>
+                {{ __('Site Settings') }}
+            </flux:sidebar.item>
+            @endrole
+        </flux:sidebar.group>
             </flux:sidebar.nav>
 
             <flux:spacer />

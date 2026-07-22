@@ -43,7 +43,6 @@ class JhsSectionSeeder extends Seeder
                     'strand' => null,
                     'specialization' => null,
                     'capacity' => 40,
-                    'is_star_section' => true,
                 ]
             );
 
@@ -59,7 +58,6 @@ class JhsSectionSeeder extends Seeder
                         'strand' => null,
                         'specialization' => null,
                         'capacity' => 40,
-                        'is_star_section' => false,
                     ]
                 );
             }

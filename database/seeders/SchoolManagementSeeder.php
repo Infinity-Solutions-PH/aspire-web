@@ -3,11 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Room;
+use App\Models\User;
 use App\Models\Section;
 use App\Models\Subject;
 use App\Models\Schedule;
-use App\Models\Fee;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class SchoolManagementSeeder extends Seeder
@@ -53,20 +52,10 @@ class SchoolManagementSeeder extends Seeder
             Subject::create($subject);
         }
 
-        // 4. Fees
-        $fees = [
-            ['name' => 'Registration Fee', 'amount' => 500.00, 'track' => null],
-            ['name' => 'Library Fee', 'amount' => 200.00, 'track' => null],
-            ['name' => 'Shop Lab Consumables', 'amount' => 1500.00, 'track' => 'TECHPRO'],
-            ['name' => 'Digital Tools Subscription', 'amount' => 800.00, 'track' => 'TECHPRO', 'strand' => 'ICT'],
-        ];
 
-        foreach ($fees as $fee) {
-            Fee::create($fee);
-        }
 
         // 5. Schedules (Manual link for first few)
-        $teacher = User::where('role', 'dept_head')->first();
+        $teacher = User::role('faculty')->first();
         if ($teacher) {
             Schedule::create([
                 'section_id' => Section::first()->id,

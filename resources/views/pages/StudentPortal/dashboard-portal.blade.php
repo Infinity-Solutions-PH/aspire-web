@@ -9,7 +9,11 @@
         <div class="relative overflow-hidden bg-primary rounded-3xl p-8 text-white shadow-xl shadow-primary/20">
             <div class="relative z-10">
                 <h2 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}!</h2>
-                <p class="text-white/80 max-w-md">Your enrollment for SY 2024-2025 is active. Stay focused and keep achieving your goals.</p>
+                @if($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active')
+                    <p class="text-white/80 max-w-md">Your enrollment for SY {{ $enrollment->schoolYear->name }} is active. Stay focused and keep achieving your goals.</p>
+                @else
+                    <p class="text-white/80 max-w-md">You are not currently enrolled for the active school year.</p>
+                @endif
             </div>
             <!-- Decorative Elements -->
             <div class="absolute -right-10 -top-10 size-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -38,7 +42,9 @@
                         <p class="text-base font-bold text-primary">{{ $enrollment->school_category }}</p>
                     </div>
                     <div>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Grade Level & Strand</p>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">
+                            {{ $enrollment->schoolYear && $enrollment->schoolYear->status === 'Active' ? 'Grade Level & Strand' : 'Last Grade Level & Strand' }}
+                        </p>
                         <p class="text-sm font-bold text-gray-600 dark:text-gray-400">{{ $enrollment->grade_level }}@if($enrollment->strand || $enrollment->specialization) - {{ $enrollment->strand ?: $enrollment->specialization }}@endif</p>
                     </div>
                 </div>
@@ -54,20 +60,26 @@
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Current Status</p>
                         <div class="flex items-center gap-2 mt-1">
-                            <span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
-                            <span class="text-sm font-bold text-green-600 uppercase">{{ $enrollment->status }}</span>
+                            @if($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active')
+                                <span class="size-2 bg-green-500 rounded-full animate-pulse"></span>
+                                <span class="text-sm font-bold text-green-600 uppercase">{{ $enrollment->status }}</span>
+                            @else
+                                <span class="size-2 bg-gray-400 rounded-full"></span>
+                                <span class="text-sm font-bold text-gray-500 uppercase">Not Enrolled</span>
+                            @endif
                         </div>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Current Section</p>
-                        <p class="text-base font-bold text-primary">{{ $enrollment->section->name ?? 'Not Assigned' }}</p>
+                        <p class="text-base font-bold {{ ($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active') ? 'text-primary' : 'text-gray-500 dark:text-gray-400' }}">
+                            {{ ($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active') ? ($enrollment->section->name ?? 'Not Assigned') : 'N/A' }}
+                        </p>
                     </div>
                     <div>
                         <p class="text-[10px] text-gray-500 uppercase font-bold tracking-tighter">Class Adviser</p>
-                        <p class="text-base font-bold">{{ $adviser->name ?? 'TBA' }}</p>
-                        @if($adviser)
-                            <p class="text-[10px] text-gray-400">{{ $adviser->email }}</p>
-                        @endif
+                        <p class="text-base font-bold {{ ($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active') ? 'text-[#1b0d0d] dark:text-white' : 'text-gray-500 dark:text-gray-400' }}">
+                            {{ ($enrollment->schoolYear && $enrollment->schoolYear->status === 'Active') ? ($adviser->name ?? 'TBA') : 'N/A' }}
+                        </p>
                     </div>
                 </div>
             </section>
@@ -86,11 +98,11 @@
                     @forelse($schedules->sortBy('start_time') as $schedule)
                         <div class="flex items-center gap-4 p-4 bg-[#f8f6f6] dark:bg-[#3d2424] rounded-xl border border-[#e7cfcf] dark:border-[#3d2424]">
                             <div class="size-12 bg-white dark:bg-zinc-800 rounded-lg flex items-center justify-center text-primary shadow-sm border border-[#e7cfcf] dark:border-[#3d2424]">
-                                <span class="material-symbols-outlined">{{ $schedule->room->type === 'shop' ? 'construction' : 'school' }}</span>
+                                <span class="material-symbols-outlined">{{ $schedule->room?->type === 'shop' ? 'construction' : 'school' }}</span>
                             </div>
                             <div class="flex-1">
                                 <h4 class="text-sm font-bold">{{ $schedule->subject->name }}</h4>
-                                <p class="text-xs text-gray-500">{{ $schedule->teacher->name }} | {{ $schedule->room->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $schedule->teacher?->name ?? 'TBA' }} | {{ $schedule->room?->name ?? 'TBA' }}</p>
                             </div>
                             <div class="text-right">
                                 <p class="text-xs font-bold">{{ \Carbon\Carbon::parse($schedule->start_time)->format('h:i A') }}</p>

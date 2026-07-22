@@ -5,11 +5,11 @@ namespace App\Livewire\Faculty;
 use App\Models\User;
 use App\Models\Branch;
 use App\Models\Faculty;
+use Livewire\Component;
 use App\Models\Position;
 use App\Models\Department;
-use App\Models\PlantillaPosition;
-use Livewire\Component;
 use Livewire\Attributes\Layout;
+use App\Models\PlantillaPosition;
 use Illuminate\Support\Facades\Hash;
 
 #[Layout('layouts.guest')]
@@ -27,7 +27,6 @@ class SignupWizard extends Component
 
     // Step 2: Professional info
     public $faculty_id = '';
-    public $branch_id = '';
     public $level = '';
     public $department_id = '';
 
@@ -36,7 +35,6 @@ class SignupWizard extends Component
     public $plantilla_item_number = '';
 
     protected $validationAttributes = [
-        'branch_id' => 'school branch',
         'department_id' => 'department',
         'position_id' => 'position',
         'plantilla_item_number' => 'plantilla item number',
@@ -55,14 +53,14 @@ class SignupWizard extends Component
             Case 2:
                 return [
                     'faculty_id' => 'required|unique:faculties,faculty_id',
-                    'branch_id' => 'required|exists:branches,id',
+
                     'level' => 'required|in:JHS,SHS',
                     'department_id' => 'required|exists:departments,id',
                 ];
             Case 3:
                 return [
                     'position_id' => 'required|exists:positions,id',
-                    'plantilla_item_number' => 'required|string',
+                    'plantilla_item_number' => 'nullable|string',
                 ];
             default:
                 return [];
@@ -95,15 +93,17 @@ class SignupWizard extends Component
 
         if ($this->currentStep == 3) {
             // Validate Plantilla assignment
-            $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
-            if ($plantilla) {
-                $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
-                    ->whereIn('status', ['Active', 'On Leave'])
-                    ->first();
+            if (!empty($this->plantilla_item_number)) {
+                $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
+                if ($plantilla) {
+                    $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
+                        ->whereIn('status', ['Active', 'On Leave'])
+                        ->first();
 
-                if ($assignedFaculty) {
-                    $this->addError('plantilla_item_number', 'This plantilla item number is already assigned to an active faculty member.');
-                    return;
+                    if ($assignedFaculty) {
+                        $this->addError('plantilla_item_number', 'This plantilla item number is already assigned to an active faculty member.');
+                        return;
+                    }
                 }
             }
         }
@@ -130,15 +130,17 @@ class SignupWizard extends Component
         $this->validate($allRules);
 
         // Double check plantilla assignment
-        $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
-        if ($plantilla) {
-            $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
-                ->whereIn('status', ['Active', 'On Leave'])
-                ->first();
+        if (!empty($this->plantilla_item_number)) {
+            $plantilla = PlantillaPosition::where('plantilla_number', $this->plantilla_item_number)->first();
+            if ($plantilla) {
+                $assignedFaculty = Faculty::where('plantilla_position_id', $plantilla->id)
+                    ->whereIn('status', ['Active', 'On Leave'])
+                    ->first();
 
-            if ($assignedFaculty) {
-                $this->addError('plantilla_item_number', 'This plantilla item number is already assigned to an active faculty member.');
-                return;
+                if ($assignedFaculty) {
+                    $this->addError('plantilla_item_number', 'This plantilla item number is already assigned to an active faculty member.');
+                    return;
+                }
             }
         }
 
@@ -147,14 +149,19 @@ class SignupWizard extends Component
             'name' => $this->name,
             'email' => $this->email,
             'password' => Hash::make($this->password),
-            'role' => 'teacher',
         ]);
 
+        $user->assignRole('faculty');
+
         // 2. Resolve/create the plantilla position
-        $plantilla = PlantillaPosition::firstOrCreate(
-            ['plantilla_number' => $this->plantilla_item_number],
-            ['position_id' => $this->position_id]
-        );
+        $plantillaId = null;
+        if (!empty($this->plantilla_item_number)) {
+            $plantilla = PlantillaPosition::firstOrCreate(
+                ['plantilla_number' => $this->plantilla_item_number],
+                ['position_id' => $this->position_id]
+            );
+            $plantillaId = $plantilla->id;
+        }
 
         // 3. Create the faculty record with status "Pending"
         Faculty::create([
@@ -162,8 +169,8 @@ class SignupWizard extends Component
             'faculty_id' => $this->faculty_id,
             'department_id' => $this->department_id,
             'status' => 'Pending',
-            'plantilla_position_id' => $plantilla->id,
-            'branch_id' => $this->branch_id,
+            'plantilla_position_id' => $plantillaId,
+            'position_id' => empty($this->plantilla_item_number) ? $this->position_id : null,
             'level' => $this->level,
             'gender' => $this->gender,
         ]);
@@ -173,12 +180,10 @@ class SignupWizard extends Component
 
     public function render()
     {
-        $branches = Branch::orderBy('id')->get();
         $departments = $this->level ? Department::where('level', $this->level)->orderBy('name')->get() : collect();
         $positions = Position::sortedForForm()->get();
 
         return view('livewire.faculty.signup-wizard', [
-            'branches' => $branches,
             'departments' => $departments,
             'positions' => $positions,
         ])->title('Faculty Registration Portal · TNTS ASPIRE');

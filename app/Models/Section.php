@@ -4,22 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['name', 'is_star_section', 'room', 'adviser_id', 'grade_level', 'track', 'strand', 'specialization', 'capacity'])]
+#[Fillable(['name', 'room_id', 'adviser_id', 'grade_level', 'track', 'strand', 'specialization', 'capacity'])]
 class Section extends Model
 {
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Get the room for the section.
      */
-    protected function casts(): array
+    public function room(): BelongsTo
     {
-        return [
-            'is_star_section' => 'boolean',
-        ];
+        return $this->belongsTo(Room::class);
     }
 
     /**

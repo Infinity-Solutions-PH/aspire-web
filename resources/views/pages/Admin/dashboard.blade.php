@@ -1,15 +1,15 @@
 @use('App\Models\Enrollment')
-@use('App\Models\PreEnrollment')
+@use('App\Models\Admission')
 @use('Illuminate\Support\Facades\Auth')
 
 @php
     // User request: pending enrollments are from pre_enrollments with status 'pending_approval'
-    $pendingCount = PreEnrollment::where('status', 'pending_approval')->count();
+    $pendingCount = Admission::where('status', 'pending_approval')->count();
     $approvedCount = Enrollment::where('status', 'Approved')->count();
     $enrolledCount = Enrollment::where('status', 'Enrolled')->count();
     $totalApplicants = $pendingCount + Enrollment::count();
 
-    $recentPending = PreEnrollment::where('status', 'pending_approval')
+    $recentPending = Admission::where('status', 'pending_approval')
         ->latest('updated_at')
         ->limit(5)
         ->get();
@@ -18,15 +18,20 @@
 <x-layouts::app :title="__('Dashboard')">
     @section('page-title', 'Dashboard')
     <div class="flex flex-col gap-10">
-        <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h2 class="text-4xl font-black tracking-tight text-[#1b0d0d] dark:text-white">Dashboard</h2>
-                <p class="text-neutral-500 mt-2 font-medium">System overview for {{ now()->format('F j, Y') }}</p>
+        <!-- Page Heading -->
+        <div class="flex flex-wrap justify-between items-center gap-4 mb-2">
+            <div class="flex items-center gap-4">
+                <div class="size-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                    <span class="material-symbols-outlined text-3xl">space_dashboard</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <h2 class="text-3xl font-black tracking-tight text-[#1b0d0d] dark:text-[#fcf8f8]">Dashboard</h2>
+                    <p class="text-[#9a4c4c] dark:text-[#c48d8d] text-base font-medium">System overview for {{ now()->format('F j, Y') }}</p>
+                </div>
             </div>
-            <div class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-zinc-800 rounded-xl border border-neutral-200 dark:border-white/10 shadow-sm">
+            <div class="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-[#1a0c0c] border border-[#e7cfcf] dark:border-[#422020] rounded-lg shadow-sm">
                 <span class="size-2 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-xs font-bold text-neutral-600 dark:text-neutral-400 uppercase tracking-widest">System Online</span>
+                <span class="text-xs font-bold text-[#9a4c4c] dark:text-[#c48d8d] uppercase tracking-widest mt-0.5">System Online</span>
             </div>
         </div>
         
@@ -108,7 +113,7 @@
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <span class="text-[10px] font-bold text-neutral-400">{{ $pre->updated_at->diffForHumans() }}</span>
-                                    <a href="{{ route('admin.pre_enrollment.review', $pre->id) }}" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
+                                    <a href="{{ route('admin.admission.review', $pre->id) }}" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-all opacity-0 group-hover:opacity-100">
                                         <span class="material-symbols-outlined text-lg">arrow_forward</span>
                                     </a>
                                 </div>
@@ -130,15 +135,19 @@
                     <div class="absolute -right-10 -bottom-10 size-40 bg-white/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">Current Term</p>
-                        <h4 class="text-2xl font-black mt-1">S.Y. 2026-2027</h4>
+                        <h4 class="text-2xl font-black mt-1">{{ $activeSchoolYear ? 'S.Y. ' . $activeSchoolYear->name : 'No Active Term' }}</h4>
                         <div class="mt-6 flex items-center gap-4">
                             <div class="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
-                                <div class="h-full bg-white rounded-full" style="width: 65%"></div>
+                                <div class="h-full bg-white rounded-full" style="width: {{ $capacityPercentage }}%"></div>
                             </div>
-                            <span class="text-[10px] font-bold">65% Capacity</span>
+                            <span class="text-[10px] font-bold">{{ $capacityPercentage }}% Capacity</span>
                         </div>
                         <p class="text-[10px] mt-4 leading-relaxed opacity-80">
-                            Enrollment is currently active for all levels. Regular verification schedules are ongoing.
+                            @if($activeSchoolYear)
+                                Enrollment is currently {{ strtolower($activeSchoolYear->status) }}.
+                            @else
+                                No active school year found. Please configure the academic calendar.
+                            @endif
                         </p>
                     </div>
                 </div>
@@ -151,8 +160,8 @@
                             <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">meeting_room</span>
                             <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400">Sections</span>
                         </a>
-                        <a href="{{ route('admin.schedules') }}" class="p-4 rounded-2xl bg-neutral-50 dark:bg-white/5 border border-neutral-100 dark:border-white/5 flex flex-col items-center gap-2 hover:border-primary/30 transition-all group">
-                            <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">calendar_month</span>
+                        <a href="{{ route('admin.schedules.templates') }}" class="p-4 rounded-2xl bg-neutral-50 dark:bg-white/5 border border-neutral-100 dark:border-white/5 flex flex-col items-center gap-2 hover:border-primary/30 transition-all group">
+                            <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">calendar_view_week</span>
                             <span class="text-[10px] font-bold text-neutral-600 dark:text-neutral-400">Schedules</span>
                         </a>
                     </div>

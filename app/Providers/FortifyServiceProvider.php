@@ -36,10 +36,14 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)
                         ->orWhere('student_id', $request->email)
+                        ->orWhere('email', $request->email . '@tnts.edu.ph')
+                        ->orWhereHas('student', function ($query) use ($request) {
+                            $query->where('lrn', $request->email);
+                        })
                         ->first();
 
             if ($user && Hash::check($request->password, $user->password)) {
-                if ($user->role === 'teacher' && $user->faculty) {
+                if ($user->hasRole('faculty') && $user->faculty) {
                     if ($user->faculty->status === 'Pending') {
                         throw ValidationException::withMessages([
                             Fortify::username() => __('Your account registration is pending approval.'),

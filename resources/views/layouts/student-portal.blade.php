@@ -72,7 +72,7 @@
                 </div>
                 
                 @php
-                    $enrollment = \App\Models\Enrollment::where('user_id', auth()->id())->latest()->first();
+                    $enrollment = auth()->user()->enrollments()->latest()->first();
                 @endphp
                 
                 <nav class="flex flex-col gap-2">
@@ -80,23 +80,23 @@
                         <span class="material-symbols-outlined">dashboard</span>
                         <span class="text-sm">Dashboard</span>
                     </a>
-                    {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
-                        <span class="material-symbols-outlined">how_to_reg</span>
-                        <span class="text-sm">Enrolment Status</span>
-                    </a> --}}
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.profile') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.profile') }}">
                         <span class="material-symbols-outlined">person</span>
-                        <span class="text-sm">Profile</span>
+                        <span class="text-sm">Student Profile</span>
+                    </a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.history') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.history') }}">
+                        <span class="material-symbols-outlined {{ request()->routeIs('student.history') ? 'fill-1' : '' }}" style="{{ request()->routeIs('student.history') ? "font-variation-settings: 'FILL' 1" : '' }}">history_edu</span>
+                        <span class="text-sm">Enrollment History</span>
                     </a>
                     <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('student.violations') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('student.violations') }}">
                         <span class="material-symbols-outlined {{ request()->routeIs('student.violations') ? 'fill-1' : '' }}" style="{{ request()->routeIs('student.violations') ? "font-variation-settings: 'FILL' 1" : '' }}">gavel</span>
                         <span class="text-sm">Violations</span>
                     </a>
+                    {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('enrollment.index') ? 'bg-primary/10 text-primary font-bold' : 'text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5' }} transition-colors" href="{{ route('enrollment.index') }}">
+                        <span class="material-symbols-outlined">how_to_reg</span>
+                        <span class="text-sm">Enrolment Status</span>
+                    </a> --}}
                     {{-- <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
-                        <span class="material-symbols-outlined">history_edu</span>
-                        <span class="text-sm">Academic Records</span>
-                    </a>
-                    <a class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#1b0d0d] dark:text-[#fcf8f8] hover:bg-gray-100 dark:hover:bg-white/5 transition-colors" href="#">
                         <span class="material-symbols-outlined">folder_open</span>
                         <span class="text-sm">Resources</span>
                     </a> --}}
@@ -106,7 +106,7 @@
             <div class="flex flex-col gap-4">
                 <div class="flex items-center gap-3 p-3 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424]">
                     @if(!empty(auth()->user()->avatar))
-                        <div class="size-10 rounded-full shrink-0 bg-cover bg-center" style="background-image: url('{{ auth()->user()->avatar }}')"></div>
+                        <div class="size-10 rounded-full shrink-0 bg-cover bg-center" style="background-image: url('{{ asset('storage/' . auth()->user()->avatar) }}')"></div>
                     @else
                         <div class="size-10 rounded-full shrink-0 bg-primary/20 text-primary flex items-center justify-center font-bold text-sm uppercase tracking-widest">
                             {{ auth()->user()->initials() }}
@@ -136,19 +136,14 @@
                     <button @click="sidebarOpen = true" class="lg:hidden flex items-center justify-center size-10 rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white shrink-0 transition-colors hover:bg-[#e7cfcf]">
                         <span class="material-symbols-outlined">menu</span>
                     </button>
-                    <div class="relative w-full hidden sm:block">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-                        <input class="w-full bg-[#f3e7e7] dark:bg-[#3d2424] border-none rounded-xl pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary/50 transition-all placeholder:text-gray-500" placeholder="Search status, fees or documents..." type="text"/>
-                    </div>
+
                 </div>
                 <div class="flex items-center gap-2 lg:gap-4">
                     <button class="size-10 flex items-center justify-center rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white relative">
                         <span class="material-symbols-outlined">notifications</span>
                         <span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
                     </button>
-                    <button class="size-10 flex items-center justify-center rounded-xl bg-[#f3e7e7] dark:bg-[#3d2424] text-[#1b0d0d] dark:text-white">
-                        <span class="material-symbols-outlined">settings</span>
-                    </button>
+
                 </div>
             </header>
 

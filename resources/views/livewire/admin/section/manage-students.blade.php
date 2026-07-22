@@ -39,8 +39,12 @@
                 </div>
             </div>
 
-            <!-- Export Actions -->
+            <!-- Quick Actions -->
             <div class="flex items-center gap-3">
+                <a href="{{ route('admin.sections.schedules', $section->id) }}" class="flex items-center gap-2 h-11 px-5 rounded-xl bg-white dark:bg-[#361a1a] text-gray-700 dark:text-gray-300 font-bold text-sm shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-[#4d3232]">
+                    <span class="material-symbols-outlined text-lg text-primary">calendar_clock</span>
+                    Manage Schedules
+                </a>
                 <a href="{{ route('admin.sections.export.csv', $section->id) }}" class="flex items-center gap-2 h-11 px-5 rounded-xl bg-white dark:bg-[#361a1a] text-gray-700 dark:text-gray-300 font-bold text-sm shadow-sm hover:shadow-md transition-all border border-gray-200 dark:border-[#4d3232]">
                     <span class="material-symbols-outlined text-lg text-green-600">table_view</span>
                     Export CSV

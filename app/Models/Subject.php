@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
-#[Fillable(['name', 'grade_level', 'track', 'strand', 'specialization'])]
+#[Fillable(['name', 'is_tech_voc'])]
 class Subject extends Model
 {
     /**

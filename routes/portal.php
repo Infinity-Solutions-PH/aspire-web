@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Enrollment;
 use App\Livewire\Faculty\Profile;
 use App\Livewire\Faculty\Dashboard;
 use Illuminate\Support\Facades\Route;
@@ -25,7 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('student.dashboard');
-Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
+    Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('student.profile');
+    Route::get('/history', [StudentDashboardController::class, 'enrollmentHistory'])->name('student.history');
     Route::get('/violations', Violations::class)->name('student.violations');
     // Route::get('/enrollment', [StudentEnrollmentController::class, 'index'])->name('enrollment.index');
     // Route::post('/enrollment/start', [StudentEnrollmentController::class, 'start'])->name('enrollment.start');
@@ -33,7 +33,7 @@ Route::get('/profile', [StudentDashboardController::class, 'profile'])->name('st
 });
 
 // Faculty Portal Authenticated Routes
-Route::middleware(['auth', 'verified', 'can:access-faculty'])->prefix('faculty')->group(function () {
+Route::middleware(['auth', 'verified', 'role:faculty'])->prefix('faculty')->group(function () {
     Route::get('/dashboard', Dashboard::class)->name('faculty.dashboard');
     Route::get('/sections', SectionsList::class)->name('faculty.sections');
     Route::get('/sections/{section}', ManageSectionStudents::class)->name('faculty.sections.students');

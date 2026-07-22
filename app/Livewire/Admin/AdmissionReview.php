@@ -5,12 +5,12 @@ namespace App\Livewire\Admin;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Section;
+use App\Models\Student;
 use Livewire\Component;
+use App\Models\Admission;
 use App\Models\Enrollment;
-use Illuminate\Support\Str;
-use App\Models\PreEnrollment;
+use App\Models\SchoolYear;
 use App\Services\SectioningService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\ProvisioningService;
@@ -18,23 +18,23 @@ use App\Services\ProvisioningService;
 class AdmissionReview extends Component
 {
     public $record;
-    public $isPre = false;
+    public $isAdmission = false;
     public $admin_remarks;
     public $selected_specialization;
     public $status;
     public $selected_section_id;
     public $selected_tech_voc_section_id;
 
-    public function mount(Enrollment $enrollment = null, PreEnrollment $preEnrollment = null)
+    public function mount(Enrollment $enrollment = null, Admission $admission = null)
     {
-        if ($preEnrollment && $preEnrollment->exists) {
-            $this->record = $preEnrollment;
-            $this->isPre = true;
+        if ($admission && $admission->exists) {
+            $this->record = $admission;
+            $this->isAdmission = true;
             // Normalize for UI
-            $data = $preEnrollment->form_data;
+            $data = $admission->form_data;
             $this->admin_remarks = $data['admin_remarks'] ?? '';
             $this->selected_specialization = $data['specialization'] ?? ($data['tech_voc_course1'] ?? '');
-            $this->status = $preEnrollment->status;
+            $this->status = $admission->status;
         } else {
             $this->record = $enrollment;
             $this->admin_remarks = $enrollment->admin_remarks;
@@ -45,9 +45,11 @@ class AdmissionReview extends Component
 
     public function approve()
     {
-        if ($this->isPre) {
+        if ($this->isAdmission) {
             // Check for duplicate LRN in enrollment
-            $exists = Enrollment::where('lrn', $this->record->lrn)
+            $exists = Enrollment::whereHas('student', function ($query) {
+                $query->where('lrn', $this->record->lrn);
+            })
                 ->whereIn('status', ['Approved', 'Enrolled', 'pending_approval'])
                 ->exists();
 
@@ -63,24 +65,31 @@ class AdmissionReview extends Component
             $passwordStr = $this->record->birthdate->format('mdY');
             
             $user = User::firstOrCreate(
-                ['student_id' => $username],
+                ['email' => $username . '@tnts.edu.ph'],
                 [
                     'name' => ($data['first_name'] ?? '') . ' ' . ($data['last_name'] ?? ''),
-                    'email' => $username . '@tnts.edu.ph',
                     'password' => Hash::make($passwordStr),
-                    'role' => 'student',
                     'avatar' => $data['profile_picture'] ?? null,
                 ]
             );
+            if (!$user->hasRole('student')) {
+                $user->assignRole('student');
+            }
 
             if ($user->wasRecentlyCreated === false && empty($user->avatar) && !empty($data['profile_picture'])) {
                 $user->update(['avatar' => $data['profile_picture']]);
             }
 
-            // 2. Promote PreEnrollment to Enrollment
-            $enrollment = Enrollment::create(array_merge($data, [
-                'user_id' => $user->id,
-                'lrn' => $this->record->lrn,
+            // 2. Create Student Record
+            $student = Student::firstOrCreate(
+                ['lrn' => $this->record->lrn],
+                array_merge($data, ['user_id' => $user->id])
+            );
+
+            // 3. Promote Admission to Enrollment
+            $enrollment = Enrollment::create([
+                'student_id' => $student->id,
+                'school_year_id' => SchoolYear::where('status', 'Active')->value('id'),
                 'birthdate' => $this->record->birthdate,
                 'transaction_number' => $this->record->transaction_number,
                 'status' => 'Approved',
@@ -88,10 +97,12 @@ class AdmissionReview extends Component
                 'admin_remarks' => $this->admin_remarks,
                 'verified_by' => Auth::id(),
                 'type' => $data['enrollment_type'] ?? 'New',
-                'gwa' => $data['last_gwa'] ?? null,
-            ]));
+                'grade_level' => $data['grade_level'] ?? null,
+                'track' => $data['track'] ?? null,
+                'strand' => $data['strand'] ?? null,
+            ]);
 
-            // Delete PreEnrollment data once promoted to Enrollment
+            // Delete Admission data once promoted to Enrollment
             $this->record->delete();
             
             session()->flash('message', 'Application promoted to Enrollment and approved.');
@@ -110,13 +121,13 @@ class AdmissionReview extends Component
 
     public function enroll(ProvisioningService $provisioningService)
     {
-        if ($this->isPre) return;
+        if ($this->isAdmission) return;
 
         try {
             // 1. Transition applicant to student role and provision IT accounts
-            $user = $this->record->user;
-            if ($user && $user->role !== 'admin') {
-                $user->update(['role' => 'student']);
+            $user = $this->record->student ? $this->record->student->user : null;
+            if ($user && !$user->hasRole('admin')) {
+                $user->assignRole('student');
                 $provisioningService->provisionAccount($user);
             }
 
@@ -160,7 +171,7 @@ class AdmissionReview extends Component
     {
         $enrollment = $this->record;
 
-        if ($this->isPre) {
+        if ($this->isAdmission) {
             $data = $this->record->form_data;
             // Create a wrapper object that behaves like an Enrollment model for the view
             $enrollment = (object) array_merge($data, [
@@ -177,11 +188,18 @@ class AdmissionReview extends Component
                 'honorable_dismissal_path' => $data['honorable_dismissal_path'] ?? null,
                 'profile_picture' => $data['profile_picture'] ?? null,
             ]);
+        } else {
+            $student = $this->record->student;
+            $enrollment = (object) array_merge($student->toArray(), $this->record->toArray(), [
+                'id' => $this->record->id,
+                'birthdate' => clone $student->birthdate,
+                'profile_picture' => $student->user->avatar ?? null,
+                'type' => $this->record->type,
+            ]);
         }
 
         return view('pages.Admin.admission.review', [
             'enrollment' => $enrollment,
-            'isStarQualified' => $sectioningService->checkStarQualification($enrollment),
             'availableSections' => $sectioningService->getAvailableSectionsForEnrollment($enrollment),
             'availableTechVocSections' => Section::where('grade_level', $enrollment->grade_level)
                 ->whereNotNull('specialization')

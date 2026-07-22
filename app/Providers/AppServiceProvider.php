@@ -26,20 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
-
-        Gate::define('access-admin', function (User $user) {
-            return in_array($user->role, ['admin', 'registrar', 'dept_head', 'guidance', 'ovpd']);
-        });
-
-        Gate::define('access-admin-standard', function (User $user) {
-            return in_array($user->role, ['admin', 'registrar', 'dept_head', 'guidance']);
-        });
-
-        Gate::define('access-faculty', function (User $user) {
-            return $user->role === 'teacher' && 
-                   $user->faculty && 
-                   in_array($user->faculty->status, ['Active', 'On Leave']);
-        });
     }
 
     /**
